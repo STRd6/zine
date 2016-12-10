@@ -5,5 +5,5 @@ style.innerHTML = Style.all
 document.head.appendChild style
 
 windowView = Window
-  yolo: {}
+  title: "ZineOS Volume 1 | Issue 1 | December 2016"
 document.body.appendChild windowView.element

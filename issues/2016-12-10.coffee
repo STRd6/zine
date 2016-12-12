@@ -20,10 +20,10 @@ module.exports = (UI) ->
           value: 0
           max: 2
           message: initialMessage
-  
+
         Modal.show progressView.element,
           cancellable: false
-  
+
         intervalId = setInterval ->
           newValue = progressView.value() + 1/60
           ellipsesCount = Math.floor(newValue * 4) % 4

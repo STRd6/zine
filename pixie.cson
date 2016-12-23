@@ -1,2 +1,5 @@
 dependencies:
   ui: "STRd6/ui:master"
+remoteDependencies: [
+  "https://unpkg.com/dexie@2.0.0-beta.7/dist/dexie.js"
+]

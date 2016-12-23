@@ -1,3 +1,5 @@
+Notepad = require "../apps/notepad"
+
 module.exports = (UI) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = UI
 
@@ -8,6 +10,8 @@ module.exports = (UI) ->
     items: parseMenu """
       Hello
         Wait Around For A Bit
+      Apps
+        Notepad.exe
       Social Media
         Comment
         Like
@@ -39,12 +43,15 @@ module.exports = (UI) ->
       comment: ->
       like: ->
       subscribe: ->
+      notepadexe: ->
+        app = Notepad()
+        document.body.appendChild app.element
 
   windowView = Window
     title: "ZineOS Volume 1 | Issue 1 | December 2016"
     content: img
     menuBar: menuBar.element
-    width: 520
-    height: 622
+    width: 508
+    height: 604
   document.body.appendChild windowView.element
 

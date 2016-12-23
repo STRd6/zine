@@ -1,9 +1,7 @@
-UI = require "ui"
+module.exports = (os) ->
+  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = os.UI
 
-module.exports = () ->
-  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = UI
-
-  exec = (cmd) -> 
+  exec = (cmd) ->
     ->
       textarea.focus()
       document.execCommand(cmd)
@@ -53,7 +51,18 @@ module.exports = () ->
     handlers:
       new: ->
       open: ->
+        Modal.prompt "File Path", "somepath.txt"
+        .then (path) ->
+          os.readAsText(path)
+        .then (data) ->
+          textarea.value = data
+
       save: ->
+        Modal.prompt "File Path", "somepath.txt"
+        .then (path) ->
+          blob = new Blob [textarea.value],
+            type: "text/plain"
+          os.write path, blob
       saveAs: ->
       pageSetup: TODO
       print: TODO

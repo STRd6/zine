@@ -1,7 +1,7 @@
 Notepad = require "../apps/notepad"
 
-module.exports = (UI) ->
-  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = UI
+module.exports = (os) ->
+  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = os.UI
 
   img = document.createElement "img"
   img.src = "https://68.media.tumblr.com/6a141d69564a29ac7d4071df5d519808/tumblr_o0rbb4TA1k1urr1ryo1_500.gif"
@@ -44,7 +44,7 @@ module.exports = (UI) ->
       like: ->
       subscribe: ->
       notepadexe: ->
-        app = Notepad()
+        app = Notepad(os)
         document.body.appendChild app.element
 
   windowView = Window

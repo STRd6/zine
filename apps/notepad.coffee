@@ -49,8 +49,9 @@ module.exports = (os) ->
         [A]bout Notepad
     """
     handlers:
-      new: ->
+      new: TODO
       open: ->
+        # TODO: File browser
         Modal.prompt "File Path", "somepath.txt"
         .then (path) ->
           os.readAsText(path)
@@ -58,34 +59,52 @@ module.exports = (os) ->
           textarea.value = data
 
       save: ->
+        # TODO: Remember path
         Modal.prompt "File Path", "somepath.txt"
         .then (path) ->
           blob = new Blob [textarea.value],
             type: "text/plain"
           os.write path, blob
-      saveAs: ->
+      
+      saveAs: TODO
+      
+      # Printing
       pageSetup: TODO
       print: TODO
+      
       exit: ->
         windowView.element.remove()
+      
       undo: exec "undo"
       redo: exec "redo"
       cut: exec "cut"
       copy: exec "copy"
+      # NOTE: Can't paste from system clipboard for security reasons
+      # Can probably paste from an in-app clipboard equivalent
       paste: exec "paste"
       delete: exec "delete"
+      
       find: TODO
       findNext: TODO
       replace: TODO
       goTo: TODO
-      selectAll: -> 
+      
+      selectAll: ->
         textarea.select()
+      
       timeDate: ->
         textarea.focus()
         dateText = (new Date).toString().split(" ").slice(0, -4).join(" ")
         document.execCommand("insertText", false, dateText)
+      
       wordWrap: TODO
-      font: TODO
+      
+      font: ->
+        Modal.prompt "Font", textarea.style.fontFamily or "monospace"
+        .then (font) ->
+          if font
+            textarea.style.fontFamily = font
+
       statusBar: TODO
       viewHelp: TODO
       aboutNotepad: TODO

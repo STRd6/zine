@@ -14,6 +14,8 @@ module.exports = (os) ->
       Apps
         Notepad.exe
         MS Access 97
+      Stories
+        Mystery Smell
       Social Media
         Comment
         Like
@@ -51,6 +53,18 @@ module.exports = (os) ->
       mSAccess97: ->
         app = Spreadsheet(os)
         document.body.appendChild app.element
+      mysterySmell: ->
+        div = document.createElement "div"
+        div.textContent = require "../stories/mystery-smell"
+        div.style.padding = "1em"
+        div.style.whiteSpace = "pre-wrap"
+        div.style.textAlign = "justify"
+        storyWindow = Window
+          title: "Mystery Smell"
+          content: div
+          width: 380
+          height: 480
+        document.body.appendChild storyWindow.element
 
   windowView = Window
     title: "ZineOS Volume 1 | Issue 1 | December 2016"

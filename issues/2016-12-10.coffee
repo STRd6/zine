@@ -1,4 +1,5 @@
 Notepad = require "../apps/notepad"
+Spreadsheet = require "../apps/spreadsheet"
 
 module.exports = (os) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = os.UI
@@ -12,6 +13,7 @@ module.exports = (os) ->
         Wait Around For A Bit
       Apps
         Notepad.exe
+        MS Access 97
       Social Media
         Comment
         Like
@@ -45,6 +47,9 @@ module.exports = (os) ->
       subscribe: ->
       notepadexe: ->
         app = Notepad(os)
+        document.body.appendChild app.element
+      mSAccess97: ->
+        app = Spreadsheet(os)
         document.body.appendChild app.element
 
   windowView = Window

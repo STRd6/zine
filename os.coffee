@@ -59,6 +59,10 @@ module.exports = (dbName='zine-os') ->
     .then ({blob}) ->
       readAsText blob
 
+  self.readAsJSON = (path) ->
+    self.readAsText(path)
+    .then JSON.parse
+
   self.UI = UI
 
   return self

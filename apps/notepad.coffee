@@ -65,16 +65,16 @@ module.exports = (os) ->
           blob = new Blob [textarea.value],
             type: "text/plain"
           os.write path, blob
-      
+
       saveAs: TODO
-      
+
       # Printing
       pageSetup: TODO
       print: TODO
-      
+
       exit: ->
         windowView.element.remove()
-      
+
       undo: exec "undo"
       redo: exec "redo"
       cut: exec "cut"
@@ -83,22 +83,22 @@ module.exports = (os) ->
       # Can probably paste from an in-app clipboard equivalent
       paste: exec "paste"
       delete: exec "delete"
-      
+
       find: TODO
       findNext: TODO
       replace: TODO
       goTo: TODO
-      
+
       selectAll: ->
         textarea.select()
-      
+
       timeDate: ->
         textarea.focus()
         dateText = (new Date).toString().split(" ").slice(0, -4).join(" ")
         document.execCommand("insertText", false, dateText)
-      
+
       wordWrap: TODO
-      
+
       font: ->
         Modal.prompt "Font", textarea.style.fontFamily or "monospace"
         .then (font) ->
@@ -110,7 +110,7 @@ module.exports = (os) ->
       aboutNotepad: TODO
 
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 1 | December 2016"
+    title: "Notepad.exe"
     content: textarea
     menuBar: menuBar.element
     width: 640

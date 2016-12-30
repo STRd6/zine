@@ -1,5 +1,7 @@
+require "./extensions"
+
 OS = require "../os"
-os = OS()
+global.system = os = OS()
 
 {Style} = os.UI
 style = document.createElement "style"

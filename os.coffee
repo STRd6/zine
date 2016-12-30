@@ -52,17 +52,24 @@ module.exports = (dbName='zine-os') ->
 
   fs = DexieFS(DexieFSDB(dbName))
 
-  Object.assign self, fs
+  Object.assign self,
+    fs: fs
 
-  self.readAsText = (path) ->
-    fs.read(path)
-    .then ({blob}) ->
-      readAsText blob
+    readFile: (path) ->
+      fs.read(path)
+      .then ({blob}) ->
+        blob
 
-  self.readAsJSON = (path) ->
-    self.readAsText(path)
-    .then JSON.parse
+    readAsText: (path) ->
+      self.readFile(path)
+      .then readAsText
 
-  self.UI = UI
+    readAsJSON: (path) ->
+      self.readAsText(path)
+      .then JSON.parse
+
+    writeFile: fs.write
+
+    UI: UI
 
   return self

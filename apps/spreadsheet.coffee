@@ -1,42 +1,43 @@
 module.exports = (os) ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = os.UI
 
-  # Observable input helper
-  o = (value, type) ->
-    attribute = Observable(value)
-    if type
-      attribute.type = type
+  sourceData = [0...5].map (i) ->
+    id: i
+    name: "yolo"
+    color: "#FF0000"
 
-    attribute.value = attribute
-
-    return attribute
-
-  data = Observable [0...5].map (i) ->
-    id: o i
-    name: o "yolo"
-    color: o "#FF0000", "color"
-
-  {element} = Table data
+  {element} = Table {
+    data
+    RowElement: SampleRow
+  }
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
       blob.readAsJSON()
       .then (json) ->
-        # TODO: Load json array to data
         console.log json
+
+        unless Array.isArray json
+          throw new Error "Data must be an array"
+
+        sourceData = json
+        # TODO: Re-render
+
     newFile: -> # TODO
     saveData: ->
-      # TODO: Make sure to get data the right way
-      Promise.resolve new Blob [JSON.stringify(data())],
+      Promise.resolve new Blob [JSON.stringify(sourceData)],
         type: "application/json"
 
     about: ->
       Modal.alert "Spreadsheet v0.0.1 by Daniel X Moore"
     insertRow: ->
-      data.push
-        id: o 50
-        name: o "new"
-        color: o "#FF00FF", "color"
+      # TODO: Data template
+      sourceData.push
+        id: 0
+        name: "new"
+        color: "#FF00FF"
+
+      # TODO: Re-render
     exit: ->
       windowView.element.remove()
 

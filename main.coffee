@@ -8,4 +8,4 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
-require("./issues/2016-12-10")(os)
+require("./issues/2016-12")(os)

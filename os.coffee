@@ -37,14 +37,6 @@ DexieFS = (db) ->
 uniq = (array) ->
   Array.from new Set array
 
-readAsText = (file) ->
-  new Promise (resolve, reject) ->
-    reader = new FileReader
-    reader.onload = ->
-      resolve reader.result
-    reader.onerror = reject
-    reader.readAsText(file)
-
 UI = require "ui"
 
 module.exports = (dbName='zine-os') ->
@@ -59,14 +51,6 @@ module.exports = (dbName='zine-os') ->
       fs.read(path)
       .then ({blob}) ->
         blob
-
-    readAsText: (path) ->
-      self.readFile(path)
-      .then readAsText
-
-    readAsJSON: (path) ->
-      self.readAsText(path)
-      .then JSON.parse
 
     writeFile: fs.write
 

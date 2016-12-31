@@ -1,5 +1,4 @@
 Notepad = require "../apps/notepad"
-Spreadsheet = require "../apps/spreadsheet"
 CommentFormTemplate = require "../social/comment-form"
 CommentsTemplate = require "../social/comments"
 

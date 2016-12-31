@@ -13,7 +13,7 @@ module.exports = (os) ->
   img = document.createElement "img"
   img.src = "https://68.media.tumblr.com/6a141d69564a29ac7d4071df5d519808/tumblr_o0rbb4TA1k1urr1ryo1_500.gif"
 
-  handlers =       
+  handlers =
     waitAroundForABit: ->
       initialMessage = "Waiting"
       progressView = Progress

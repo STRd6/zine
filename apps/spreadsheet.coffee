@@ -1,14 +1,45 @@
-module.exports = (os) ->
-  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = os.UI
+FileIO = require "../os/file-io"
+Model = require "model"
+
+module.exports = () ->
+  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
   sourceData = [0...5].map (i) ->
     id: i
     name: "yolo"
     color: "#FF0000"
 
+  headers = ["id", "name", "color"]
+
+  models = sourceData.map (datum) ->
+    Model(datum).attrObservable headers...
+
+  InputTemplate = require "../templates/input"
+  RowElement = (datum) ->
+    tr = document.createElement "tr"
+    types = [
+      "number"
+      "text"
+      "color"
+    ]
+    
+    console.log datum
+
+    headers.forEach (key, i) ->
+      td = document.createElement "td"
+      td.appendChild InputTemplate 
+        value: datum[key]
+        type: types[i]
+
+      tr.appendChild td
+
+    return tr
+
+
   {element} = Table {
-    data
-    RowElement: SampleRow
+    data: models
+    RowElement: RowElement
+    headers: headers
   }
 
   handlers = Model().include(FileIO).extend

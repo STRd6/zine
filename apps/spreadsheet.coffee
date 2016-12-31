@@ -1,14 +1,45 @@
-module.exports = (os) ->
-  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = os.UI
+FileIO = require "../os/file-io"
+Model = require "model"
+
+module.exports = () ->
+  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
   sourceData = [0...5].map (i) ->
     id: i
     name: "yolo"
     color: "#FF0000"
 
-  {element} = Table {
-    data
-    RowElement: SampleRow
+  headers = ["id", "name", "color"]
+
+  RowModel = (datum) ->
+    Model(datum).attrObservable headers...
+
+  models = sourceData.map RowModel
+
+  InputTemplate = require "../templates/input"
+  RowElement = (datum) ->
+    tr = document.createElement "tr"
+    types = [
+      "number"
+      "text"
+      "color"
+    ]
+
+    headers.forEach (key, i) ->
+      td = document.createElement "td"
+      td.appendChild InputTemplate 
+        value: datum[key]
+        type: types[i]
+
+      tr.appendChild td
+
+    return tr
+
+
+  {element} = tableView = Table {
+    data: models
+    RowElement: RowElement
+    headers: headers
   }
 
   handlers = Model().include(FileIO).extend
@@ -21,7 +52,9 @@ module.exports = (os) ->
           throw new Error "Data must be an array"
 
         sourceData = json
-        # TODO: Re-render
+        # TODO: Update models data
+        # Re-render
+        tableView.render()
 
     newFile: -> # TODO
     saveData: ->
@@ -32,12 +65,16 @@ module.exports = (os) ->
       Modal.alert "Spreadsheet v0.0.1 by Daniel X Moore"
     insertRow: ->
       # TODO: Data template
-      sourceData.push
+      datum = 
         id: 0
         name: "new"
         color: "#FF00FF"
 
-      # TODO: Re-render
+      sourceData.push datum
+      models.push RowModel(datum)
+
+      # Re-render
+      tableView.render()
     exit: ->
       windowView.element.remove()
 

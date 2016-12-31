@@ -2,7 +2,7 @@
 
 # Host must provide the following methods
 #   `loadFile` Take a blob and load it as the application state.
-#   `saveData` Return a promise that will be fulfilled with a blob of the 
+#   `saveData` Return a promise that will be fulfilled with a blob of the
 #     current application state.
 #   `newFile` Initialize the application to an empty state.
 

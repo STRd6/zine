@@ -1,0 +1,5 @@
+comments
+  - @forEach (comment) ->
+    comment
+      div= comment.body
+      .author= comment.author

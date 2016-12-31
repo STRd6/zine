@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 1483213447351
+
+CACHE:
+index.html
+../templates/input.jadelet.json
+https://unpkg.com/dexie@2.0.0-beta.7/dist/dexie.js
+
+NETWORK:
+https://*
+http://*
+*

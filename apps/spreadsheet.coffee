@@ -11,8 +11,10 @@ module.exports = () ->
 
   headers = ["id", "name", "color"]
 
-  models = sourceData.map (datum) ->
+  RowModel = (datum) ->
     Model(datum).attrObservable headers...
+
+  models = sourceData.map RowModel
 
   InputTemplate = require "../templates/input"
   RowElement = (datum) ->
@@ -22,8 +24,6 @@ module.exports = () ->
       "text"
       "color"
     ]
-    
-    console.log datum
 
     headers.forEach (key, i) ->
       td = document.createElement "td"
@@ -36,7 +36,7 @@ module.exports = () ->
     return tr
 
 
-  {element} = Table {
+  {element} = tableView = Table {
     data: models
     RowElement: RowElement
     headers: headers
@@ -52,7 +52,9 @@ module.exports = () ->
           throw new Error "Data must be an array"
 
         sourceData = json
-        # TODO: Re-render
+        # TODO: Update models data
+        # Re-render
+        tableView.render()
 
     newFile: -> # TODO
     saveData: ->
@@ -63,12 +65,16 @@ module.exports = () ->
       Modal.alert "Spreadsheet v0.0.1 by Daniel X Moore"
     insertRow: ->
       # TODO: Data template
-      sourceData.push
+      datum = 
         id: 0
         name: "new"
         color: "#FF00FF"
 
-      # TODO: Re-render
+      sourceData.push datum
+      models.push RowModel(datum)
+
+      # Re-render
+      tableView.render()
     exit: ->
       windowView.element.remove()
 

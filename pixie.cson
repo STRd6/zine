@@ -1,4 +1,5 @@
 dependencies:
+  ajax: "distri/ajax:master"
   model: "distri/model:master"
   ui: "STRd6/ui:master"
 remoteDependencies: [

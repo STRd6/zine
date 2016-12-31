@@ -1,0 +1,10 @@
+form
+  h1 Comment
+  label
+    h3 Author
+    input(name="author" value="Anon")
+  label
+    h3 Body
+    textarea(name="body")
+  input(type="hidden" name="area" value=@area)
+  button Submit

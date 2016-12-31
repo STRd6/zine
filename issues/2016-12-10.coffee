@@ -1,5 +1,9 @@
 Notepad = require "../apps/notepad"
 Spreadsheet = require "../apps/spreadsheet"
+CommentFormTemplate = require "../social/comment-form"
+
+Ajax = require "ajax"
+ajax = Ajax()
 
 module.exports = (os) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = os.UI
@@ -13,7 +17,6 @@ module.exports = (os) ->
         Wait Around For A Bit
       Apps
         Notepad.exe
-        MS Access 97
       Stories
         Mystery Smell
       Social Media
@@ -45,8 +48,20 @@ module.exports = (os) ->
             Modal.hide()
         , 15
       comment: ->
+        Modal.form CommentFormTemplate
+          area: "TEST:2016-12"
+        .then (data) ->
+          ajax
+            url: "https://whimsy-space.gomix.me/comments"
+            data: JSON.stringify(data)
+            headers:
+              "Content-Type": "application/json"
+            method: "POST"
+
       like: ->
+        Modal.alert "I like you too, but we don't have a facebook or anything yet :)"
       subscribe: ->
+        require("../mailchimp").show()
       notepadexe: ->
         app = Notepad(os)
         document.body.appendChild app.element

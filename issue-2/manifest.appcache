@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 1483211264815
+
+CACHE:
+index.html
+../issue-2.json
+https://unpkg.com/dexie@2.0.0-beta.7/dist/dexie.js
+
+NETWORK:
+https://*
+http://*
+*

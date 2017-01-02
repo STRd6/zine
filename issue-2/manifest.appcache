@@ -1,10 +1,13 @@
 CACHE MANIFEST
-# 1483213867909
+# 1483316669830
 
 CACHE:
 index.html
 ../issue-2.json
 https://unpkg.com/dexie@2.0.0-beta.7/dist/dexie.js
+https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ace.js
+https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.4/ext-language_tools.js
+https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js
 
 NETWORK:
 https://*

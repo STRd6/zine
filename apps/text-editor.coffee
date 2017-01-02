@@ -27,28 +27,32 @@ module.exports = ->
     enableBasicAutocompletion: true
     enableLiveAutocompletion: true
     highlightActiveLine: true
+  
+  session = aceEditor.getSession()
+  session.setUseSoftTabs true
+  session.setTabSize 2
+
+  mode = "coffee"
+  session.setMode("ace/mode/#{mode}")
 
   global.aceEditor = aceEditor
 
-  initSession: (file) ->
-    session = ace.createEditSession(file.content())
-
-    session.setMode("ace/mode/#{mode file.mode()}")
-
-    session.setUseSoftTabs true
-    session.setTabSize 2
-
-    return session
+  initSession = (file) ->
+    # TODO: Update window title
+    file.readAsText()
+    .then (content) ->
+      session.setValue(content)
+      # TODO: Correct modes
+      mode = "coffee"
+      session.setMode("ace/mode/#{mode}")
 
   handlers = Model().include(FileIO).extend
-    loadFile: (blob) ->
-      blob.readAsText()
-      .then (text) ->
-        textarea.value = text
+    loadFile: initSession
     newFile: ->
-      textarea.value = ""
+      session.setValue ""
     saveData: ->
-      data = new Blob [textarea.value],
+      # TODO: Maintain proper mime type
+      data = new Blob [session.getValue()],
         type: "text/plain"
 
       return Promise.resolve data
@@ -70,7 +74,7 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: "Notepad.exe"
+    title: Observable "Ace"
     content: aceWrap
     menuBar: menuBar.element
     width: 640

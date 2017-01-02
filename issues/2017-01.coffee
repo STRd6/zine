@@ -1,4 +1,5 @@
 Model = require "model"
+PixiePaint = require "../apps/pixel"
 Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
 
@@ -19,6 +20,9 @@ module.exports = ->
     textEditor: ->
       app = TextEditor(system)
       document.body.appendChild app.element
+    pixiePaint: ->
+      app = PixiePaint(system)
+      document.body.appendChild app.element
 
   menuBar = MenuBar
     items: parseMenu """
@@ -27,16 +31,18 @@ module.exports = ->
       [A]pps
         [M]S Access 97
         [T]ext Editor
+        [P]ixie Paint
       #{Social.menuText}
     """
     handlers: handlers
 
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 2 | January 2017"
+    title: "ZineOS Volume 1 | Issue 2 | ENTER THE DUNGEON | January 2017"
     content: img
     menuBar: menuBar.element
     width: 1228
     height: 936
     x: 0
     y: 0
+
   document.body.appendChild windowView.element

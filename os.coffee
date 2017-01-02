@@ -54,6 +54,14 @@ module.exports = (dbName='zine-os') ->
 
     writeFile: fs.write
 
+    # NOTE: These are experimental commands to run code
+    execJS: (path) ->
+      self.readFile(path)
+      .then (file) ->
+        file.readAsText()
+      .then (programText) ->
+        Function(programText)()
+
     UI: UI
 
   return self

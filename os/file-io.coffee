@@ -37,6 +37,8 @@ module.exports = (I, self) ->
         self.saveData()
         .then (blob) ->
           system.writeFile currentPath, blob
+        .then ->
+          currentPath
       else
         self.saveAs()
 

@@ -12,6 +12,12 @@ Desktop Background
 
 Help Documentation
 
+Compiler
+
+Require/Include Local Files
+
+Custom Models/Views
+
 Applications
 ------------
 

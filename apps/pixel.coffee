@@ -11,7 +11,7 @@ module.exports = ->
   postmaster = Postmaster()
   postmaster.remoteTarget = -> frame.contentWindow
   Object.assign postmaster,
-    childLoaded: -> 
+    childLoaded: ->
       console.log "child loaded"
     save: ->
       handlers.save()

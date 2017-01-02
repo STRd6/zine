@@ -1,5 +1,6 @@
 Model = require "model"
 Spreadsheet = require "../apps/spreadsheet"
+TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
 
@@ -15,6 +16,9 @@ module.exports = ->
     mSAccess97: ->
       app = Spreadsheet(system)
       document.body.appendChild app.element
+    textEditor: ->
+      app = TextEditor(system)
+      document.body.appendChild app.element
 
   menuBar = MenuBar
     items: parseMenu """
@@ -22,6 +26,7 @@ module.exports = ->
         [W]ait Around For A Bit
       [A]pps
         [M]S Access 97
+        [T]ext Editor
       #{Social.menuText}
     """
     handlers: handlers

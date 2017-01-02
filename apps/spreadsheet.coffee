@@ -27,7 +27,7 @@ module.exports = () ->
 
     headers.forEach (key, i) ->
       td = document.createElement "td"
-      td.appendChild InputTemplate 
+      td.appendChild InputTemplate
         value: datum[key]
         type: types[i]
 
@@ -65,7 +65,7 @@ module.exports = () ->
       Modal.alert "Spreadsheet v0.0.1 by Daniel X Moore"
     insertRow: ->
       # TODO: Data template
-      datum = 
+      datum =
         id: 0
         name: "new"
         color: "#FF00FF"

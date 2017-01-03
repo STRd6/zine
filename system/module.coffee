@@ -1,51 +1,56 @@
 module.exports = (I, self) ->
 
+  # System modules table
   modules = {}
 
   ###
   Load a module from a file in the file system.
 
-  This external context provides some variable that modules have access to.
-
-  A `require` function is exposed to modules so they may require other modules.
-
   Additional properties such as a reference to the global object and some metadata
-  are also exposed.
+  are exposed.
+
+  Returns a promise that is fulfilled when the module assigns its exports, or
+  rejected on error.
   ###
   fileSeparator = "/"
 
-  # TODO: This will become a promise returning function
   loadModule = (content, path) ->
-    program = annotateSourceURL content, path
-    dirname = path.split(fileSeparator)[0...-1].join(fileSeparator)
+    new Promise (resolve, reject) ->
+      program = annotateSourceURL content, path
+      dirname = path.split(fileSeparator)[0...-1].join(fileSeparator)
 
-    # TODO: Need to use a defineProperty setter on 
-    # module.exports to trigger when the module successfully exports because
-    # it can all be async madness.
+      # May need to scan for a module.exports to see if it is the kind of
+      # module that exports things vs just plain side effects code
+      module =
+        path: dirname
 
-    # May need to scan for a module.exports to see if it is the kind of
-    # module that exports things vs just plain side effects code
-    module =
-      path: dirname
-      exports: {}
+      # Use a defineProperty setter on module.exports to trigger when the module
+      # successfully exports because it can all be async madness.
+      exports = {}
+      Object.defineProperty module, "exports",
+        get: ->
+          exports
+        set: (newValue) ->
+          exports = newValue
+          # Trigger complete
+          resolve(module)
 
-    # TODO: Apply relative path wrapper for system.include
+      # TODO: Apply relative path wrapper for system.include
+      context =
+        system: self
+        global: global
+        module: module
+        exports: module.exports
+        __filename: path
+        __dirname: dirname
 
-    context =
-      system: self
-      global: global
-      module: module
-      exports: module.exports
-      PACKAGE: pkg
-      __filename: path
-      __dirname: dirname
+      args = Object.keys(context)
+      values = args.map (name) -> context[name]
 
-    args = Object.keys(context)
-    values = args.map (name) -> context[name]
-
-    Function(args..., program).apply(module, values)
-
-    return module
+      try
+        Function(args..., program).apply(module, values)
+      catch e
+        reject e
 
   Object.assign self,
     # still experimenting with the API
@@ -64,7 +69,9 @@ module.exports = (I, self) ->
           .then (file) ->
             file.readAsText()
           .then (sourceProgram) ->
-            # TODO: Apply wrapper and eval
+            loadModule sourceProgram, identifier
+          .then (module) ->
+            module.exports
         else
           module = modules[identifier]
 

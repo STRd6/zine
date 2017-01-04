@@ -1,8 +1,4 @@
 module.exports = (I, self) ->
-
-  # System modules table
-  modules = {}
-
   ###
   Load a module from a file in the file system.
 
@@ -14,10 +10,47 @@ module.exports = (I, self) ->
   ###
   fileSeparator = "/"
 
+  normalizePath = (path) ->
+    path.replace(/\/\/+/, fileSeparator) # /// -> /
+    .replace(/\/[^/]*\/\.\./g, "") # /base/something/.. -> /base
+    .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
+
+  # Wrap program in async include wrapper
+  rewriteRequires = (program) ->
+    id = 0
+    namePrefix = "__req"
+    requires = {}
+
+    # rewrite requires
+    rewrittenProgram = program.replace /require\(['"]([^'"]+)['"]\)/g, (match, key) ->
+      if requires[key]
+        tmpVar = requires[key]
+      else
+        tmpVar = "#{namePrefix}#{id}"
+        id += 1
+        requires[key] = tmpVar
+
+      return tmpVar
+
+    tmpVars = Object.keys(requires).map (name) ->
+      requires[name]
+
+    requirePaths = Object.keys(requires)
+    requirePaths = requirePaths
+
+    """
+      system.include(#{JSON.stringify(requirePaths)})
+      .then(function(__reqResults) {
+      (function(#{tmpVars.join(', ')}){
+      #{rewrittenProgram}
+      }).apply(this, __reqResults);
+      });
+    """
+
   loadModule = (content, path) ->
     new Promise (resolve, reject) ->
-      program = annotateSourceURL content, path
-      dirname = path.split(fileSeparator)[0...-1].join(fileSeparator)
+      program = annotateSourceURL(rewriteRequires(content), path)
+      dirname = path.split(fileSeparator)[0...-1].join(fileSeparator) or fileSeparator
 
       # May need to scan for a module.exports to see if it is the kind of
       # module that exports things vs just plain side effects code
@@ -35,9 +68,14 @@ module.exports = (I, self) ->
           # Trigger complete
           resolve(module)
 
+      localSystem = Object.assign {}, self,
+        include: (moduleIdentifiers) ->
+          self.include moduleIdentifiers.map (identifier) ->
+            normalizePath dirname + identifier
+
       # TODO: Apply relative path wrapper for system.include
       context =
-        system: self
+        system: localSystem
         global: global
         module: module
         exports: module.exports
@@ -50,35 +88,23 @@ module.exports = (I, self) ->
       try
         Function(args..., program).apply(module, values)
       catch e
+        console.error e
         reject e
 
   Object.assign self,
     # still experimenting with the API
     # Async include in the vein of require.js
     # it's horrible but seems necessary
-    include: (moduleIdentifiers...) ->
+    include: (moduleIdentifiers) ->
       Promise.all moduleIdentifiers.map (identifier) ->
-        # Only allow absolute and system modules, relative modules can be handled
-        # by wrapping this when exposing system to scripts
-
-        # If a file, read and execute the file
-        # If a system module, return the module
-        # TODO: Make sure we handle normalizing paths correctly
-        if identifier.indexOf("/") is 0
-          self.readFile(identifier)
-          .then (file) ->
-            file.readAsText()
-          .then (sourceProgram) ->
-            loadModule sourceProgram, identifier
-          .then (module) ->
-            module.exports
-        else
-          module = modules[identifier]
-
-          if module
-            Promise.resolve module
-          else
-            Promise.reject new Error "System module not found: #{module}"
+        # Read and execute the file
+        self.readFile(identifier)
+        .then (file) ->
+          file.readAsText()
+        .then (sourceProgram) ->
+          loadModule sourceProgram, identifier
+        .then (module) ->
+          module.exports
 
 annotateSourceURL = (program, path) ->
   """

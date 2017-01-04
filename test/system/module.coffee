@@ -8,11 +8,30 @@ describe "System Module", ->
 
     model.include SystemModule
 
-    model.readFile = ->
-      Promise.resolve new Blob ["module.exports = 'yo';"]
+    files =
+      "/test.js": """
+        console.log('in test.js');
+        module.exports = 'yo';
+      """
+      "/root.js": """
+        console.log('in root.js', require);
+        var test = require('./test.js');
+        var test2 = require("./folder/nested.js");
+        module.exports = test + " 2 rad " + test2;
+      """
+      "/folder/nested.js": """
+        module.exports = "hella";
+      """
+      "/wat.js": """
+        module.exports = "wat";
+      """
 
-    assert model.include
+    model.readFile = (path) ->
+      content = files[path]
 
-    model.include "/test.js"
-    .then (module) ->
-      assert.equal module, 'yo'
+      Promise.resolve new Blob [content]
+
+    model.include(["/root.js", "/wat.js"])
+    .then ([root, wat]) ->
+      console.log root, wat
+      assert.equal root, 'yo 2 rad hella'

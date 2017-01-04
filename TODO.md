@@ -3,20 +3,25 @@ TODO
 
 System Features
 ---------------
+[ ] File Browser
 
-Folders
+[ ] App Associations
 
-Desktop Icons
+[ ] File Context Menu
 
-Desktop Background
+[ ] Folders
 
-Help Documentation
+[ ] Desktop Icons
 
-Compiler
+[ ] Desktop Background
 
-Require/Include Local Files
+[ ] Help Documentation
 
-Custom Models/Views
+[ ] Compiler
+
+[x] Require/Include Local Files
+
+[ ] Custom Models/Views
 
 Applications
 ------------
@@ -28,3 +33,14 @@ Spreadsheet
 - Forms
 
 Tactics Game Sandbox
+
+Network Social
+--------------
+
+CDN
+
+Comments
+
+Sharing
+
+Remote Files

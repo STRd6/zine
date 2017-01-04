@@ -5,8 +5,12 @@ TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
 
+Explorer = require "../apps/explorer"
+
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+
+  document.body.appendChild Explorer()
 
   img = document.createElement "img"
   img.src = "https://s-media-cache-ak0.pinimg.com/originals/a3/ba/56/a3ba56cef667d14b54023cd624d4e070.jpg"

@@ -15,12 +15,8 @@ module.exports = (I, self) ->
 
   # TODO: Require .coffee/arbitrary files
   ###
-  fileSeparator = "/"
-
-  normalizePath = (path) ->
-    path.replace(/\/\/+/, fileSeparator) # /// -> /
-    .replace(/\/[^/]*\/\.\./g, "") # /base/something/.. -> /base
-    .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
+  
+  {fileSeparator, normalizePath} = require "../util"
 
   # Wrap program in async include wrapper
   rewriteRequires = (program) ->

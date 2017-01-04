@@ -1,3 +1,5 @@
+{fileSeparator, normalizePath} = require "./util"
+
 # DexieDB Containing our FS
 DexieFSDB = (dbName='fs') ->
   db = new Dexie dbName
@@ -28,11 +30,15 @@ DexieFS = (db) ->
   delete: (path) ->
     Files.delete(path)
 
+  # TODO: Collapse folders
+  # .replace(/\/.*$/, "/")
   list: (dir) ->
     Files.where("path").startsWith(dir).toArray()
-    .then (results) ->
-      uniq results.map ({path}) ->
-        path = path.replace(dir, "").replace(/\/.*$/, "/")
+    .then (files) ->
+      files.forEach (file) ->
+        file.relativePath = file.path.replace(dir, "")
+
+      return files
 
 uniq = (array) ->
   Array.from new Set array
@@ -47,12 +53,19 @@ module.exports = (dbName='zine-os') ->
   Object.assign self,
     fs: fs
 
+    # TODO: Allow relative paths
     readFile: (path) ->
+      path = normalizePath "/#{path}"
+
       fs.read(path)
       .then ({blob}) ->
         blob
 
-    writeFile: fs.write
+    # TODO: Allow relative paths
+    writeFile: (path, blob) ->
+      path = normalizePath "/#{path}"
+
+      fs.write path, blob
 
     # NOTE: These are experimental commands to run code
     execJS: (path) ->

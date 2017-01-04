@@ -25,13 +25,17 @@ describe "System Module", ->
       "/wat.js": """
         module.exports = "wat";
       """
+      "/rand.js": """
+        module.exports = Math.random();
+      """
 
     model.readFile = (path) ->
       content = files[path]
 
       Promise.resolve new Blob [content]
 
-    model.include(["/root.js", "/wat.js"])
-    .then ([root, wat]) ->
-      console.log root, wat
+    model.include(["/root.js", "/wat.js", "/rand.js", "/rand.js"])
+    .then ([root, wat, r1, r2]) ->
+      console.log root, wat, r1, r2
+      assert.equal r1, r2
       assert.equal root, 'yo 2 rad hella'

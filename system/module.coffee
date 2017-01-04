@@ -7,6 +7,10 @@ module.exports = (I, self) ->
 
   Returns a promise that is fulfilled when the module assigns its exports, or
   rejected on error.
+
+  Caches modules so mutual includes don't get re-run
+
+  Circular includes will never reslove
   ###
   fileSeparator = "/"
 
@@ -47,7 +51,7 @@ module.exports = (I, self) ->
       });
     """
 
-  loadModule = (content, path) ->
+  loadModule = (content, path, state) ->
     new Promise (resolve, reject) ->
       program = annotateSourceURL(rewriteRequires(content), path)
       dirname = path.split(fileSeparator)[0...-1].join(fileSeparator) or fileSeparator
@@ -68,12 +72,16 @@ module.exports = (I, self) ->
           # Trigger complete
           resolve(module)
 
+      # Apply relative path wrapper for system.include
       localSystem = Object.assign {}, self,
         include: (moduleIdentifiers) ->
-          self.include moduleIdentifiers.map (identifier) ->
+          relativeIdentifiers = moduleIdentifiers.map (identifier) ->
+            # TODO: Allow absolute paths?
             normalizePath dirname + identifier
 
-      # TODO: Apply relative path wrapper for system.include
+          self.include relativeIdentifiers, state
+      # TODO: Also make working directory relative paths for readFile and writeFile
+
       context =
         system: localSystem
         global: global
@@ -95,14 +103,17 @@ module.exports = (I, self) ->
     # still experimenting with the API
     # Async include in the vein of require.js
     # it's horrible but seems necessary
-    include: (moduleIdentifiers) ->
+
+    # This is an internal API and isn't recommended for general use
+    include: (moduleIdentifiers, state={}) ->
+      state.cache ?= {}
+
       Promise.all moduleIdentifiers.map (identifier) ->
-        # Read and execute the file
-        self.readFile(identifier)
+        state.cache[identifier] ?= self.readFile(identifier)
         .then (file) ->
           file.readAsText()
         .then (sourceProgram) ->
-          loadModule sourceProgram, identifier
+          loadModule sourceProgram, identifier, state
         .then (module) ->
           module.exports
 

@@ -8,9 +8,12 @@ module.exports = (I, self) ->
   Returns a promise that is fulfilled when the module assigns its exports, or
   rejected on error.
 
-  Caches modules so mutual includes don't get re-run
+  Caches modules so mutual includes don't get re-run per include root.
 
   Circular includes will never reslove
+  # TODO: Fail early on circular includes, challenging because of async
+
+  # TODO: Require .coffee/arbitrary files
   ###
   fileSeparator = "/"
 
@@ -105,6 +108,8 @@ module.exports = (I, self) ->
     # it's horrible but seems necessary
 
     # This is an internal API and isn't recommended for general use
+    # The state determines an include root and should is the same for a single
+    # app or process
     include: (moduleIdentifiers, state={}) ->
       state.cache ?= {}
 

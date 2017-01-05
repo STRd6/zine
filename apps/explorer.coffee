@@ -31,6 +31,8 @@ module.exports = (options={}) ->
         x: e.pageX
         y: e.pageY
 
+  # TODO: Refresh files when they change
+
   system.fs.list(path)
   .then (files) ->
     files.forEach (file) ->

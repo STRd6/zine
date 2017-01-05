@@ -15,6 +15,8 @@ module.exports = (options={}) ->
     return if e.defaultPrevented
     e.preventDefault()
 
+    # TODO: Open With Options
+    # TODO: Set Mime Type
     contextMenu = ContextMenu
       items: parseMenu """
         Hello

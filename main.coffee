@@ -1,11 +1,11 @@
 require "./extensions"
 
-OS = require "../os"
-global.system = os = OS()
+System = require "./system"
+global.system = System()
 
-{Style} = os.UI
+{Style} = system.UI
 style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
-require("./issues/2017-01")(os)
+require("./issues/2017-01")()

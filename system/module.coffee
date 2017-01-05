@@ -1,3 +1,7 @@
+# Handles loading and launching files from the fs
+#
+# Depends on having self.readFile defined
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -13,12 +17,16 @@ module.exports = (I, self) ->
   Circular includes will never reslove
   # TODO: Fail early on circular includes, challenging because of async
 
+  # TODO: Succeed on files that don't assign module.exports
+
   # TODO: Require .coffee/arbitrary files
+  # images, blobs, html, json
   ###
-  
+
   {fileSeparator, normalizePath} = require "../util"
 
   # Wrap program in async include wrapper
+  # Replaces references to require('something') with local variables in an async wrapper function
   rewriteRequires = (program) ->
     id = 0
     namePrefix = "__req"
@@ -99,6 +107,18 @@ module.exports = (I, self) ->
         reject e
 
   Object.assign self,
+    # Open a file
+    # TODO: Pass arguments
+    # TODO: Drop files on an app to open them in that app
+    open: (file) ->
+      # Launch/Exec JS
+      self.include([file.path])
+      .then ([moduleExports]) ->
+        moduleExports
+
+      # Open JSON arrays in spreadsheet
+      # Open text in notepad
+
     # still experimenting with the API
     # Async include in the vein of require.js
     # it's horrible but seems necessary

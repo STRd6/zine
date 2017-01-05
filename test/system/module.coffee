@@ -65,3 +65,43 @@ describe "System Module", ->
       done()
     , 100
 
+  it "should return export if present", ->
+    model = Model()
+
+    model.include SystemModule
+
+    files =
+      "/wat.js": """
+        module.exports = "wat";
+      """
+
+    model.readFile = (path) ->
+      content = files[path]
+
+      Promise.resolve new Blob [content]
+
+    model.open
+      path: "/wat.js"
+    .then (moduleExports) ->
+      assert.equal moduleExports, "wat"
+
+  it "should work even if the file doesn't assign to module.exports"
+  ->
+    model = Model()
+
+    model.include SystemModule
+
+    files =
+      "/wat.js": """
+        exports.yolo = "wat";
+      """
+
+    model.readFile = (path) ->
+      content = files[path]
+
+      Promise.resolve new Blob [content]
+
+    model.open
+      path: "/wat.js"
+    .then (moduleExports) ->
+      assert.equal moduleExports.yolo, "wat"

@@ -5,16 +5,42 @@
 FileTemplate = require "../templates/file"
 
 module.exports = (options={}) ->
+  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {path} = options
   path ?= '/'
 
   explorer = document.createElement "explorer"
+
+  contextMenuFor = (file, e) ->
+    return if e.defaultPrevented
+    e.preventDefault()
+
+    contextMenu = ContextMenu
+      items: parseMenu """
+        Hello
+        Radical
+        -
+        Yolo
+        -
+        Cool
+      """
+      handlers: {}
+
+    contextMenu.display
+        inElement: document.body
+        x: e.pageX
+        y: e.pageY
 
   system.fs.list(path)
   .then (files) ->
     files.forEach (file) ->
       file.dblclick = ->
         console.log "dblclick", file
+        system.open file
+
+      file.contextmenu = (e) ->
+        contextMenuFor(file, e)
+
       explorer.appendChild FileTemplate file
 
   return explorer

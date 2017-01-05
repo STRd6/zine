@@ -43,14 +43,18 @@ DexieFS = (db) ->
 uniq = (array) ->
   Array.from new Set array
 
+Model = require "model"
+SystemModule = require "./system/module"
 UI = require "ui"
 
 module.exports = (dbName='zine-os') ->
-  self = {}
+  self = Model()
 
   fs = DexieFS(DexieFSDB(dbName))
 
-  Object.assign self,
+  self.include(SystemModule)
+
+  self.extend
     fs: fs
 
     # TODO: Allow relative paths

@@ -13,36 +13,47 @@ DexieFSDB = (dbName='fs') ->
 DexieFS = (db) ->
   Files = db.files
 
-  read: (path) ->
-    Files.get(path)
+  notify = (eventType, path) ->
+    (result) ->
+      self.trigger eventType, path
+      return result
 
-  write: (path, blob) ->
-    now = +new Date
+  self = Model()
+  .include(Bindable)
+  .extend
+    read: (path) ->
+      Files.get(path)
 
-    Files.put
-      path: path
-      blob: blob
-      size: blob.size
-      type: blob.type
-      createdAt: now
-      updatedAt: now
+    write: (path, blob) ->
+      now = +new Date
 
-  delete: (path) ->
-    Files.delete(path)
+      Files.put
+        path: path
+        blob: blob
+        size: blob.size
+        type: blob.type
+        createdAt: now
+        updatedAt: now
+      .then notify "write", path
 
-  # TODO: Collapse folders
-  # .replace(/\/.*$/, "/")
-  list: (dir) ->
-    Files.where("path").startsWith(dir).toArray()
-    .then (files) ->
-      files.forEach (file) ->
-        file.relativePath = file.path.replace(dir, "")
+    delete: (path) ->
+      Files.delete(path)
+      .then notify "delete", path
 
-      return files
+    # TODO: Collapse folders
+    # .replace(/\/.*$/, "/")
+    list: (dir) ->
+      Files.where("path").startsWith(dir).toArray()
+      .then (files) ->
+        files.forEach (file) ->
+          file.relativePath = file.path.replace(dir, "")
+  
+        return files
 
 uniq = (array) ->
   Array.from new Set array
 
+Bindable = require "bindable"
 Model = require "model"
 SystemModule = require "./system/module"
 UI = require "ui"

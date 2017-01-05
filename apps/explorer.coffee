@@ -4,6 +4,8 @@
 
 FileTemplate = require "../templates/file"
 
+{emptyElement} = require "../util"
+
 module.exports = (options={}) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {path} = options
@@ -33,18 +35,27 @@ module.exports = (options={}) ->
         x: e.pageX
         y: e.pageY
 
-  # TODO: Refresh files when they change
+  update = ->
+    system.fs.list(path)
+    .then (files) ->
+      emptyElement explorer
+      
+      files.forEach (file) ->
+        file.dblclick = ->
+          console.log "dblclick", file
+          system.open file
+  
+        file.contextmenu = (e) ->
+          contextMenuFor(file, e)
+  
+        explorer.appendChild FileTemplate file
 
-  system.fs.list(path)
-  .then (files) ->
-    files.forEach (file) ->
-      file.dblclick = ->
-        console.log "dblclick", file
-        system.open file
+  update()
 
-      file.contextmenu = (e) ->
-        contextMenuFor(file, e)
-
-      explorer.appendChild FileTemplate file
+  # Refresh files when they change
+  system.fs.on "write", (path) ->
+    update()
+  system.fs.on "delete", (path) ->
+    update()
 
   return explorer

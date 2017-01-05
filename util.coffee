@@ -6,5 +6,9 @@ normalizePath = (path) ->
   .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
 
 module.exports =
+  emptyElement: ->
+    while element.lastChild
+      element.removeChild element.lastChild
+
   fileSeparator: fileSeparator
   normalizePath: normalizePath

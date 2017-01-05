@@ -4,10 +4,7 @@ Model = require "model"
 module.exports = () ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
-  sourceData = [0...5].map (i) ->
-    id: i
-    name: "yolo"
-    color: "#FF0000"
+  sourceData = []
 
   headers = ["id", "name", "color"]
 
@@ -35,7 +32,6 @@ module.exports = () ->
 
     return tr
 
-
   {element} = tableView = Table {
     data: models
     RowElement: RowElement
@@ -52,7 +48,9 @@ module.exports = () ->
           throw new Error "Data must be an array"
 
         sourceData = json
-        # TODO: Update models data
+        # Update models data
+        models.splice(0, models.length, sourceData.map(RowModel)...)
+
         # Re-render
         tableView.render()
 
@@ -100,5 +98,7 @@ module.exports = () ->
     menuBar: menuBar.element
     width: 640
     height: 480
+
+  windowView.loadFile = handlers.loadFile
 
   return windowView

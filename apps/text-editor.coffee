@@ -27,7 +27,7 @@ module.exports = ->
     enableBasicAutocompletion: true
     enableLiveAutocompletion: true
     highlightActiveLine: true
-  
+
   session = aceEditor.getSession()
   session.setUseSoftTabs true
   session.setTabSize 2
@@ -79,6 +79,8 @@ module.exports = ->
     menuBar: menuBar.element
     width: 640
     height: 480
+
+  windowView.loadFile = initSession
 
   windowView.on "resize", ->
     aceEditor.resize()

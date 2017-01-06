@@ -33,6 +33,7 @@ module.exports = (options={}) ->
         open: ->
           system.open(file)
         delete: ->
+          system.deleteFile(file.path)
         rename: ->
           Modal.prompt "Filename", file.path
           .then (newPath) ->

@@ -1,6 +1,7 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
+# TODO: Drag and drop files and folders
 
 FileTemplate = require "../templates/file"
 FolderTemplate = require "../templates/folder"
@@ -20,6 +21,44 @@ module.exports = Explorer = (options={}) ->
 
     # TODO: Open With Options
     # TODO: Set Mime Type
+    contextMenu = ContextMenu
+      items: parseMenu """
+        Open
+        Open With
+        -
+        Cut
+        Copy
+        -
+        Delete
+        Rename
+        -
+        Properties
+      """
+      handlers:
+        open: ->
+          system.open(file)
+        openWith: -> #TODO
+        cut: -> #TODO
+        copy: -> #TODO
+        delete: ->
+          system.deleteFile(file.path)
+        rename: ->
+          Modal.prompt "Filename", file.path
+          .then (newPath) ->
+            if newPath
+              system.deleteFile(file.path)
+              system.writeFile(newPath, file.blob)
+        properties: -> #TODO
+
+    contextMenu.display
+        inElement: document.body
+        x: e.pageX
+        y: e.pageY
+
+  contextMenuForFolder = (folder, e) ->
+    return if e.defaultPrevented
+    e.preventDefault()
+
     # TODO: Cut/Copy
     contextMenu = ContextMenu
       items: parseMenu """
@@ -32,15 +71,12 @@ module.exports = Explorer = (options={}) ->
       """
       handlers:
         open: ->
-          system.open(file)
-        delete: ->
-          system.deleteFile(file.path)
+          addWindow(folder.path)
+        delete: -> # TODO: Delete all files under folder
         rename: ->
-          Modal.prompt "Filename", file.path
-          .then (newPath) ->
-            if newPath
-              system.deleteFile(file.path)
-              system.writeFile(newPath, file.blob)
+          ;# TODO: Rename all files under folder (!)
+          # May want to think about inodes or something that makes this simpler
+        properties: -> # TODO
 
     contextMenu.display
         inElement: document.body
@@ -70,16 +106,17 @@ module.exports = Explorer = (options={}) ->
         explorer.appendChild FileTemplate file
 
       Object.keys(addedFolders).forEach (folderName) ->
-        folderElement = FolderTemplate
+        folder = 
+          path: "#{path}#{folderName}/"
           relativePath: folderName
-          contextmenu: ->
+          contextmenu: (e) ->
+            contextMenuForFolder(folder, e)
           dblclick: ->
             # Open folder in new window
-            addWindow("#{path}#{folderName}/")
+            addWindow(folder.path)
 
+        folderElement = FolderTemplate folder
         explorer.insertBefore(folderElement, explorer.firstChild)
-
-      console.log addedFolders
 
   update()
 
@@ -90,7 +127,9 @@ module.exports = Explorer = (options={}) ->
     update()
 
   addWindow = (path) ->
-    element = Explorer
+    element = document.createElement "container"
+
+    element.appendChild Explorer
       path: path
 
     windowView = Window

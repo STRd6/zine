@@ -82,6 +82,12 @@ module.exports = (dbName='zine-os') ->
 
       fs.write path, blob
 
+    # TODO: Allow relative paths
+    deleteFile: (path) ->
+      path = normalizePath "/#{path}"
+
+      fs.delete(path)
+
     # NOTE: These are experimental commands to run code
     execJS: (path) ->
       self.readFile(path)

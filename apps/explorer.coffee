@@ -29,7 +29,16 @@ module.exports = (options={}) ->
         -
         Properties
       """
-      handlers: {}
+      handlers:
+        open: ->
+          system.open(file)
+        delete: ->
+        rename: ->
+          Modal.prompt "Filename", file.path
+          .then (newPath) ->
+            if newPath
+              system.deleteFile(file.path)
+              system.writeFile(newPath, file.blob)
 
     contextMenu.display
         inElement: document.body

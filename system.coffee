@@ -47,7 +47,7 @@ DexieFS = (db) ->
       .then (files) ->
         files.forEach (file) ->
           file.relativePath = file.path.replace(dir, "")
-  
+
         return files
 
 uniq = (array) ->

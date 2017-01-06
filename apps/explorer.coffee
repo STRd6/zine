@@ -3,10 +3,11 @@
 # Explore the file system like adventureres of old!
 
 FileTemplate = require "../templates/file"
+FolderTemplate = require "../templates/folder"
 
 {emptyElement} = require "../util"
 
-module.exports = (options={}) ->
+module.exports = Explorer = (options={}) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {path} = options
   path ?= '/'
@@ -51,7 +52,14 @@ module.exports = (options={}) ->
     .then (files) ->
       emptyElement explorer
 
+      addedFolders = {}
+
       files.forEach (file) ->
+        if file.relativePath.match /\// # folder
+          folderPath = file.relativePath.replace /\/.*$/, ""
+          addedFolders[folderPath] = true
+          return
+
         file.dblclick = ->
           console.log "dblclick", file
           system.open file
@@ -61,6 +69,18 @@ module.exports = (options={}) ->
 
         explorer.appendChild FileTemplate file
 
+      Object.keys(addedFolders).forEach (folderName) ->
+        folderElement = FolderTemplate
+          relativePath: folderName
+          contextmenu: ->
+          dblclick: ->
+            # Open folder in new window
+            addWindow("#{path}#{folderName}/")
+
+        explorer.insertBefore(folderElement, explorer.firstChild)
+
+      console.log addedFolders
+
   update()
 
   # Refresh files when they change
@@ -68,5 +88,18 @@ module.exports = (options={}) ->
     update()
   system.fs.on "delete", (path) ->
     update()
+
+  addWindow = (path) ->
+    element = Explorer
+      path: path
+
+    windowView = Window
+      title: path
+      content: element
+      menuBar: null
+      width: 640
+      height: 480
+
+    document.body.appendChild windowView.element
 
   return explorer

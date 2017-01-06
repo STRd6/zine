@@ -19,14 +19,15 @@ module.exports = (options={}) ->
 
     # TODO: Open With Options
     # TODO: Set Mime Type
+    # TODO: Cut/Copy
     contextMenu = ContextMenu
       items: parseMenu """
-        Hello
-        Radical
+        Open
         -
-        Yolo
+        Delete
+        Rename
         -
-        Cool
+        Properties
       """
       handlers: {}
 
@@ -39,15 +40,15 @@ module.exports = (options={}) ->
     system.fs.list(path)
     .then (files) ->
       emptyElement explorer
-      
+
       files.forEach (file) ->
         file.dblclick = ->
           console.log "dblclick", file
           system.open file
-  
+
         file.contextmenu = (e) ->
           contextMenuFor(file, e)
-  
+
         explorer.appendChild FileTemplate file
 
   update()

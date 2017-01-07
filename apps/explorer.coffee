@@ -2,7 +2,11 @@
 #
 # Explore the file system like adventureres of old!
 # TODO: Drag and drop files and folders
+# TODO: Select multiple
+# TOOD: Keyboard Input
+# TODO: Style file types
 
+Drop = require "../lib/drop"
 FileTemplate = require "../templates/file"
 FolderTemplate = require "../templates/folder"
 
@@ -14,6 +18,13 @@ module.exports = Explorer = (options={}) ->
   path ?= '/'
 
   explorer = document.createElement "explorer"
+  
+  Drop explorer, (e) ->
+    files = e.dataTransfer.files
+    
+    if files.length
+      files.forEach (file) ->
+        console.log file
 
   contextMenuFor = (file, e) ->
     return if e.defaultPrevented
@@ -64,6 +75,9 @@ module.exports = Explorer = (options={}) ->
       items: parseMenu """
         Open
         -
+        Cut
+        Copy
+        -
         Delete
         Rename
         -
@@ -106,7 +120,7 @@ module.exports = Explorer = (options={}) ->
         explorer.appendChild FileTemplate file
 
       Object.keys(addedFolders).forEach (folderName) ->
-        folder = 
+        folder =
           path: "#{path}#{folderName}/"
           relativePath: folderName
           contextmenu: (e) ->

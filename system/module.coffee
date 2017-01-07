@@ -67,7 +67,7 @@ module.exports = (I, self) ->
     if handler
       handler.fn(file)
     else
-      throw new Error "No handler for files of type #{type}"
+      throw new Error "No handler for files of type #{file.type}"
 
   {fileSeparator, normalizePath} = require "../util"
 

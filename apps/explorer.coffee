@@ -18,13 +18,14 @@ module.exports = Explorer = (options={}) ->
   path ?= '/'
 
   explorer = document.createElement "explorer"
-  
+
   Drop explorer, (e) ->
     files = e.dataTransfer.files
-    
+
     if files.length
       files.forEach (file) ->
-        console.log file
+        newPath = path + file.name
+        system.writeFile(newPath, file)
 
   contextMenuFor = (file, e) ->
     return if e.defaultPrevented
@@ -117,7 +118,12 @@ module.exports = Explorer = (options={}) ->
         file.contextmenu = (e) ->
           contextMenuFor(file, e)
 
-        explorer.appendChild FileTemplate file
+        fileElement = FileTemplate file
+        if file.type.match /^image\//
+          url = URL.createObjectURL file.blob
+          fileElement.querySelector('icon').style.backgroundImage = "url(#{url})"
+
+        explorer.appendChild fileElement
 
       Object.keys(addedFolders).forEach (folderName) ->
         folder =

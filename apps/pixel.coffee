@@ -8,16 +8,25 @@ module.exports = ->
   frame = document.createElement "iframe"
   frame.src = "https://danielx.net/pixel-editor/"
 
+  # TODO: Gross hack to keep track of waiting for child window to load
+  # May want to move it into the postmaster library
+  resolveLoaded = null
+  loadedPromise = new Promise (resolve) ->
+    resolveLoaded = resolve
+
   postmaster = Postmaster()
   postmaster.remoteTarget = -> frame.contentWindow
   Object.assign postmaster,
     childLoaded: ->
       console.log "child loaded"
+      resolveLoaded()
     save: ->
       handlers.save()
 
   handlers = Model().include(FileIO).extend
-    loadFile: ->
+    loadFile: (blob) ->
+      loadedPromise.then ->
+        postmaster.invokeRemote "loadFile", blob
     newFile: ->
     saveData: ->
       postmaster.invokeRemote "getBlob"
@@ -44,5 +53,7 @@ module.exports = ->
     menuBar: menuBar.element
     width: 640
     height: 480
+
+  windowView.loadFile = handlers.loadFile
 
   return windowView

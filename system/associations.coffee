@@ -2,6 +2,13 @@
 Filter = require "../apps/filter"
 TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
+PixelEditor = require "../apps/pixel"
+
+openWith = (App) ->
+  (file) ->
+    app = App()
+    app.loadFile(file.blob)
+    document.body.appendChild app.element
 
 module.exports = (I, self) ->
   # TODO: Handlers that can use combined type, extension, and contents info
@@ -17,30 +24,27 @@ module.exports = (I, self) ->
       .then ([moduleExports]) ->
         moduleExports
   }, {
-    name: "Open as Text"
+    name: "Text Editor"
     filter: (file) ->
       file.type.match /^text\//
-    fn: (file) ->
-      editor = TextEditor()
-      editor.loadFile(file.blob)
-      document.body.appendChild editor.element
+    fn: openWith(TextEditor)
   }, {
-    name: "Open Spreadsheet"
+    name: "Spreadsheet"
     filter: (file) ->
       # TODO: This actually only handles JSON arrays
       file.type is "application/json"
-    fn: (file) ->
-      editor = Spreadsheet()
-      editor.loadFile(file.blob)
-      document.body.appendChild editor.element
+    fn: openWith(Spreadsheet)
   }, {
-    name: "View Image"
+    name: "Image Viewer"
     filter: (file) ->
       file.type.match /^image\//
-    fn: (file) ->
-      app = Filter()
-      app.loadFile(file.blob)
-      document.body.appendChild app.element
+    fn: openWith(Filter)
+      
+  }, {
+    name: "Pixel Editor"
+    filter: (file) ->
+      file.type.match /^image\//
+    fn: openWith(PixelEditor)
   }]
 
   # Open JSON arrays in spreadsheet
@@ -60,5 +64,9 @@ module.exports = (I, self) ->
     # TODO: Drop files on an app to open them in that app
     open: (file) ->
       handle(file)
+
+    openersFor: (file) ->
+      handlers.filter (handler) ->
+        handler.filter(file)
 
   return self

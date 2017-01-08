@@ -31,12 +31,45 @@ module.exports = Explorer = (options={}) ->
     return if e.defaultPrevented
     e.preventDefault()
 
+    contextMenuHandlers =
+      open: ->
+        system.open(file)
+      openWith: -> #TODO
+      cut: -> #TODO
+      copy: -> #TODO
+      delete: ->
+        system.deleteFile(file.path)
+      rename: ->
+        Modal.prompt "Filename", file.path
+        .then (newPath) ->
+          if newPath
+            system.deleteFile(file.path)
+            system.writeFile(newPath, file.blob)
+      properties: -> #TODO
+
+    openers = system.openersFor(file)
+
+    openerOptions = openers.map ({name, fn}, i) ->
+      handlerName = "opener#{i}"
+      contextMenuHandlers[handlerName] = ->
+        fn(file)
+
+      "  #{name} -> #{handlerName}"
+    .join("\n")
+
+    openWithMenu = ""
+    if openers.length > 0
+      openWithMenu = """
+        Open With
+        #{openerOptions}
+      """
+
     # TODO: Open With Options
     # TODO: Set Mime Type
     contextMenu = ContextMenu
       items: parseMenu """
         Open
-        Open With
+        #{openWithMenu}
         -
         Cut
         Copy
@@ -46,21 +79,8 @@ module.exports = Explorer = (options={}) ->
         -
         Properties
       """
-      handlers:
-        open: ->
-          system.open(file)
-        openWith: -> #TODO
-        cut: -> #TODO
-        copy: -> #TODO
-        delete: ->
-          system.deleteFile(file.path)
-        rename: ->
-          Modal.prompt "Filename", file.path
-          .then (newPath) ->
-            if newPath
-              system.deleteFile(file.path)
-              system.writeFile(newPath, file.blob)
-        properties: -> #TODO
+      handlers: contextMenuHandlers
+        
 
     contextMenu.display
         inElement: document.body

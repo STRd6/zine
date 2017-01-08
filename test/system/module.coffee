@@ -1,5 +1,6 @@
 require "../../extensions"
 Model = require "model"
+Associations = require "../../system/associations"
 SystemModule = require "../../system/module"
 
 describe "System Module", ->
@@ -68,7 +69,7 @@ describe "System Module", ->
   it "should return export if present", ->
     model = Model()
 
-    model.include SystemModule
+    model.include Associations, SystemModule
 
     files =
       "/wat.js": """
@@ -82,6 +83,7 @@ describe "System Module", ->
 
     model.open
       path: "/wat.js"
+      type: "application/javascript"
     .then (moduleExports) ->
       assert.equal moduleExports, "wat"
 

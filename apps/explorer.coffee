@@ -46,6 +46,13 @@ module.exports = Explorer = (options={}) ->
             system.deleteFile(file.path)
             system.writeFile(newPath, file.blob)
       properties: -> #TODO
+      editMIMEType: ->
+        Modal.prompt "MIME Type", file.type
+        .then (newType) ->
+          if newType
+            system.updateFile file.path,
+              type: newType
+            .then console.log
 
     openers = system.openersFor(file)
 
@@ -77,6 +84,7 @@ module.exports = Explorer = (options={}) ->
         Delete
         Rename
         -
+        Edit MIME Type
         Properties
       """
       handlers: contextMenuHandlers
@@ -161,10 +169,9 @@ module.exports = Explorer = (options={}) ->
   update()
 
   # Refresh files when they change
-  system.fs.on "write", (path) ->
-    update()
-  system.fs.on "delete", (path) ->
-    update()
+  system.fs.on "write", (path) -> update()
+  system.fs.on "delete", (path) -> update()
+  system.fs.on "update", (path) -> update()
 
   addWindow = (path) ->
     element = document.createElement "container"

@@ -36,6 +36,10 @@ DexieFS = (db) ->
         updatedAt: now
       .then notify "write", path
 
+    update: (path, changes) ->
+      Files.update path, changes
+      .then notify "update", path
+
     delete: (path) ->
       Files.delete(path)
       .then notify "delete", path
@@ -72,7 +76,6 @@ module.exports = (dbName='zine-os') ->
     # TODO: Allow relative paths
     readFile: (path) ->
       path = normalizePath "/#{path}"
-
       fs.read(path)
       .then ({blob}) ->
         blob
@@ -80,14 +83,17 @@ module.exports = (dbName='zine-os') ->
     # TODO: Allow relative paths
     writeFile: (path, blob) ->
       path = normalizePath "/#{path}"
-
       fs.write path, blob
 
     # TODO: Allow relative paths
     deleteFile: (path) ->
       path = normalizePath "/#{path}"
-
       fs.delete(path)
+
+    # TODO: Allow relative paths
+    updateFile: (path, changes) ->
+      path = normalizePath "/#{path}"
+      fs.update(path, changes)
 
     # NOTE: These are experimental commands to run code
     execJS: (path) ->

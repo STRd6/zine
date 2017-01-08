@@ -26,7 +26,8 @@ module.exports = (I, self) ->
   }, {
     name: "Text Editor"
     filter: (file) ->
-      file.type.match /^text\//
+      file.type.match(/^text\//) or
+      file.type is "application/javascript"
     fn: openWith(TextEditor)
   }, {
     name: "Spreadsheet"
@@ -39,7 +40,6 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match /^image\//
     fn: openWith(Filter)
-      
   }, {
     name: "Pixel Editor"
     filter: (file) ->

@@ -22,7 +22,7 @@ Image.fromBlob = (blob) ->
       resolve img
     img.onerror = reject
 
-  img.src = URL.createObjectURL blob
+    img.src = URL.createObjectURL blob
 
 FileList::forEach ?= (args...) ->
   Array::forEach.apply(this, args)

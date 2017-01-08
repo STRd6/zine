@@ -3,6 +3,7 @@
 # Depends on having self.readFile defined
 
 # TODO: Move handlers out
+Filter = require "../apps/filter"
 TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
 
@@ -56,6 +57,14 @@ module.exports = (I, self) ->
       editor = Spreadsheet()
       editor.loadFile(file.blob)
       document.body.appendChild editor.element
+  }, {
+    name: "View Image"
+    filter: (file) ->
+      file.type.match /^image\//
+    fn: (file) ->
+      app = Filter()
+      app.loadFile(file.blob)
+      document.body.appendChild app.element
   }]
 
   # Open JSON arrays in spreadsheet

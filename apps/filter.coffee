@@ -42,7 +42,7 @@ module.exports = ->
     menuBar: menuBar.element
     width: 640
     height: 480
-  
+
   windowView.loadFile = handlers.loadFile
 
   return windowView

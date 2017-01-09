@@ -29,6 +29,11 @@ module.exports = (I, self) ->
       # TODO: Prompt if unsaved
       # TODO: File browser
       Modal.prompt "File Path", currentPath
+      .then (newPath) ->
+        if newPath
+          currentPath = newPath
+        else
+          throw new Error "No path given"
       .then system.readFile
       .then self.loadFile
 

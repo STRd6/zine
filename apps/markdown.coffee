@@ -7,13 +7,14 @@ module.exports = ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
-  canvas = document.createElement 'div'
+  container = document.createElement 'container'
+  container.style.padding = "1em"
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
       blob.readAsText()
       .then (textContent) ->
-        canvas.innerHTML = marked(textContent)
+        container.innerHTML = marked(textContent)
 
     saveData: ->
 
@@ -33,7 +34,7 @@ module.exports = ->
 
   windowView = Window
     title: "Markdown"
-    content: canvas
+    content: container
     menuBar: menuBar.element
     width: 640
     height: 480

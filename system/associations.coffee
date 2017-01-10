@@ -3,6 +3,7 @@ Filter = require "../apps/filter"
 TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
+Markdown = require "../apps/markdown"
 
 openWith = (App) ->
   (file) ->
@@ -23,6 +24,11 @@ module.exports = (I, self) ->
       self.include([file.path])
       .then ([moduleExports]) ->
         moduleExports
+  }, {
+    name: "Markdown"
+    filter: (file) ->
+      file.path.match /\.md$/
+    fn: openWith(Markdown)
   }, {
     name: "Text Editor"
     filter: (file) ->

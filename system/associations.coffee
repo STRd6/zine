@@ -26,6 +26,17 @@ module.exports = (I, self) ->
       .then ([moduleExports]) ->
         moduleExports
   }, {
+    # CoffeeScript
+    name: "Execute"
+    filter: (file) ->
+      file.path.match /\.coffee$/
+    fn: (file) ->
+      file.blob.readAsText()
+      .then (coffeeSource) ->
+        sourceProgram = CoffeeScript.compile coffeeSource, bare: true
+
+        system.loadModule sourceProgram, file.path
+  }, {
     name: "Markdown"
     filter: (file) ->
       file.path.match /\.md$/

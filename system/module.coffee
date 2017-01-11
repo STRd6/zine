@@ -126,6 +126,9 @@ module.exports = (I, self) ->
         .then (module) ->
           module.exports
 
+    # May want to reconsider this name
+    loadModule: loadModule
+
 annotateSourceURL = (program, path) ->
   """
     #{program}

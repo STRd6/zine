@@ -1,4 +1,5 @@
 # TODO: Move handlers out
+AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
 TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
@@ -19,7 +20,7 @@ module.exports = (I, self) ->
     # JavaScript
     name: "Execute"
     filter: (file) ->
-      file.type is "application/javascript" or 
+      file.type is "application/javascript" or
       file.path.match /\.js$/
     fn: (file) ->
       self.include([file.path])
@@ -63,6 +64,11 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match /^image\//
     fn: openWith(PixelEditor)
+  }, {
+    name: "Audio Bro"
+    filter: (file) ->
+      file.type.match /^audio\//
+    fn: openWith(AudioBro)
   }]
 
   # Open JSON arrays in spreadsheet

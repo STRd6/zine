@@ -9,6 +9,16 @@ module.exports = ->
 
   canvas = document.createElement 'canvas'
   context = canvas.getContext('2d')
+  
+  modalForm = system.compileTemplate """
+    form
+      label
+        h2 Width
+        input(name="width")
+      label
+        h2 Height
+        input(name="height")
+  """
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
@@ -26,7 +36,8 @@ module.exports = ->
       windowView.element.remove()
 
     crop: ->
-      Modal
+      Modal.form modalForm()
+      .then console.log
 
   menuBar = MenuBar
     items: parseMenu """

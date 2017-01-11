@@ -61,6 +61,7 @@ Bindable = require "bindable"
 Model = require "model"
 Associations = require "./system/associations"
 SystemModule = require "./system/module"
+Template = require "./system/template"
 UI = require "ui"
 
 module.exports = (dbName='zine-os') ->
@@ -68,7 +69,7 @@ module.exports = (dbName='zine-os') ->
 
   fs = DexieFS(DexieFSDB(dbName))
 
-  self.include(Associations, SystemModule)
+  self.include(Associations, SystemModule, Template)
 
   self.extend
     fs: fs

@@ -1,5 +1,7 @@
 require "./extensions"
 
+global.Hamlet = require "./lib/hamlet"
+
 System = require "./system"
 global.system = System()
 

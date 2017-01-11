@@ -3,15 +3,15 @@ TODO
 
 System Features
 ---------------
-[ ] File Browser
+[x] File Browser
 
-[ ] App Associations
+[x] App Associations
 
-[ ] File Context Menu
+[x] File Context Menu
 
-[ ] Folders
+[x] Folders
 
-[ ] Desktop Icons
+[x] Desktop Icons
 
 [ ] Desktop Background
 
@@ -34,13 +34,17 @@ Spreadsheet
 
 Tactics Game Sandbox
 
+Markdown / Wiki
+
+Image Munger
+
 Network Social
 --------------
 
-CDN
+[ ] CDN
 
-Comments
+[x] Comments
 
-Sharing
+[ ] Sharing
 
-Remote Files
+[ ] Remote Files

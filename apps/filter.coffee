@@ -1,4 +1,4 @@
-# Filter Images
+# View and Manipulate Images
 
 FileIO = require "../os/file-io"
 Model = require "model"
@@ -25,6 +25,9 @@ module.exports = ->
     exit: ->
       windowView.element.remove()
 
+    crop: ->
+      Modal
+
   menuBar = MenuBar
     items: parseMenu """
       [F]ile
@@ -33,11 +36,14 @@ module.exports = ->
         Save [A]s
         -
         E[x]it
+      [E]dit
+        [C]rop
+        [F]ilter
     """
     handlers: handlers
 
   windowView = Window
-    title: "Filter Booth"
+    title: "Spectacle Image Viewer"
     content: canvas
     menuBar: menuBar.element
     width: 640

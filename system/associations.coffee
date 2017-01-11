@@ -19,7 +19,8 @@ module.exports = (I, self) ->
     # JavaScript
     name: "Execute"
     filter: (file) ->
-      file.type is "application/javascript"
+      file.type is "application/javascript" or 
+      file.path.match /\.js$/
     fn: (file) ->
       self.include([file.path])
       .then ([moduleExports]) ->

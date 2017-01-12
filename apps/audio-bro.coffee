@@ -31,8 +31,8 @@ module.exports = ->
     title: "Audio Bro"
     content: audio
     menuBar: menuBar.element
-    width: 640
-    height: 480
+    width: 308
+    height: 80
 
   windowView.loadFile = handlers.loadFile
 

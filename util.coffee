@@ -12,3 +12,13 @@ module.exports =
 
   fileSeparator: fileSeparator
   normalizePath: normalizePath
+
+  parentElementOfType: (tagname, element) ->
+    tagname = tagname.toLowerCase()
+
+    if element.nodeName.toLowerCase() is tagname
+      return element
+
+    while element = element.parentNode
+      if element.nodeName.toLowerCase() is tagname
+        return element

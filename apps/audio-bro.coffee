@@ -8,6 +8,8 @@ module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
   audio = document.createElement 'audio'
+  audio.controls = true
+  audio.autoplay = true
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->

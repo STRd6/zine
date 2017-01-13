@@ -18,12 +18,31 @@ module.exports = ->
 
   pages =
     front: """
-      a(href="#enter")
+      a(href="#vista")
         img(src="https://s-media-cache-ak0.pinimg.com/originals/a3/ba/56/a3ba56cef667d14b54023cd624d4e070.jpg")
     """
-    enter: """
-      a(href="#yolo")
+    vista: """
+      a(href="#table")
         img(src="https://books.google.com/books/content?id=2cgDAAAAMBAJ&rview=1&pg=PA10&img=1&zoom=3&hl=en&sig=ACfU3U3477L46r0KxSQusJrQ6w9qxIQ70w&w=1280")
+    """
+    table: """
+      div
+        h1 Table of Contents
+        ul
+          li
+            a(href="#front") Cover
+          li
+            a(href="#vista") Excerpt from Windows Vista Magazine
+          li
+            a(href="#table") Table of Contents
+          li
+            a(href="#random") Random Thoughts
+    """
+    random: """
+      div
+        h1 Random Thoughts
+        p Don't you hate it when you're cooking something and you look at the stove clock and think it's 3:75 and you're late for your appointment but it was just the temperature and also 3:75 isn't even a real time?
+        p I suggest you bone up a bit on torts before the next attempt at the bar exam.
     """
 
   Object.keys(pages).forEach (pageName) ->

@@ -72,6 +72,8 @@ module.exports = ->
 
     blob.readAsDataURL()
     .then (url) ->
+      myAvatar.dataURL = url
+
       broadcast
         avatar: url
 
@@ -79,6 +81,24 @@ module.exports = ->
     socket.send JSON.stringify
       type: "broadcast"
       message: data
+
+  directMessage = (data, accountId) ->
+    socket.send JSON.stringify
+      type: "dm"
+      recipient: accountId
+      message: data
+
+  updateNewcomer = (accountId) ->
+    return unless myAvatar = avatars[myAccountId]
+
+    data =
+      move:
+        x: myAvatar.x
+        y: myAvatar.y
+      avatar: myAvatar.dataURL
+      say: myAvatar.say
+
+    directMessage(data, accountId)
 
   canvas = document.createElement 'canvas'
   context = canvas.getContext('2d')
@@ -146,27 +166,37 @@ module.exports = ->
       when "connect"
         # Add Avatar
         addAvatar(accountId)
+        updateNewcomer(accountId)
       when "disconnect"
         # Remove Avatar
         delete avatars[accountId]
         updateWords()
-      when "broadcast"
+      when "broadcast", "dm"
         {message} = message
 
-        if message.move
-          {x, y} = message.move
-          avatars[accountId].x = x
-          avatars[accountId].y = y
+        receiveMessage(message, accountId)
 
-        if message.say
-          avatars[accountId].say = message.say
-          updateWords()
+  receiveMessage = (message, accountId) ->
+    avatars[accountId] ?=
+      x: rand canvas.width
+      y: rand canvas.height
+      color: "orange"
 
-        if message.avatar
-          img = new Image()
-          img.src = message.avatar
+    if message.move
+      {x, y} = message.move
+      avatars[accountId].x = x
+      avatars[accountId].y = y
 
-          avatars[accountId].img = img
+    if message.say
+      avatars[accountId].say = message.say
+
+    if message.avatar
+      img = new Image()
+      img.src = message.avatar
+
+      avatars[accountId].img = img
+
+    updateWords()
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->

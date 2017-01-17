@@ -1,4 +1,5 @@
 Model = require "model"
+Chateau = require "../apps/chateau"
 PixiePaint = require "../apps/pixel"
 Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
@@ -63,12 +64,16 @@ module.exports = ->
     pixiePaint: ->
       app = PixiePaint(system)
       document.body.appendChild app.element
+    chateau: ->
+      app = Chateau(system)
+      document.body.appendChild app.element
 
   menuBar = MenuBar
     items: parseMenu """
       [H]ello
         [W]ait Around For A Bit
       [A]pps
+        [C]hateau
         [M]S Access 97
         [T]ext Editor
         [P]ixie Paint
@@ -84,7 +89,7 @@ module.exports = ->
     height: 936
     x: 0
     y: 0
-  
+
   windowView.element.addEventListener "click", (e) ->
     anchor = parentElementOfType("a", e.target)
 

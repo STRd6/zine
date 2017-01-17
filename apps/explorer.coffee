@@ -88,7 +88,7 @@ module.exports = Explorer = (options={}) ->
         Properties
       """
       handlers: contextMenuHandlers
-        
+
 
     contextMenu.display
         inElement: document.body

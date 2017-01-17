@@ -9,7 +9,7 @@ module.exports = ->
 
   canvas = document.createElement 'canvas'
   context = canvas.getContext('2d')
-  
+
   modalForm = system.compileTemplate """
     form
       label

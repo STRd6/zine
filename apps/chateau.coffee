@@ -155,8 +155,8 @@ module.exports = ->
   socket.onmessage = (e) ->
     message = JSON.parse e.data
     console.log message
-    
-    accountId = message.clientId
+
+    accountId = message.accountId
 
     switch message.type
       when "meta"

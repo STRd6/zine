@@ -1,6 +1,7 @@
 chateau
   = @canvas
-  = @words
+  word-area
+    = @words
   form(@submit)
     input
     button Speak

@@ -13,4 +13,6 @@ document.head.appendChild style
 require("./issues/2017-01")()
 
 AchievementTemplate = require "./templates/achievement"
-document.body.appendChild AchievementTemplate()
+document.body.appendChild AchievementTemplate
+  icon: "📓"
+  text: "Constructed a notebook"

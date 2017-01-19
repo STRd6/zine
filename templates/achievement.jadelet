@@ -1,4 +1,4 @@
 achievement
-  icon 🍔
+  icon= @icon
   h2 Achievement Unlocked
-  p Displayed an Achievement
+  p= @text

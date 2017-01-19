@@ -11,3 +11,6 @@ style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
 require("./issues/2017-01")()
+
+AchievementTemplate = require "./templates/achievement"
+document.body.appendChild AchievementTemplate()

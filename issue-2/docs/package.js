@@ -289,7 +289,7 @@
     },
     "main.coffee": {
       "path": "main.coffee",
-      "content": "require \"./extensions\"\n\nglobal.Hamlet = require \"./lib/hamlet\"\n\nSystem = require \"./system\"\nglobal.system = System()\n\n{Style} = system.UI\nstyle = document.createElement \"style\"\nstyle.innerHTML = Style.all + \"\\n\" + require(\"./style\")\ndocument.head.appendChild style\n\nrequire(\"./issues/2017-01\")()\n\nAchievementTemplate = require \"./templates/achievement\"\ndocument.body.appendChild AchievementTemplate()\n",
+      "content": "require \"./extensions\"\n\nglobal.Hamlet = require \"./lib/hamlet\"\n\nSystem = require \"./system\"\nglobal.system = System()\n\n{Style} = system.UI\nstyle = document.createElement \"style\"\nstyle.innerHTML = Style.all + \"\\n\" + require(\"./style\")\ndocument.head.appendChild style\n\nrequire(\"./issues/2017-01\")()\n\nAchievementTemplate = require \"./templates/achievement\"\ndocument.body.appendChild AchievementTemplate\n  icon: \"📓\"\n  text: \"Constructed a notebook\"\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -401,7 +401,7 @@
     },
     "templates/achievement.jadelet": {
       "path": "templates/achievement.jadelet",
-      "content": "achievement\n  icon 🍔\n  h2 Achievement Unlocked\n  p Displayed an Achievement\n",
+      "content": "achievement\n  icon= @icon\n  h2 Achievement Unlocked\n  p= @text\n",
       "mode": "100644"
     }
   },
@@ -478,7 +478,7 @@
     },
     "main": {
       "path": "main",
-      "content": "(function() {\n  var AchievementTemplate, Style, System, style;\n\n  require(\"./extensions\");\n\n  global.Hamlet = require(\"./lib/hamlet\");\n\n  System = require(\"./system\");\n\n  global.system = System();\n\n  Style = system.UI.Style;\n\n  style = document.createElement(\"style\");\n\n  style.innerHTML = Style.all + \"\\n\" + require(\"./style\");\n\n  document.head.appendChild(style);\n\n  require(\"./issues/2017-01\")();\n\n  AchievementTemplate = require(\"./templates/achievement\");\n\n  document.body.appendChild(AchievementTemplate());\n\n}).call(this);\n",
+      "content": "(function() {\n  var AchievementTemplate, Style, System, style;\n\n  require(\"./extensions\");\n\n  global.Hamlet = require(\"./lib/hamlet\");\n\n  System = require(\"./system\");\n\n  global.system = System();\n\n  Style = system.UI.Style;\n\n  style = document.createElement(\"style\");\n\n  style.innerHTML = Style.all + \"\\n\" + require(\"./style\");\n\n  document.head.appendChild(style);\n\n  require(\"./issues/2017-01\")();\n\n  AchievementTemplate = require(\"./templates/achievement\");\n\n  document.body.appendChild(AchievementTemplate({\n    icon: \"📓\",\n    text: \"Constructed a notebook\"\n  }));\n\n}).call(this);\n",
       "type": "blob"
     },
     "os/file-io": {
@@ -573,7 +573,7 @@
     },
     "templates/achievement": {
       "path": "templates/achievement",
-      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    __root.buffer(__root.element(\"achievement\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"icon\", this, {}, function(__root) {\n        __root.buffer(\"🍔\\n\");\n      }));\n      __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n        __root.buffer(\"Achievement Unlocked\\n\");\n      }));\n      __root.buffer(__root.element(\"p\", this, {}, function(__root) {\n        __root.buffer(\"Displayed an Achievement\\n\");\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
+      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    __root.buffer(__root.element(\"achievement\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"icon\", this, {}, function(__root) {\n        __root.buffer(this.icon);\n      }));\n      __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n        __root.buffer(\"Achievement Unlocked\\n\");\n      }));\n      __root.buffer(__root.element(\"p\", this, {}, function(__root) {\n        __root.buffer(this.text);\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
       "type": "blob"
     },
     "lib/hamlet-runtime": {

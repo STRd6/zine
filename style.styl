@@ -1,3 +1,6 @@
+body
+  overflow: hidden
+
 user-select(s)
   user-select: s
   -moz-user-select: s
@@ -87,11 +90,21 @@ chateau
   window > viewport > &
     margin: initial
 
+@keyframes display-achievement
+  0%
+    bottom: -128px
+  5%
+    bottom: 2em
+  95%
+    bottom: 2em
+  100%
+    bottom: -128px
+
 achievement
   color: white
   background-color: blue
   border-radius: 32px
-  bottom: 2em
+  bottom: -128px
   display: block
   height: 64px
   left: 0
@@ -100,6 +113,10 @@ achievement
   position: absolute
   right: 0
   width: 300px
+  z-index: 9000
+
+  &.display
+    animation: display-achievement 6s
 
   > h2
     font-size: 1.25em

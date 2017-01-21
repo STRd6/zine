@@ -1,3 +1,4 @@
+Achievement = require "../lib/achievement"
 Model = require "model"
 Chateau = require "../apps/chateau"
 PixiePaint = require "../apps/pixel"
@@ -16,6 +17,12 @@ module.exports = ->
   document.body.appendChild Explorer()
 
   container = document.createElement "container"
+
+  setTimeout ->
+    Achievement.display
+      icon: "📰"
+      text: "Issue 2"
+  , 3000
 
   pages =
     front: """

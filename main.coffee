@@ -11,3 +11,8 @@ style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
 require("./issues/2017-01")()
+
+Achievement = require "./lib/achievement"
+Achievement.display
+  icon: "📰"
+  text: "Issue 2"

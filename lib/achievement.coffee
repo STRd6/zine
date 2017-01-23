@@ -3,6 +3,14 @@ AchievementTemplate = require "../templates/achievement"
 pending = []
 displaying = false
 
+audioPath = "https://cdn.gomix.com/294e834f-223f-4792-9323-5b1fa8d0402b/unlock2.mp3"
+
+playSound = ->
+  audio = new Audio(audioPath)
+  audio.autoplay = true
+
+  audio
+
 module.exports = Achievement =
   display: (options={}) ->
     if displaying
@@ -11,6 +19,7 @@ module.exports = Achievement =
     achievementElement = AchievementTemplate options
     document.body.appendChild achievementElement
     achievementElement.classList.add "display"
+    achievementElement.appendChild playSound()
 
     displaying = true
 

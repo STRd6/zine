@@ -19,7 +19,7 @@ module.exports = ->
   container = document.createElement "container"
 
   setTimeout ->
-    Achievement.display
+    system.achieve
       icon: "📰"
       text: "Issue 2"
   , 3000

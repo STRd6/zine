@@ -59,6 +59,7 @@ uniq = (array) ->
 
 Bindable = require "bindable"
 Model = require "model"
+Achievement = require "./system/achievement"
 Associations = require "./system/associations"
 SystemModule = require "./system/module"
 Template = require "./system/template"
@@ -69,7 +70,7 @@ module.exports = (dbName='zine-os') ->
 
   fs = DexieFS(DexieFSDB(dbName))
 
-  self.include(Associations, SystemModule, Template)
+  self.include(Achievement, Associations, SystemModule, Template)
 
   self.extend
     fs: fs

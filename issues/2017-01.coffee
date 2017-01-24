@@ -24,6 +24,8 @@ module.exports = ->
       text: "Issue 2"
   , 3000
 
+  system.writeFile "issue-2/around.md", new Blob [require "../stories/around-the-world"], type: "text/markdown"
+
   pages =
     front: """
       a(href="#vista")

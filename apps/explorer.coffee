@@ -25,7 +25,7 @@ module.exports = Explorer = (options={}) ->
     if files.length
       files.forEach (file) ->
         newPath = path + file.name
-        system.writeFile(newPath, file)
+        system.writeFile(newPath, file, true)
 
   contextMenuFor = (file, e) ->
     return if e.defaultPrevented

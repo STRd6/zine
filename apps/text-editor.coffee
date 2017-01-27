@@ -12,6 +12,8 @@ mode = (mode) ->
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
+  system.Achievement.unlock "Notepad.exe"
+
   aceWrap = document.createElement "div"
   aceWrap.style.width = aceWrap.style.height = "100%"
 

@@ -1,14 +1,14 @@
 module.exports = """
 # Around the World in 20 Years and a Weekend
 
-The history of human progress is rife with us entering things. [Tombs](https://en.wikipedia.org/wiki/Raiders_of_the_Lost_Ark), [dragons](https://en.wikipedia.org/wiki/Enter_the_Dragon), [voids](https://en.wikipedia.org/wiki/Enter_the_Void), even [gungeons](http://dodgeroll.com/gungeon/). 
+The history of human progress is rife with us entering things. [Tombs](https://en.wikipedia.org/wiki/Raiders_of_the_Lost_Ark), [dragons](https://en.wikipedia.org/wiki/Enter_the_Dragon), [voids](https://en.wikipedia.org/wiki/Enter_the_Void), even [gungeons](http://dodgeroll.com/gungeon/).
 
 
 But have you ever stopped to think about what fuels this endless urge to ingress? Rather fearlessly, I decided to find out.
 
 ![sensuous nights](https://frog-feels.s3.amazonaws.com/2016-52/391848cb-afa1-4149-b2be-054d6d86b540.png)
 
-It's now 20 years later. I've waded through the jungles of the Amazon, skied the slopes of Norway, swam the Ganges, and braved long lines. I've lost a lot too. The years have aged me dramatically - I'm a hot mess. And I lost my phone a month ago, so my friends and family are dead to me now. 
+It's now 20 years later. I've waded through the jungles of the Amazon, skied the slopes of Norway, swam the Ganges, and braved long lines. I've lost a lot too. The years have aged me dramatically - I'm a hot mess. And I lost my phone a month ago, so my friends and family are dead to me now.
 
 Here's what I've learned on my journey,
 
@@ -22,7 +22,7 @@ My Peyote spirit animal is a horse. Under the desert sky he whispers in my ear t
 
 ![soup boy](https://frog-feels.s3.amazonaws.com/2016-32/821e8ec3-e55d-4388-8cdd-6da58d902924.png)
 
-After the peyote trip, things get a little fuzzy. I stumbled into a place. It was either a diner, a drive-in, or a dive. There I met TV food guy Guy Fieri. Between mouthfuls of cheese and enthusiasm, he proclaimed that we enter so that we may exit.  
+After the peyote trip, things get a little fuzzy. I stumbled into a place. It was either a diner, a drive-in, or a dive. There I met TV food guy Guy Fieri. Between mouthfuls of cheese and enthusiasm, he proclaimed that we enter so that we may exit.
 
 “We’re all searching for something that’s everything we imagine it to be.”
 

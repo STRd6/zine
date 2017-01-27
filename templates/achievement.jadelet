@@ -1,4 +1,4 @@
 achievement
   icon= @icon
-  h2 Achievement Unlocked
+  h2= @title
   p= @text

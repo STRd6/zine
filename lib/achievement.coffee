@@ -16,6 +16,8 @@ module.exports = Achievement =
     if displaying
       return pending.push(options)
 
+    options.title ?= "Achievement Unlocked"
+
     achievementElement = AchievementTemplate options
     document.body.appendChild achievementElement
     achievementElement.classList.add "display"

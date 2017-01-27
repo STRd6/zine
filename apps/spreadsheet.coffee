@@ -4,6 +4,8 @@ Model = require "model"
 module.exports = () ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
+  system.Achievement.unlock "Microsoft Access 97"
+
   sourceData = []
 
   headers = ["id", "name", "color"]

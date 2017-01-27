@@ -113,4 +113,14 @@ module.exports = (dbName='zine-os') ->
 
     UI: UI
 
+  invokeBefore UI.Modal, "hide", ->
+    self.Achievement.unlock "Dismiss modal"
+
   return self
+
+invokeBefore = (receiver, method, fn) ->
+  oldFn = receiver[method]
+
+  receiver[method] = ->
+    fn()
+    oldFn.apply(receiver, arguments)

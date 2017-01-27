@@ -8,30 +8,52 @@ achievementData = [{
   text: "Issue 1"
   icon: "📰"
   group: "Issue"
+  description: "View Issue 1"
 }, {
   text: "Issue 2"
   icon: "📰"
   group: "Issue"
+  description: "View Issue 2"
 }, { # Apps
   text: "Feel the frog"
   icon: "🐸"
   group: "App"
+  description: "Visit frogfeels.com"
 }, {
   text: "Notepad.exe"
   icon: "📝"
   group: "App"
+  description: "Launch a text editor"
+}, {
+  text: "Microsoft Access 97"
+  icon: "🔞"
+  group: "App"
+  description: "Launch a spreadsheet application"
+}, {
+  text: "Look at that"
+  icon: "🖼️"
+  group: "App"
+  description: "Open the image viewer"
 }, { # OS
   text: "Save a file"
   icon: "💾"
   group: "OS"
+  description: "Write to the file system"
 }, {
   text: "Load a file"
   icon: "💽"
   group: "OS"
+  description: "Read from the file system"
 }, {
   text: "Execute code"
   icon: "🖥️"
   group: "OS"
+  description: "Some people like to live dangerously"
+}, {
+  text: "Dismiss modal"
+  icon: "💃"
+  group: "OS"
+  description: "Dismiss a modal without even reading it"
 }]
 
 module.exports = (I, self) ->

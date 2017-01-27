@@ -7,6 +7,8 @@ module.exports = ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
+  system.Achievement.unlock "Look at that"
+
   canvas = document.createElement 'canvas'
   context = canvas.getContext('2d')
 

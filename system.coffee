@@ -76,14 +76,20 @@ module.exports = (dbName='zine-os') ->
     fs: fs
 
     # TODO: Allow relative paths
-    readFile: (path) ->
+    readFile: (path, userEvent) ->
+      if userEvent
+        self.Achievement.unlock "Load a file"
+
       path = normalizePath "/#{path}"
       fs.read(path)
       .then ({blob}) ->
         blob
 
     # TODO: Allow relative paths
-    writeFile: (path, blob) ->
+    writeFile: (path, blob, userEvent) ->
+      if userEvent
+        self.Achievement.unlock "Save a file"
+
       path = normalizePath "/#{path}"
       fs.write path, blob
 

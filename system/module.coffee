@@ -127,7 +127,9 @@ module.exports = (I, self) ->
           module.exports
 
     # May want to reconsider this name
-    loadModule: loadModule
+    loadModule: (args...) ->
+      self.Achievement.unlock "Execute code"
+      loadModule(args...)
 
 annotateSourceURL = (program, path) ->
   """

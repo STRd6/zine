@@ -13,13 +13,25 @@ achievementData = [{
   icon: "📰"
   group: "Issue"
 }, { # Apps
-  text: "Feeling the frog"
+  text: "Feel the frog"
   icon: "🐸"
   group: "App"
 }, {
   text: "Notepad.exe"
   icon: "📝"
   group: "App"
+}, { # OS
+  text: "Save a file"
+  icon: "💾"
+  group: "OS"
+}, {
+  text: "Load a file"
+  icon: "💽"
+  group: "OS"
+}, {
+  text: "Execute code"
+  icon: "🖥️"
+  group: "OS"
 }]
 
 module.exports = (I, self) ->

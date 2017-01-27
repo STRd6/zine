@@ -34,14 +34,16 @@ module.exports = (I, self) ->
           currentPath = newPath
         else
           throw new Error "No path given"
-      .then system.readFile
-      .then self.loadFile
+      .then (path) ->
+        system.readFile path, true
+      .then (file) ->
+        self.loadFile file
 
     save: ->
       if currentPath
         self.saveData()
         .then (blob) ->
-          system.writeFile currentPath, blob
+          system.writeFile currentPath, blob, true
         .then ->
           currentPath
       else

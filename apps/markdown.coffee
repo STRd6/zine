@@ -25,8 +25,6 @@ module.exports = ->
     items: parseMenu """
       [F]ile
         [O]pen
-        [S]ave
-        Save [A]s
         -
         E[x]it
     """

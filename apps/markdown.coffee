@@ -36,7 +36,7 @@ module.exports = ->
     title: "Markdown"
     content: container
     menuBar: menuBar.element
-    width: 640
+    width: 720
     height: 480
 
   windowView.loadFile = handlers.loadFile

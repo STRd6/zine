@@ -14,6 +14,11 @@ achievementData = [{
   icon: "📰"
   group: "Issue"
   description: "View Issue 2"
+}, {
+  text: "Lol wut"
+  icon: "😂"
+  group: "Issue 2"
+  description: "Did you know Windows Vista had a magazine?"
 }, { # Apps
   text: "Feel the frog"
   icon: "🐸"

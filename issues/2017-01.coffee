@@ -31,7 +31,7 @@ module.exports = ->
     """
     vista: """
       a(href="#table")
-        img(src="https://books.google.com/books/content?id=2cgDAAAAMBAJ&rview=1&pg=PA10&img=1&zoom=3&hl=en&sig=ACfU3U3477L46r0KxSQusJrQ6w9qxIQ70w&w=1280")
+        img(width=640 height="auto" src="https://books.google.com/books/content?id=2cgDAAAAMBAJ&rview=1&pg=PA10&img=1&zoom=3&hl=en&sig=ACfU3U3477L46r0KxSQusJrQ6w9qxIQ70w&w=1280")
     """
     table: """
       div
@@ -107,6 +107,9 @@ module.exports = ->
         e.preventDefault()
         emptyElement(container)
         page = next.substr(1)
+        
+        if page is "vista"
+          system.Achievement.unlock "Lol wut"
         container.appendChild(pages[page])
 
   document.body.appendChild windowView.element

@@ -105,11 +105,37 @@ module.exports = ->
 
       if next.match /^\#/
         e.preventDefault()
-        emptyElement(container)
         page = next.substr(1)
-        
-        if page is "vista"
-          system.Achievement.unlock "Lol wut"
-        container.appendChild(pages[page])
+
+        displayPage(page)
+
+  currentPage = "front"
+
+  displayPage = (page) ->
+    return unless page
+
+    if page is "vista"
+      system.Achievement.unlock "Lol wut"
+
+    emptyElement(container)
+    container.appendChild(pages[page])
+
+    currentPage = page
+
+  nextPage = (n=1) ->
+    pageKeys = Object.keys(pages)
+    nextIndex = pageKeys.indexOf(currentPage) + n
+
+    return pageKeys[nextIndex]
+
+  windowView.element.addEventListener "keydown", (e) ->
+    switch e.key
+      when "Enter", "ArrowRight", " "
+        displayPage nextPage()
+      when "ArrowLeft"
+        displayPage nextPage(-1)
 
   document.body.appendChild windowView.element
+
+  windowView.element.tabIndex = 0
+  windowView.element.focus()

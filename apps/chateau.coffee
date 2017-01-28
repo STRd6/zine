@@ -202,11 +202,11 @@ module.exports = ->
     container
       h1 About
       p Chat with your friends in this online chateau!
-      
+
       p Drag and drop an image to become your avatar.
-      
+
       p Click to position yourself in the room.
-      
+
       p Say what you want to talk with others!
   """
 

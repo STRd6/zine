@@ -128,7 +128,7 @@ module.exports = ->
         input.value = ""
 
         broadcast
-          say: words 
+          say: words
 
   Drop content, (e) ->
     files = e.dataTransfer.files
@@ -147,7 +147,7 @@ module.exports = ->
   , 30000
 
   socket.onopen = ->
-    
+
 
   socket.onclose = ->
     connected false
@@ -198,43 +198,38 @@ module.exports = ->
 
     updateWords()
 
+  AboutTemplate = system.compileTemplate """
+    container
+      h1 About
+      p Chat with your friends in this online chateau!
+      
+      p Drag and drop an image to become your avatar.
+      
+      p Click to position yourself in the room.
+      
+      p Say what you want to talk with others!
+  """
+
   handlers = Model().include(FileIO).extend
-    loadFile: (blob) ->
-      Image.fromBlob blob
-      .then (img) ->
-        canvas.width = img.width
-        canvas.height = img.height
-        context.drawImage(img, 0, 0)
-
-    saveData: ->
-      new Promise (resolve) ->
-        canvas.toBlob resolve
-
     exit: ->
       windowView.element.remove()
 
-    crop: ->
-      Modal.form modalForm()
-      .then console.log
+    about: ->
+      Modal.show AboutTemplate()
 
   menuBar = MenuBar
     items: parseMenu """
       [F]ile
-        [O]pen
-        [S]ave
-        Save [A]s
-        -
         E[x]it
-      [E]dit
-        [C]rop
-        [F]ilter
+      [H]elp
+        [A]bout
     """
     handlers: handlers
 
   windowView = Window
     title: "Chateau"
     content: content
-    menuBar: null
+    menuBar: menuBar.element
     width: 640
     height: 480
 

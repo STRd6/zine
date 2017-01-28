@@ -30,6 +30,11 @@ achievementData = [{
   group: "App"
   description: "Launch a text editor"
 }, {
+  text: "Pump up the jam"
+  icon: "🎶"
+  group: "App"
+  description: "Launch audio application"
+}, {
   text: "Microsoft Access 97"
   icon: "🔞"
   group: "App"

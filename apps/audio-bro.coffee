@@ -6,6 +6,9 @@ Model = require "model"
 module.exports = ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+  {Achievement} = system
+
+  Achievement.unlock "Pump up the jam"
 
   audio = document.createElement 'audio'
   audio.controls = true

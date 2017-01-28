@@ -89,7 +89,7 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 2 | ENTER THE DUNGEON | January 2017"
+    title: "ZineOS Volume 1 | Issue 2 | ENTER THE DUNGEON | February 2017"
     content: container
     menuBar: menuBar.element
     width: 1228

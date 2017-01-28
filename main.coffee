@@ -1,3 +1,5 @@
+require("analytics").init("UA-3464282-16")
+
 require "./extensions"
 
 global.Hamlet = require "./lib/hamlet"

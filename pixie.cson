@@ -1,5 +1,6 @@
 dependencies:
   ajax: "distri/ajax:master"
+  analytics: "distri/google-analytics:master"
   bindable: "distri/bindable:master"
   model: "distri/model:master"
   postmaster: "distri/postmaster:v0.5.0"

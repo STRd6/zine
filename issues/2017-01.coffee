@@ -46,19 +46,56 @@ module.exports = ->
             a(href="#table") Table of Contents
           li
             a(href="#random") Random Thoughts
+          li
+            a(href="#cheevos") Cheevos
+          li
+            a(href="#contributors") Contributors
     """
     random: """
-      div
+      div(style="padding: 1em;")
         h1 Random Thoughts
         p Don't you hate it when you're cooking something and you look at the stove clock and think it's 3:75 and you're late for your appointment but it was just the temperature and also 3:75 isn't even a real time?
         p I suggest you bone up a bit on torts before the next attempt at the bar exam.
+        p Does anyone remember thepalace.com avatar based chat and virtual worlds?
+        p Those spreadsheets you like are going back in style.
+    """
+    cheevos: """
+      div(style="padding: 1em;")
+        h1 Cheevos
+
+        p No matter if you guy/girl or whatever, Cheevos impress people. It's almost like saying 'Well, I got tons of Cheevos. There are tons of people online that are interested and respect me." 
+
+        p You might be thinking 'Oh that's complete BS, I personally don't care about Cheevos when dating'. And yeah, you are probably telling the truth, but it's in your sub-concious.  Sort of like how girls always like the bad guy, but never admit it.
+
+        p Braggin about your Cheevos sometimes makes you look conceited, but that's a good thing.  It like how celebraties look conceited because they're rolling VIP into clubs and you're stuck in line.
+
+        p 'Brewer' asks 'What happens if you're cheevo talking at a bar, club or party and someone says they have more cheevos that you?'
+
+        p Well, hopefully they are just hating and are lying. First look up their score with your cellphone, make sure you have a page bookmarked where you can check. If you catch them in a lie, you look even better. If they are telling the truth and have more Cheevos than you, leave. Nothing else you can do. Buy the person a drink and leave, unless you're willing to look 2nd best. If you brought a date, odds are she's going to be impressed with the higher gamer score and ditch you. Get out as soon as you can and go to some other party. 
+
+        p
+          a(href="http://cheevos.com") Learn more about cheevos from Bboy360 at cheevos.com
+
+    """
+    contributors: """
+      div(style="padding: 1em;")
+        h1 Contributors
+        ul
+          li Daniel X
+          li Lan
+          li pketh
+          li Mayor
+          li and you!
+        
+        p
+          a(href="#table") Return to table of contents
     """
 
   Object.keys(pages).forEach (pageName) ->
     value = pages[pageName]
     pages[pageName] = system.compileTemplate(value)({})
 
-  container.appendChild pages.front
+  pages.cheevos.appendChild system.Achievement.progressView()
 
   handlers = Model().include(Social).extend
     area: ->
@@ -75,17 +112,20 @@ module.exports = ->
     chateau: ->
       app = Chateau(system)
       document.body.appendChild app.element
+    credits: ->
+      displayPage "contributors"
+    tableofContents: ->
+      displayPage "table"
 
   menuBar = MenuBar
     items: parseMenu """
-      [H]ello
-        [W]ait Around For A Bit
       [A]pps
-        [C]hateau
-        [M]S Access 97
         [T]ext Editor
         [P]ixie Paint
       #{Social.menuText}
+      H[e]lp
+        [T]able of Contents
+        [C]redits
     """
     handlers: handlers
 
@@ -112,8 +152,15 @@ module.exports = ->
 
   currentPage = "front"
 
+  visited = {}
+
   displayPage = (page) ->
     return unless page
+    
+    visited[page] = true
+
+    if Object.keys(visited).length is Object.keys(pages).length
+      system.Achievement.unlock "Cover-2-cover 2: 2 cover 2 furious"
 
     if page is "vista"
       system.Achievement.unlock "Lol wut"
@@ -122,6 +169,8 @@ module.exports = ->
     container.appendChild(pages[page])
 
     currentPage = page
+
+  displayPage currentPage
 
   nextPage = (n=1) ->
     pageKeys = Object.keys(pages)

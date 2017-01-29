@@ -2,6 +2,8 @@ require("analytics").init("UA-3464282-16")
 
 require "./extensions"
 
+require "./lib/outbound-clicks"
+
 global.Hamlet = require "./lib/hamlet"
 
 System = require "./system"

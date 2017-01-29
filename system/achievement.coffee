@@ -134,22 +134,20 @@ module.exports = (I, self) ->
 
         Observable ->
           data = self.Achievement.groupData()
-  
+
           elements = Object.keys(data).map (group) ->
             AchievementProgressPresenter
               name: group
               achievements: data[group]
 
-          console.log "EE", elements
-
           emptyElement content
           elements.forEach (element) ->
             content.appendChild(element)
-  
+
         return content
 
   updateStatus = ->
-    console.log self.Achievement.groupData groupBy(achievementData, "group")
+    self.Achievement.groupData groupBy(achievementData, "group")
   updateStatus()
 
   return self

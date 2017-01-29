@@ -36,6 +36,7 @@ module.exports = (I, self) ->
         Modal.show CommentsTemplate data
 
     like: ->
+      system.Achievement.unlock "Do you 'like' like me?"
       Modal.alert "I like you too, but we don't have a facebook or anything yet :)"
     subscribe: ->
       require("../mailchimp").show()

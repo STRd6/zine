@@ -24,6 +24,7 @@ module.exports = ->
 
   system.writeFile "issue-2/around.md", new Blob [require "../stories/around-the-world"], type: "text/markdown"
   system.writeFile "issue-2/provision.txt", new Blob [require "../stories/provision"], type: "text/plain"
+  system.writeFile "issue-2/dungeon-dog.txt", new Blob [require "../stories/dungeon-dog"], type: "text/plain"
 
   pages =
     front: """

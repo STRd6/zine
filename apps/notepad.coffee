@@ -15,6 +15,7 @@ module.exports = () ->
   TODO = -> console.log "TODO"
 
   textarea = document.createElement "textarea"
+  textarea.spellcheck = false
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->

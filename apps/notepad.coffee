@@ -1,7 +1,7 @@
 FileIO = require "../os/file-io"
 Model = require "model"
 
-module.exports = () ->
+module.exports = ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 

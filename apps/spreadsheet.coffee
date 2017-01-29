@@ -1,7 +1,7 @@
 FileIO = require "../os/file-io"
 Model = require "model"
 
-module.exports = () ->
+module.exports = ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
   system.Achievement.unlock "Microsoft Access 97"

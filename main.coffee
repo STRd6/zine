@@ -15,4 +15,9 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
-require("./issues/2017-01")()
+# Desktop
+Explorer = require "./apps/explorer"
+document.body.appendChild Explorer()
+
+# Launch Current Issue
+require("./issues/2017-02")()

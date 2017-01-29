@@ -6,6 +6,7 @@ TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
 Markdown = require "../apps/markdown"
+DSad = require "../apps/dungeon-of-sadness"
 
 openWith = (App) ->
   (file) ->
@@ -70,6 +71,25 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match /^audio\//
     fn: openWith(AudioBro)
+  }, {
+    name: "dsad.exe"
+    filter: (file) ->
+      file.path.match /dsad\.exe$/
+    fn: ->
+      app = DSad()
+      document.body.appendChild app.element
+  }, {
+    name: "zine2.exe"
+    filter: (file) ->
+      file.path.match /zine2\.exe$/
+    fn: ->
+      require("../issues/2017-02")()
+  }, {
+    name: "zine1.exe"
+    filter: (file) ->
+      file.path.match /zine1\.exe$/
+    fn: ->
+      require("../issues/2016-12")()
   }]
 
   # Open JSON arrays in spreadsheet

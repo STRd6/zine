@@ -19,6 +19,11 @@ achievementData = [{
   group: "Issue 1"
   description: "Read the entire issue"
 }, {
+  text: "No rush"
+  icon: "⏳"
+  group: "Issue 1"
+  description: "Patience is a virtue"
+}, {
   text: "Issue 2"
   icon: "📰"
   group: "Issue 2"
@@ -38,6 +43,11 @@ achievementData = [{
   icon: "🐸"
   group: "Issue 2"
   description: "Visit frogfeels.com"
+}, {
+  text: "The dungeon is in our heart"
+  icon: "😭"
+  group: "Issue 2"
+  description: "Played dungeon of sadness"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

@@ -78,6 +78,11 @@ achievementData = [{
   icon: "💃"
   group: "OS"
   description: "Dismiss a modal without even reading it"
+}, {
+  text: "I AM ERROR"
+  icon: "🐛"
+  group: "OS"
+  description: "Encountered a JavaScript error"
 }, { # Social
   text: "Do you 'like' like me?"
   icon: "💕"

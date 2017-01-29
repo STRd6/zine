@@ -5,6 +5,8 @@ module.exports = () ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
+  system.Achievement.unlock "Notepad.exe"
+
   exec = (cmd) ->
     ->
       textarea.focus()
@@ -114,5 +116,7 @@ module.exports = () ->
     menuBar: menuBar.element
     width: 640
     height: 480
+  
+  windowView.loadFile = handlers.loadFile
 
   return windowView

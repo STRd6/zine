@@ -23,6 +23,7 @@ module.exports = ->
   #, 3000
 
   system.writeFile "issue-2/around.md", new Blob [require "../stories/around-the-world"], type: "text/markdown"
+  system.writeFile "issue-2/provision.txt", new Blob [require "../stories/provision"], type: "text/plain"
 
   pages =
     front: """

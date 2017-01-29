@@ -1,6 +1,7 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
+Notepad = require "../apps/notepad"
 TextEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
@@ -47,7 +48,7 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match(/^text\//) or
       file.type is "application/javascript"
-    fn: openWith(TextEditor)
+    fn: openWith(Notepad)
   }, {
     name: "Spreadsheet"
     filter: (file) ->

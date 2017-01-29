@@ -135,8 +135,8 @@ module.exports = ->
     menuBar: menuBar.element
     width: 1228
     height: 936
-    x: 0
-    y: 0
+    x: 32
+    y: 32
 
   windowView.element.addEventListener "click", (e) ->
     anchor = parentElementOfType("a", e.target)

@@ -2,7 +2,7 @@
 
 # Host must provide the following methods
 #   `loadFile` Take a blob and load it as the application state.
-#   `saveData` Return a promise that will be fulfilled with a blob of the 
+#   `saveData` Return a promise that will be fulfilled with a blob of the
 #     current application state.
 #   `newFile` Initialize the application to an empty state.
 
@@ -29,14 +29,23 @@ module.exports = (I, self) ->
       # TODO: Prompt if unsaved
       # TODO: File browser
       Modal.prompt "File Path", currentPath
-      .then system.readFile
-      .then self.loadFile
+      .then (newPath) ->
+        if newPath
+          currentPath = newPath
+        else
+          throw new Error "No path given"
+      .then (path) ->
+        system.readFile path, true
+      .then (file) ->
+        self.loadFile file
 
     save: ->
       if currentPath
         self.saveData()
         .then (blob) ->
-          system.writeFile currentPath, blob
+          system.writeFile currentPath, blob, true
+        .then ->
+          currentPath
       else
         self.saveAs()
 

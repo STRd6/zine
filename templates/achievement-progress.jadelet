@@ -1,0 +1,5 @@
+achievement-progress
+  h2= @name
+  progress(@value)
+  span= @fraction
+  achievement-badges= @badges

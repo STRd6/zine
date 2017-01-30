@@ -1,5 +1,4 @@
 Notepad = require "../apps/notepad"
-Spreadsheet = require "../apps/spreadsheet"
 CommentFormTemplate = require "../social/comment-form"
 CommentsTemplate = require "../social/comments"
 
@@ -8,13 +7,15 @@ ajax = Ajax()
 
 issueTag = "2016-12"
 
-module.exports = (os) ->
-  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = os.UI
+module.exports = ->
+  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+
+  system.Achievement.unlock "Issue 1"
 
   img = document.createElement "img"
   img.src = "https://68.media.tumblr.com/6a141d69564a29ac7d4071df5d519808/tumblr_o0rbb4TA1k1urr1ryo1_500.gif"
 
-  handlers =       
+  handlers =
     waitAroundForABit: ->
       initialMessage = "Waiting"
       progressView = Progress
@@ -34,6 +35,7 @@ module.exports = (os) ->
         progressView.value(newValue)
         progressView.message(initialMessage + ellipses)
         if newValue > 2
+          system.Achievement.unlock "No rush"
           clearInterval intervalId
           Modal.hide()
       , 15
@@ -68,12 +70,14 @@ module.exports = (os) ->
     subscribe: ->
       require("../mailchimp").show()
     notepadexe: ->
-      app = Notepad(os)
+      app = Notepad()
       document.body.appendChild app.element
     mSAccess97: ->
-      app = Spreadsheet(os)
+      app = Spreadsheet()
       document.body.appendChild app.element
     mysterySmell: ->
+      system.Achievement.unlock "Cover-2-cover"
+      
       div = document.createElement "div"
       div.textContent = require "../stories/mystery-smell"
       div.style.padding = "1em"
@@ -93,7 +97,7 @@ module.exports = (os) ->
       [A]pps
         [N]otepad.exe
       [S]tories
-        Mystery Smell
+        [M]ystery Smell
       S[o]cial Media
         [V]iew Comments
         [C]omment
@@ -108,5 +112,5 @@ module.exports = (os) ->
     menuBar: menuBar.element
     width: 508
     height: 604
-  document.body.appendChild windowView.element
 
+  document.body.appendChild windowView.element

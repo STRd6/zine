@@ -1,9 +1,11 @@
 FileIO = require "../os/file-io"
 Model = require "model"
 
-module.exports = () ->
+module.exports = ->
   # Global system
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+
+  system.Achievement.unlock "Notepad.exe"
 
   exec = (cmd) ->
     ->
@@ -13,6 +15,7 @@ module.exports = () ->
   TODO = -> console.log "TODO"
 
   textarea = document.createElement "textarea"
+  textarea.spellcheck = false
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
@@ -114,5 +117,7 @@ module.exports = () ->
     menuBar: menuBar.element
     width: 640
     height: 480
+  
+  windowView.loadFile = handlers.loadFile
 
   return windowView

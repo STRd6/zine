@@ -1,42 +1,80 @@
-module.exports = (os) ->
-  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = os.UI
+FileIO = require "../os/file-io"
+Model = require "model"
 
-  # Observable input helper
-  o = (value, type) ->
-    attribute = Observable(value)
-    if type
-      attribute.type = type
+module.exports = ->
+  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
-    attribute.value = attribute
+  system.Achievement.unlock "Microsoft Access 97"
 
-    return attribute
+  sourceData = []
 
-  data = Observable [0...5].map (i) ->
-    id: o i
-    name: o "yolo"
-    color: o "#FF0000", "color"
+  headers = ["id", "name", "color"]
 
-  {element} = Table data
+  RowModel = (datum) ->
+    Model(datum).attrObservable headers...
+
+  models = sourceData.map RowModel
+
+  InputTemplate = require "../templates/input"
+  RowElement = (datum) ->
+    tr = document.createElement "tr"
+    types = [
+      "number"
+      "text"
+      "color"
+    ]
+
+    headers.forEach (key, i) ->
+      td = document.createElement "td"
+      td.appendChild InputTemplate
+        value: datum[key]
+        type: types[i]
+
+      tr.appendChild td
+
+    return tr
+
+  {element} = tableView = Table {
+    data: models
+    RowElement: RowElement
+    headers: headers
+  }
 
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
       blob.readAsJSON()
       .then (json) ->
-        # TODO: Load json array to data
         console.log json
+
+        unless Array.isArray json
+          throw new Error "Data must be an array"
+
+        sourceData = json
+        # Update models data
+        models.splice(0, models.length, sourceData.map(RowModel)...)
+
+        # Re-render
+        tableView.render()
+
     newFile: -> # TODO
     saveData: ->
-      # TODO: Make sure to get data the right way
-      Promise.resolve new Blob [JSON.stringify(data())],
+      Promise.resolve new Blob [JSON.stringify(sourceData)],
         type: "application/json"
 
     about: ->
       Modal.alert "Spreadsheet v0.0.1 by Daniel X Moore"
     insertRow: ->
-      data.push
-        id: o 50
-        name: o "new"
-        color: o "#FF00FF", "color"
+      # TODO: Data template
+      datum =
+        id: 0
+        name: "new"
+        color: "#FF00FF"
+
+      sourceData.push datum
+      models.push RowModel(datum)
+
+      # Re-render
+      tableView.render()
     exit: ->
       windowView.element.remove()
 
@@ -62,5 +100,7 @@ module.exports = (os) ->
     menuBar: menuBar.element
     width: 640
     height: 480
+
+  windowView.loadFile = handlers.loadFile
 
   return windowView

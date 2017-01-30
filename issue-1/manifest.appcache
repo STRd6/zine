@@ -1,0 +1,16 @@
+CACHE MANIFEST
+# 1485817562442
+
+CACHE:
+index.html
+../issue-1.json
+https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js
+https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js
+https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js
+https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js
+https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js
+
+NETWORK:
+https://*
+http://*
+*

@@ -20,4 +20,4 @@ Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()
 
 # Launch Current Issue
-require("./issues/2017-02")()
+require("./issues/2016-12")()

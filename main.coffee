@@ -1,11 +1,23 @@
+require("analytics").init("UA-3464282-16")
+
 require "./extensions"
 
-OS = require "../os"
-global.system = os = OS()
+require "./lib/outbound-clicks"
+require "./lib/error-reporter"
 
-{Style} = os.UI
+global.Hamlet = require "./lib/hamlet"
+
+System = require "./system"
+global.system = System()
+
+{Style} = system.UI
 style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
-require("./issues/2016-12-10")(os)
+# Desktop
+Explorer = require "./apps/explorer"
+document.body.appendChild Explorer()
+
+# Launch Current Issue
+require("./issues/2017-02")()

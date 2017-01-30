@@ -1,0 +1,4 @@
+achievement
+  icon= @icon
+  h2= @title
+  p= @text

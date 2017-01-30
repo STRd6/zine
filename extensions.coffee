@@ -1,5 +1,5 @@
 # Add some utility readers to the Blob API
-Blob.prototype.readAsText = ->
+Blob::readAsText = ->
   file = this
 
   new Promise (resolve, reject) ->
@@ -9,6 +9,30 @@ Blob.prototype.readAsText = ->
     reader.onerror = reject
     reader.readAsText(file)
 
-Blob.prototype.readAsJSON = ->
+Blob::readAsJSON = ->
   @readAsText()
   .then JSON.parse
+
+Blob::readAsDataURL = ->
+  file = this
+
+  new Promise (resolve, reject) ->
+    reader = new FileReader
+    reader.onload = ->
+      resolve reader.result
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+
+# Load an image from a blob returning a promise that is fulfilled with the
+# loaded image or rejected with an error
+Image.fromBlob = (blob) ->
+  new Promise (resolve, reject) ->
+    img = new Image
+    img.onload = ->
+      resolve img
+    img.onerror = reject
+
+    img.src = URL.createObjectURL blob
+
+FileList::forEach ?= (args...) ->
+  Array::forEach.apply(this, args)

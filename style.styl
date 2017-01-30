@@ -1,3 +1,20 @@
+body
+  overflow: hidden
+
+h1
+  line-height: 1.25em
+  margin: 0
+
+ul
+  list-style-type: square
+  padding-left: 1.25em
+
+user-select(s)
+  user-select: s
+  -moz-user-select: s
+  -webkit-user-select: s
+  -ms-user-select: s
+
 comments, comment
   display: block
   padding: 1em
@@ -16,3 +33,177 @@ comment
 
     &::before
       content: "-"
+
+explorer
+  display: block
+  padding: 0.5em
+  user-select: none
+
+  body > &
+    height: 100%
+    width: 100%
+
+  > file, > folder
+    display: inline-block
+    padding: 0.5em
+
+    > icon
+      display: block
+      height: 32px
+      margin: auto
+      width: 32px
+
+  > file > icon
+    background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAACHd3d3d3d3d3d3d3dwAAAAj///////////////cAAAAI///////////////3AAAACP///////3d///d39wAAAAj/zMzM//mZ//+Zn/cAAAAI////////l///+X/3AAAACP/MzMzM//l3d3l/9wAAAAj/////////mZmZf/cAAAAI/8zMzMzM//l/+X/3AAAACP//////////l/l/9wAAAAj/zMzMzMzM//l5f/cAAAAI////////////mX/3AAAACP/MzMzMzMzM//n/9wAAAAj///////////////cAAAAI/8zMzMzMzMzMzP/3AAAACP//////////////9wAAAAj/zMzMzMzMzMzM//cAAAAI///////////////3AAAACP8AAAAA/8zMzMz/9wAAAAj/iZD/8P////////cAAAAI/4AAAAD/zMzMzP/3AAAACP+P8Luw////////9wAAAAj/gAC7sP/MzMzM//cAAAAI/4/wu7D////////3AAAACP+P8Luw/////4AAAAAAAAj/j/AAAP////+P94AAAAAI/4/wzMD/////j3gAAAAACP+IiIiA/////4eAAAAAAAj///////////+IAAAAAAAI////////////gAAAAAAACIiIiIiIiIiIiIAAAAAA4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAH4AAAB+AAAAfgAAAP4AAAH+AAAD/gAAB/4AAA/+AAAf8oAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAACHd3d3d3cAAI//////9wAAj8z5//n3AACP//+ZmfcAAI/MzPn59wAAj////5n3AACPzMzM+fcAAI//////9wAAjwAPzMz3AACPmY////cAAI/Pj8zM9wAAj8+P//AAAACPiI//9/gAAI/////3gAAAiIiIiIgAAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIAHAACADwAAgB8AAA==")
+
+  > file[type^="text/"] > icon
+    background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAACHd3d3d3d3d3d3dwcAAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA/////////3BwAAAI//////////////9wcAAACP8AAAD/////////cHAAAAj//////////////3BwAAAI//////////////9wcAAACP8AAAAAAAAAAAD/cHAAAAj//////////////3BwAAAI/wAAAAAAAAAAAP9wcAAACP//////////////cHAAAAj/AAAAAAAAAAAA/3BwAAAI//////////////9wcAAACP8AAAAAAAAAAAD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP8AAAD/////////cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA/////////3BwAAAI//////////////9wcAAACP8AAAD////w8AD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAjw/w/w/w/w/w/w/4BwAAAI8P8P8P8P8P8P8P+AcAAAAI+I+I+I+I+I+I+I+AAAAAAAAAAAAAAAAAAAAAAAAA8AAAH+AAAA/AAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAH4AAAD/JJJL8oAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAh3d3d3d3AACP//////cAAI//////9wAAj/AAAA/3AACP//////cAAI/wAAAP9wAAj//////3AACP8AAAD/cAAI//////9wAAj/AA8A/3AACP//////cAAI//////9wAAjw8PDw8PAAAA+Pj4+PAAAAAAAAAAAAAAgA8AAAAHAAAABwAAAAcAAAAHAAAABwAAAAcAAAAHAAAABwAAAAcAAAAHAAAABwAAAAcAAAAHAACADwAA1V8AAA==")
+
+  > file[type="application/javascript"] > icon
+    background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAACHd3d3d3d3d3d3dwcAAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA////AAD//3BwAAAI////////AwsDAP9wcAAACP8AAAD//zu7uzD/cHAAAAj///////M7MDsAD3BwAAAI///////zuwgLsw9wcAAACP8AAAAAAzswOwAPcHAAAAj///////87u7sw/3BwAAAI/wAAAAAAMwsDAP9wcAAACP////////8zM///cHAAAAj/AAAAAAAAAAAA/3BwAAAI//////////////9wcAAACP8AAAAAAAAAAAD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP8AAAD/////////cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA/////////3BwAAAI//////////////9wcAAACP8AAAD////w8AD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAjw/w/w/w/w/w/w/4BwAAAI8P8P8P8P8P8P8P+AcAAAAI+I+I+I+I+I+I+I+AAAAAAAAAAAAAAAAAAAAAAAAA8AAAH+AAAA/AAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAH4AAAD/JJJL8oAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAACHd3d3d3cAAI//////9wAAj///Aw/3AACP8Ac7MPcAAI//87Cz9wAAj/AHOzD3AACP//9zf/cAAI/wAAAP9wAAj//////3AACP8ADwD/cAAI//////9wAAj//////3AACPDw8PDw8AAAD4+Pj48AAAAAAAAAAAAAwAcAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAADABwAA6q8AAA==")
+
+  > folder > icon
+    background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACDMzMzMzMzMzMzMzMzMzMwj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI///////////////////wCHd3d3d3d3d4iIiIiIiIgACPt7e3t7e3gAAAAAAAAAAACPt7e3t7eAAAAAAAAAAAAACP/////4AAAAAAAAAAAAAACIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////////gAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAP//wAH//+AD///wB/////////////8oAAAAEAAAACAAAAABAAQAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIiIiIiIiIgAj7e3t7e3uACPe3t7e3t4AI+3t7e3t7gAj3t7e3t7eACPt7e3t7e4AI97e3t7e3gAj7e3t7e3uACP///////4AIe3t7eIiIgACHt7eAAAAAAAiIiAAAAAAAAAAAAAAAAA//8AAP//AACAAQCgAAHOAAABzgAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAID/AADB/wAA//8AAA==")
+
+#modal > container
+  padding: 1em
+
+chateau
+  width: 100%
+  height: 100%
+  position: relative
+
+  > word-area
+    display: block
+    pointer-events: none
+    position: absolute
+    width: 100%
+    height: 100%
+
+    > words
+      border: 1px solid black
+      border-radius: 4px
+      background-color: white
+      padding: 0.5em
+      position: absolute
+      display: inline-block
+
+  > canvas
+    display: block
+    width: 100%
+    height: 100%
+    position: absolute
+
+  > form
+    position: absolute
+    bottom: 0
+
+  window > viewport > &
+    margin: initial
+
+
+@keyframes display-achievement
+  0%
+    bottom: -128px
+  5%
+    bottom: 2em
+  95%
+    bottom: 2em
+  100%
+    bottom: -128px
+
+@keyframes slide-left
+  0%
+    left: 100%
+  25%
+    left: 0
+  50%
+    left: -100%
+  100%
+    left: -100%
+
+achievement
+  color: white
+  background-color: blue
+  border-radius: 32px
+  bottom: -128px
+  box-shadow: 2px 2px 10px black
+  display: block
+  height: 64px
+  left: 0
+  margin: auto
+  overflow: hidden
+  padding: 8px
+  position: absolute
+  right: 0
+  width: 300px
+  z-index: 9000
+
+  &:after
+    animation: slide-left 3s linear 0.75s infinite
+    content: ""
+    background: linear-gradient(
+      50deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0) 75%,
+      rgba(255, 255, 255, 0) 100%
+    )
+    height: 100%
+    position: absolute
+    top: 0
+    left: 100%
+    width: 100%
+
+  &.display
+    animation: display-achievement 6s
+
+  > h2
+    font-size: 1.25em
+    margin: 0
+
+  > p
+    margin-top: 8px
+    margin-bottom: 8px
+
+  > icon
+    background-color: white
+    border-radius: 32px
+    color: blue
+    display: inline-block
+    float: left
+    font-size: 35px
+    font-family: "Apple Color Emoji","Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols"
+    height: 48px
+    line-height: 48px
+    margin-right: 8px
+    text-align: center
+    width: 48px
+
+achievement-badges
+  display: block
+
+achievement-progress
+  display: block
+
+  > h2
+    margin-bottom: 4px
+
+achievement-badge
+  background-color: white
+  border: 1px solid gray
+  color: gray
+  display: inline-block
+  font-size: 35px
+  font-family: "Apple Color Emoji","Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols"
+  height: 48px
+  line-height: 48px
+  margin-right: 8px
+  margin-top: 8px
+  text-align: center
+  width: 48px
+
+  &.achieved
+    border: 1px solid blue
+    color: blue

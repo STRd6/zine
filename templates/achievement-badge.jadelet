@@ -1,0 +1,2 @@
+achievement-badge(title=@description @class)
+  = @icon

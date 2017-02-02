@@ -21,3 +21,5 @@ document.body.appendChild Explorer()
 
 # Launch Current Issue
 require("./issues/2017-02")()
+
+system.writeFile "feedback.exe", new Blob [""], type: "application/exe"

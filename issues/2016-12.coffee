@@ -77,7 +77,7 @@ module.exports = ->
       document.body.appendChild app.element
     mysterySmell: ->
       system.Achievement.unlock "Cover-2-cover"
-      
+
       div = document.createElement "div"
       div.textContent = require "../stories/mystery-smell"
       div.style.padding = "1em"

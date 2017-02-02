@@ -64,7 +64,7 @@ module.exports = ->
       div(style="padding: 1em;")
         h1 Cheevos
 
-        p No matter if you guy/girl or whatever, Cheevos impress people. It's almost like saying 'Well, I got tons of Cheevos. There are tons of people online that are interested and respect me." 
+        p No matter if you guy/girl or whatever, Cheevos impress people. It's almost like saying 'Well, I got tons of Cheevos. There are tons of people online that are interested and respect me."
 
         p You might be thinking 'Oh that's complete BS, I personally don't care about Cheevos when dating'. And yeah, you are probably telling the truth, but it's in your sub-concious.  Sort of like how girls always like the bad guy, but never admit it.
 
@@ -72,7 +72,7 @@ module.exports = ->
 
         p 'Brewer' asks 'What happens if you're cheevo talking at a bar, club or party and someone says they have more cheevos that you?'
 
-        p Well, hopefully they are just hating and are lying. First look up their score with your cellphone, make sure you have a page bookmarked where you can check. If you catch them in a lie, you look even better. If they are telling the truth and have more Cheevos than you, leave. Nothing else you can do. Buy the person a drink and leave, unless you're willing to look 2nd best. If you brought a date, odds are she's going to be impressed with the higher gamer score and ditch you. Get out as soon as you can and go to some other party. 
+        p Well, hopefully they are just hating and are lying. First look up their score with your cellphone, make sure you have a page bookmarked where you can check. If you catch them in a lie, you look even better. If they are telling the truth and have more Cheevos than you, leave. Nothing else you can do. Buy the person a drink and leave, unless you're willing to look 2nd best. If you brought a date, odds are she's going to be impressed with the higher gamer score and ditch you. Get out as soon as you can and go to some other party.
 
         p
           a(href="http://cheevos.com") Learn more about cheevos from Bboy360 at cheevos.com
@@ -87,7 +87,7 @@ module.exports = ->
           li pketh
           li Mayor
           li and you!
-        
+
         p
           a(href="#table") Return to table of contents
     """
@@ -157,7 +157,7 @@ module.exports = ->
 
   displayPage = (page) ->
     return unless page
-    
+
     visited[page] = true
 
     if Object.keys(visited).length is Object.keys(pages).length

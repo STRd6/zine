@@ -90,6 +90,12 @@ module.exports = (I, self) ->
       file.path.match /zine1\.exe$/
     fn: ->
       require("../issues/2016-12")()
+  }, {
+    name: "feedback.exe"
+    filter: (file) ->
+      file.path.match /feedback\.exe$/
+    fn: ->
+      require("../feedback")()
   }]
 
   # Open JSON arrays in spreadsheet

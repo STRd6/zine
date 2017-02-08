@@ -19,7 +19,6 @@ document.head.appendChild style
 Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()
 
-# Launch Current Issue
-require("./issues/2017-02")()
-
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
+system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
+system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"

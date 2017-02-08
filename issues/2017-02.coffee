@@ -14,17 +14,12 @@ module.exports = ->
 
   container = document.createElement "container"
 
-  setTimeout ->
-    system.Achievement.unlock "Issue 2"
-  #, 3000
+  system.Achievement.unlock "Issue 2"
 
   system.writeFile "issue-2/around.md", new Blob [require "../stories/around-the-world"], type: "text/markdown"
   system.writeFile "issue-2/provision.txt", new Blob [require "../stories/provision"], type: "text/plain"
   system.writeFile "issue-2/dungeon-dog.txt", new Blob [require "../stories/dungeon-dog"], type: "text/plain"
   system.writeFile "issue-2/dsad.exe", new Blob [""], type: "application/exe"
-  system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"
-
-  system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 
   pages =
     front: """

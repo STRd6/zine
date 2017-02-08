@@ -56,4 +56,6 @@ module.exports = ->
 
   windowView.loadFile = handlers.loadFile
 
+  system.Achievement.unlock "Pixel perfect"
+
   return windowView

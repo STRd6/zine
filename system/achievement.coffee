@@ -68,6 +68,11 @@ achievementData = [{
   icon: "🖼️"
   group: "App"
   description: "Open the image viewer"
+}, {
+  text: "Pixel perfect"
+  icon: "◼️️"
+  group: "App"
+  description: "Open the pixel editor"
 }, { # OS
   text: "Save a file"
   icon: "💾"
@@ -98,6 +103,11 @@ achievementData = [{
   icon: "💕"
   group: "Social"
   description: "Have fine taste"
+}, {
+  text: "We value your input"
+  icon: "📩"
+  group: "Social"
+  description: "View feedback form"
 }]
 
 restore = ->

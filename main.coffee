@@ -22,3 +22,5 @@ document.body.appendChild Explorer()
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"
+
+require("./issues/2017-03")()

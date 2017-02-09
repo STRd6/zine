@@ -108,6 +108,31 @@ achievementData = [{
   icon: "📩"
   group: "Social"
   description: "View feedback form"
+}, { # Chateau
+  text: "Enter the Chateau"
+  icon: "🏡"
+  group: "Chateau"
+  description: "Enter the Chateau"
+}, {
+  text: "Puttin' on the Ritz"
+  icon: "🐭"
+  group: "Chateau"
+  description: "Upload custom avatar"
+}, {
+  text: "Paint the town red"
+  icon: "🌆"
+  group: "Chateau"
+  description: "Upload a custom avatar"
+}, {
+  text: "Poutine on the Ritz"
+  icon: "🍘"
+  group: "Chateau"
+  description: "Put poutine on a Ritz cracker"
+}, {
+  text: "It's in the cloud"
+  icon: "☁️️"
+  group: "Chateau"
+  description: "Upload a file"
 }]
 
 restore = ->

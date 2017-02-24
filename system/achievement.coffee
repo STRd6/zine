@@ -48,6 +48,16 @@ achievementData = [{
   icon: "😭"
   group: "Issue 2"
   description: "Played dungeon of sadness"
+}, {
+  text: "Issue 3"
+  icon: "📰"
+  group: "Issue 3"
+  description: "View Issue 3"
+}, {
+  text: "Cover-2-cover 3: Tokyo Drift"
+  icon: "📗"
+  group: "Issue 3"
+  description: "Read the entire issue"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"
@@ -73,6 +83,11 @@ achievementData = [{
   icon: "◼️️"
   group: "App"
   description: "Open the pixel editor"
+}, {
+  text: "Check yo' self"
+  icon: "😉"
+  group: "App"
+  description: "Check your achievement status"
 }, { # OS
   text: "Save a file"
   icon: "💾"
@@ -122,7 +137,7 @@ achievementData = [{
   text: "Paint the town red"
   icon: "🌆"
   group: "Chateau"
-  description: "Upload a custom avatar"
+  description: "Upload a custom background"
 }, {
   text: "Poutine on the Ritz"
   icon: "🍘"

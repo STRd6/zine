@@ -161,6 +161,9 @@ module.exports = ->
     if page is "vista"
       system.Achievement.unlock "Lol wut"
 
+    if page is "cheevos"
+      system.Achievement.unlock "Check yo' self"
+
     emptyElement(container)
     container.appendChild(pages[page])
 

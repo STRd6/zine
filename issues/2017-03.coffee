@@ -31,6 +31,8 @@ module.exports = ->
       cheevoElement.style.width = "100%"
       cheevoElement.style.padding = "1em"
 
+      system.Achievement.unlock "Check yo' self"
+
       windowView = Window
         title: "Cheevos"
         content: cheevoElement

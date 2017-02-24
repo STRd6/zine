@@ -1,6 +1,7 @@
 Achievement = require "../lib/achievement"
 Model = require "model"
 Chateau = require "../apps/chateau"
+Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
 Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
@@ -26,6 +27,9 @@ module.exports = ->
       app = Chateau(system)
       document.body.appendChild app.element
 
+    contrasaurus: ->
+      document.body.appendChild Contrasaurus(system).element
+
     achievementStatus: ->
       cheevoElement = system.Achievement.progressView()
       cheevoElement.style.width = "100%"
@@ -45,6 +49,7 @@ module.exports = ->
     items: parseMenu """
       [A]pps
         [C]hateau
+        Contra[s]aurus
       #{Social.menuText}
       [H]elp
         [A]chievement Status

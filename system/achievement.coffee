@@ -148,6 +148,11 @@ achievementData = [{
   icon: "☁️️"
   group: "Chateau"
   description: "Upload a file"
+}, {
+  text: "Rawr"
+  icon: "🐉"
+  group: "Contrasaurus"
+  description: "Played Contrasaurus"
 }]
 
 restore = ->

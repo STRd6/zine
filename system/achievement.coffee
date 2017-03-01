@@ -58,6 +58,11 @@ achievementData = [{
   icon: "📗"
   group: "Issue 3"
   description: "Read the entire issue"
+}, {
+  text: "Blue light special"
+  icon: "🈹"
+  group: "Issue 3"
+  description: "Read 'Blue Light Special'"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

@@ -1,4 +1,3 @@
-Achievement = require "../lib/achievement"
 Model = require "model"
 Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
@@ -12,6 +11,22 @@ Social = require "../social/social"
 
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+  {Achievement} = system
+
+  visitedAreas =
+    blue: false
+    csaur: false
+    chateau: false
+    cheevo: false
+  
+  visit = (area) ->
+    visitedAreas[area] = true
+
+    visitedAll = Object.keys(visitedAreas).every (key) ->
+      visitedAreas[key]
+
+    if visitedAll
+      Achievement.unlock "Cover-2-cover 3: Tokyo Drift"
 
   system.writeFile "issue-3/blue-light-special.txt", new Blob [require "../stories/blue-light-special"], type: "text/plain"
 
@@ -26,13 +41,16 @@ module.exports = ->
       document.body.appendChild app.element
 
     chateau: ->
+      visit "chateau"
       app = Chateau(system)
       document.body.appendChild app.element
 
     contrasaurus: ->
+      visit "csaur"
       document.body.appendChild Contrasaurus(system).element
 
     achievementStatus: ->
+      visit "cheevo"
       cheevoElement = system.Achievement.progressView()
       cheevoElement.style.width = "100%"
       cheevoElement.style.padding = "1em"
@@ -47,20 +65,34 @@ module.exports = ->
 
       document.body.appendChild windowView.element
 
+    blueLightSpecial: ->
+      Achievement.unlock "Blue light special"
+      visit "blue"
+
+      storyWindow = StoryWindow("Blue Light Special", require("../stories/blue-light-special"))
+
+      document.body.appendChild storyWindow.element
+
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
         [C]hateau
         Contra[s]aurus
+      [S]tories
+        [B]lue Light Special
       #{Social.menuText}
       [H]elp
         [A]chievement Status
     """
     handlers: handlers
 
+  kmartGif = document.createElement "img"
+  kmartGif.src = "http://media.boingboing.net/wp-content/uploads/2015/07/m66DBJ.gif"
+  kmartGif.style = "width: 100%; height: 100%"
+
   windowView = Window
     title: "ZineOS Volume 1 | Issue 3 | ATTN: K-Mart Shoppers | March 2017"
-    content: null
+    content: kmartGif
     menuBar: menuBar.element
     width: 800
     height: 600
@@ -68,3 +100,16 @@ module.exports = ->
     y: 32
 
   document.body.appendChild windowView.element
+
+StoryWindow = (title, text) ->
+  div = document.createElement "div"
+  div.textContent = text
+  div.style.padding = "1em"
+  div.style.whiteSpace = "pre-wrap"
+  div.style.textAlign = "justify"
+
+  system.UI.Window
+    title: title
+    content: div
+    width: 380
+    height: 480

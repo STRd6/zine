@@ -13,6 +13,8 @@ Social = require "../social/social"
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
+  system.writeFile "issue-3/blue-light-special.txt", new Blob [require "../stories/blue-light-special"], type: "text/plain"
+
   system.Achievement.unlock "Issue 3"
 
   handlers = Model().include(Social).extend

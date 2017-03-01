@@ -18,6 +18,7 @@ module.exports = ->
     csaur: false
     chateau: false
     cheevo: false
+    evan: false
   
   visit = (area) ->
     visitedAreas[area] = true
@@ -64,6 +65,20 @@ module.exports = ->
         height: 480
 
       document.body.appendChild windowView.element
+    
+    evanAndMore: ->
+      visit "evan"
+      url = "https://s3.amazonaws.com/whimsyspace-databucket-1g3p6d9lcl6x1/danielx/IMG_9794.JPG"
+      img = document.createElement "img"
+      img.src = url
+
+      {element} = system.UI.Window
+        title: "Evan And More"
+        content: img
+        width: 600
+        height: 480
+
+      document.body.appendChild element
 
     blueLightSpecial: ->
       Achievement.unlock "Blue light special"
@@ -80,6 +95,7 @@ module.exports = ->
         Contra[s]aurus
       [S]tories
         [B]lue Light Special
+        [E]van And More
       #{Social.menuText}
       [H]elp
         [A]chievement Status

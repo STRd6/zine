@@ -3,7 +3,7 @@ Dungeon Crawl with Cliffford!
 
 One sunny day, Cliffford the big rad dog was playing at the park with his friends U-Bone and Cloe. They chased each other through the playground, around the play structures, and through the sand. Children squealed with delight to see Cliffford jump right over the swing set in his excitement. “He’s so big! He can jump over things! Heehee!” they giggled. THUMP! went Cliffford’s paws as he landed on the grassy field, and Cloe and U-Bone followed right behind.
 
-The dogs dashed through a soccer game, U-Bone stopping to bite at the ball, and Cleo weaving her way through at least four players’ legs. They emerged on the other side of the field at the northernmost edge of the park, where the well-kept field gave way to a little meadow, and then the woods. 
+The dogs dashed through a soccer game, U-Bone stopping to bite at the ball, and Cleo weaving her way through at least four players’ legs. They emerged on the other side of the field at the northernmost edge of the park, where the well-kept field gave way to a little meadow, and then the woods.
 
 Cliffford flopped down in a shady spot, and Cloe and U-Bone stood panting next to him. Cool breezes blew in from the ocean, rippling the leaves on the trees and the long meadow-grass.
 
@@ -53,7 +53,7 @@ Something else glinted in the darkness just beyond them. Cloe moved closer and t
 
 U-Bone stumbled upon a sheath and baldric for the sword a short distance away, and strapped them on. BOSS! A few turns of the path later, and the dogs found another staircase down. Come on, it’s a dungeon crawl. Of course they found another staircase!
 
-The dogs explored further and deeper into the dungeon. Cliffford’s mouth was crammed as full as possible with bones, and he looked sadly at each one he had to leave behind as they pressed on. 
+The dogs explored further and deeper into the dungeon. Cliffford’s mouth was crammed as full as possible with bones, and he looked sadly at each one he had to leave behind as they pressed on.
 
 “Humuhlauhsunrrmmmuh,” said the big rad dog, furrowing his brows.
 “Hmm?” asked Cloe, through the side of her mouth around the torch.
@@ -90,7 +90,7 @@ Cloe whipped her head back and forth, and the scroll unfurled, revealing the tex
 
 A moment later, Cliffford was back up again, only now he was the size of a normal dog. Yup!
 
-This was a very useful development for our plot, because they heard shouts from the top of the stairs. The angry lake-keeper’s scratchy toenails clicked on the stone treads as he skittered down toward them. 
+This was a very useful development for our plot, because they heard shouts from the top of the stairs. The angry lake-keeper’s scratchy toenails clicked on the stone treads as he skittered down toward them.
 
 The dogs wasted no time, and all three dove right into the entrance to the labyrinth. They tried their best to stay together, but Clifford, unused to being tiny, lagged behind. He felt weak, and needed food badly.
 

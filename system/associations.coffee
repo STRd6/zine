@@ -79,17 +79,23 @@ module.exports = (I, self) ->
       app = DSad()
       document.body.appendChild app.element
   }, {
+    name: "zine1.exe"
+    filter: (file) ->
+      file.path.match /zine1\.exe$/
+    fn: ->
+      require("../issues/2016-12")()
+  }, {
     name: "zine2.exe"
     filter: (file) ->
       file.path.match /zine2\.exe$/
     fn: ->
       require("../issues/2017-02")()
   }, {
-    name: "zine1.exe"
+    name: "zine3.exe"
     filter: (file) ->
-      file.path.match /zine1\.exe$/
+      file.path.match /zine3\.exe$/
     fn: ->
-      require("../issues/2016-12")()
+      require("../issues/2017-03")()
   }, {
     name: "feedback.exe"
     filter: (file) ->

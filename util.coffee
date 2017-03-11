@@ -5,6 +5,10 @@ normalizePath = (path) ->
   .replace(/\/[^/]*\/\.\./g, "") # /base/something/.. -> /base
   .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
 
+# NOTE: Allows paths like '../..' to go above the base path
+absolutizePath = (base, relativePath) ->
+  normalizePath "/#{base}/#{relativePath}"
+
 module.exports =
   emptyElement: (element) ->
     while element.lastChild
@@ -12,6 +16,7 @@ module.exports =
 
   fileSeparator: fileSeparator
   normalizePath: normalizePath
+  absolutizePath: absolutizePath
 
   parentElementOfType: (tagname, element) ->
     tagname = tagname.toLowerCase()

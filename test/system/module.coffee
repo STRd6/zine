@@ -3,13 +3,28 @@ Model = require "model"
 Associations = require "../../system/associations"
 SystemModule = require "../../system/module"
 
+global.Hamlet = require "../../lib/hamlet"
+
+makeSystemFS = (files) ->
+  model = Model()
+  model.include SystemModule, Associations
+
+  model.fs =
+    read: (path) ->
+      Promise.resolve()
+      .then ->
+        content = files[path]
+  
+        throw new Error "File not found: #{path}" unless content?
+
+        path: path
+        blob: new Blob [content]
+
+  return model
+
 describe "System Module", ->
   it "should include modules in files async", ->
-    model = Model()
-
-    model.include SystemModule
-
-    files =
+    model = makeSystemFS
       "/test.js": """
         module.exports = 'yo';
       """
@@ -28,34 +43,32 @@ describe "System Module", ->
         module.exports = Math.random();
       """
 
-    model.readFile = (path) ->
-      content = files[path]
-
-      Promise.resolve new Blob [content]
-
     model.include(["/root.js", "/wat.js", "/rand.js", "/rand.js"])
     .then ([root, wat, r1, r2]) ->
       console.log root, wat, r1, r2
       assert.equal r1, r2
       assert.equal root, 'yo 2 rad hella'
 
+  it "should throw an error when requiring a file that doesn't exist", (done) ->
+    @timeout 250
+
+    model = makeSystemFS
+      "/a.js": """
+        module.exports = require("./b.js")
+      """
+
+    model.include(["/a.js"])
+    .catch (e) ->
+      done()
+
   it "should wait forever when resolving circular requires", (done) ->
-    model = Model()
-
-    model.include SystemModule
-
-    files =
+    model = makeSystemFS
       "/a.js": """
         module.exports = require("./b.js")
       """
       "/b.js": """
         module.exports = require("./a.js")
       """
-
-    model.readFile = (path) ->
-      content = files[path]
-
-      Promise.resolve new Blob [content]
 
     model.include(["/a.js"])
     .then ([a]) ->
@@ -66,44 +79,60 @@ describe "System Module", ->
       done()
     , 100
 
-  it "should return export if present", ->
-    model = Model()
-
-    model.include Associations, SystemModule
-
-    files =
-      "/wat.js": """
-        module.exports = "wat";
-      """
-
-    model.readFile = (path) ->
-      content = files[path]
-
-      Promise.resolve new Blob [content]
-
-    model.open
-      path: "/wat.js"
-      type: "application/javascript"
-    .then (moduleExports) ->
-      assert.equal moduleExports, "wat"
-
-  it "should work even if the file doesn't assign to module.exports"
-  ->
-    model = Model()
-
-    model.include SystemModule
-
-    files =
+  it "should work even if the file doesn't assign to module.exports", ->
+    model = makeSystemFS
       "/wat.js": """
         exports.yolo = "wat";
       """
 
-    model.readFile = (path) ->
-      content = files[path]
+    model.include ["/wat.js"]
+    .then ([wat]) ->
+      assert.equal wat.yolo, "wat"
 
-      Promise.resolve new Blob [content]
+  it "should work with relative paths in subfolders", ->
+    model = makeSystemFS
+      "/main.js": """
+        module.exports = require("./folder/a.js");
+      """
+      "/folder/a.js": """
+        module.exports = require("./b.js");
+      """
+      "/folder/b.js": """
+        module.exports = "b";
+      """
 
-    model.open
-      path: "/wat.js"
-    .then (moduleExports) ->
-      assert.equal moduleExports.yolo, "wat"
+    model.include ["/main.js"]
+    .then ([main]) ->
+      assert.equal main, "b"
+
+  it "should work with absolute paths in subfolders", ->
+    model = makeSystemFS
+      "/main.js": """
+        module.exports = require("./folder/a.js");
+      """
+      "/folder/a.js": """
+        module.exports = require("/b.js");
+      """
+      "/b.js": """
+        module.exports = "b";
+      """
+
+    model.include ["/main.js"]
+    .then ([main]) ->
+      assert.equal main, "b"
+
+  it "should require .jadelet sources", ->
+    model = makeSystemFS
+      "/main.coffee": """
+        template = require "./button.jadelet"
+
+        module.exports =
+          buttonTemplate: template
+      """
+      "/button.jadelet": """
+        button(@click)= @text
+      """
+
+    model.include ["/main.coffee"]
+    .then ([main]) ->
+      assert typeof main.buttonTemplate is "function"

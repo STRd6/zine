@@ -23,7 +23,7 @@ module.exports = (I, self) ->
   # images, blobs, html, json
   ###
 
-  {fileSeparator, normalizePath} = require "../util"
+  {absolutizePath, fileSeparator, normalizePath} = require "../util"
 
   # Wrap program in async include wrapper
   # Replaces references to require('something') with local variables in an async wrapper function
@@ -68,6 +68,10 @@ module.exports = (I, self) ->
       module =
         path: dirname
 
+      # This can return false positives if it just matches the string and isn't
+      # really exporting
+      hasExports = program.match /module\.exports/
+
       # Use a defineProperty setter on module.exports to trigger when the module
       # successfully exports because it can all be async madness.
       exports = {}
@@ -83,8 +87,10 @@ module.exports = (I, self) ->
       localSystem = Object.assign {}, self,
         include: (moduleIdentifiers) ->
           relativeIdentifiers = moduleIdentifiers.map (identifier) ->
-            # TODO: Allow absolute paths?
-            normalizePath dirname + identifier
+            if identifier.match /^\//
+              absolutizePath "/", identifier
+            else
+              absolutizePath dirname, identifier
 
           self.include relativeIdentifiers, state
       # TODO: Also make working directory relative paths for readFile and writeFile
@@ -100,11 +106,17 @@ module.exports = (I, self) ->
       args = Object.keys(context)
       values = args.map (name) -> context[name]
 
-      try
+      Promise.resolve()
+      .then ->
         Function(args..., program).apply(module, values)
-      catch e
-        console.error e
-        reject e
+      .catch reject
+
+      # Just resolve next tick if we're not specifically exporting
+      # can be fun with race conditions, but just export your biz, yo!
+      if !hasExports
+        setTimeout ->
+          resolve(module)
+        , 0
 
   Object.assign self,
     # still experimenting with the API
@@ -114,22 +126,57 @@ module.exports = (I, self) ->
     # This is an internal API and isn't recommended for general use
     # The state determines an include root and should is the same for a single
     # app or process
+    # TODO: Rename to something else because this replaces `Model#include`
     include: (moduleIdentifiers, state={}) ->
       state.cache ?= {}
 
-      Promise.all moduleIdentifiers.map (identifier) ->
-        state.cache[identifier] ?= self.readFile(identifier)
-        .then (file) ->
-          file.readAsText()
+      Promise.all moduleIdentifiers.map (absolutePath) ->
+        state.cache[absolutePath] ?= self.loadProgram(absolutePath)
         .then (sourceProgram) ->
-          loadModule sourceProgram, identifier, state
+          loadModule sourceProgram, absolutePath, state
         .then (module) ->
           module.exports
+
+    loadProgram: (path, basePath="/") ->
+      self.fs.read absolutizePath(basePath, path)
+      .then (file) ->
+        [compiler] = compilers.filter ({filter}) ->
+          filter file
+
+        if compiler
+          compiler.fn(file)
+        else
+          throw new Error "Could not find a compiler for file: #{path}"
 
     # May want to reconsider this name
     loadModule: (args...) ->
       self.Achievement.unlock "Execute code"
       loadModule(args...)
+
+# Compile files based on type to JS program source
+compilers = [{
+  filter: ({path}) ->
+    path.match /\.js/
+  fn: ({blob}) ->
+    blob.readAsText()
+}, {
+  filter: ({path}) ->
+    path.match /\.coffee/
+  fn: ({blob}) ->
+    blob.readAsText()
+    .then (coffeeSource) ->
+      CoffeeScript.compile coffeeSource, bare: true
+}, {
+  filter: ({path}) ->
+    path.match /\.jadelet/
+  fn: ({blob}) ->
+    blob.readAsText()
+    .then (jadeletSource) ->
+      Hamlet.compile jadeletSource,
+        compiler: CoffeeScript
+        mode: "jade"
+        runtime: "Hamlet"
+}]
 
 annotateSourceURL = (program, path) ->
   """

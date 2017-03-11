@@ -111,6 +111,7 @@ module.exports = (dbName='zine-os') ->
       .then (programText) ->
         Function(programText)()
 
+    Observable: UI.Observable
     UI: UI
 
   invokeBefore UI.Modal, "hide", ->

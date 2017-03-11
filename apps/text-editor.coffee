@@ -39,10 +39,12 @@ module.exports = ->
 
   global.aceEditor = aceEditor
 
-  initSession = (file) ->
+  initSession = (file, path) ->
     # TODO: Update window title
     file.readAsText()
     .then (content) ->
+      if path
+        handlers.currentFile path
       session.setValue(content)
       # TODO: Correct modes
       mode = "coffee"

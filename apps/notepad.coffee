@@ -18,9 +18,10 @@ module.exports = ->
   textarea.spellcheck = false
 
   handlers = Model().include(FileIO).extend
-    loadFile: (blob) ->
+    loadFile: (blob, path) ->
       blob.readAsText()
       .then (text) ->
+        handlers.currentPath path
         textarea.value = text
     newFile: ->
       textarea.value = ""
@@ -112,7 +113,12 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: "Notepad.exe"
+    title: ->
+      path = handlers.currentPath()
+      if path
+        "Notepad.exe [#{path}]"
+      else
+        "Notepad.exe"
     content: textarea
     menuBar: menuBar.element
     width: 640

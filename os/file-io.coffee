@@ -7,16 +7,18 @@
 #   `newFile` Initialize the application to an empty state.
 
 module.exports = (I, self) ->
+  {Observable} = system
   {Modal} = system.UI
 
-  currentPath = ""
+  currentPath = Observable ""
   # TODO: Update saved to be false when model changes
   saved = true
 
   self.extend
+    currentPath: currentPath
     new: ->
       if saved
-        currentPath = ""
+        currentPath ""
         self.newFile()
       else
         Modal.confirm "You will lose unsaved progress, continue?"
@@ -28,10 +30,10 @@ module.exports = (I, self) ->
     open: ->
       # TODO: Prompt if unsaved
       # TODO: File browser
-      Modal.prompt "File Path", currentPath
+      Modal.prompt "File Path", currentPath()
       .then (newPath) ->
         if newPath
-          currentPath = newPath
+          currentPath newPath
         else
           throw new Error "No path given"
       .then (path) ->
@@ -40,20 +42,20 @@ module.exports = (I, self) ->
         self.loadFile file
 
     save: ->
-      if currentPath
+      if currentPath()
         self.saveData()
         .then (blob) ->
-          system.writeFile currentPath, blob, true
+          system.writeFile currentPath(), blob, true
         .then ->
-          currentPath
+          currentPath()
       else
         self.saveAs()
 
     saveAs: ->
-      Modal.prompt "File Path", currentPath
+      Modal.prompt "File Path", currentPath()
       .then (path) ->
         if path
-          currentPath = path
+          currentPath path
           self.save()
 
   return self

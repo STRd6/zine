@@ -11,7 +11,7 @@ DSad = require "../apps/dungeon-of-sadness"
 openWith = (App) ->
   (file) ->
     app = App()
-    app.loadFile(file.blob)
+    app.loadFile(file.blob, file.path)
     document.body.appendChild app.element
 
 module.exports = (I, self) ->

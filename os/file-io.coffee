@@ -11,35 +11,44 @@ module.exports = (I, self) ->
   {Modal} = system.UI
 
   currentPath = Observable ""
-  # TODO: Update saved to be false when model changes
-  saved = true
+  saved = Observable true
+
+  confirmUnsaved = ->
+    new Promise (resolve, reject) ->
+      Modal.confirm "You will lose unsaved progress, continue?"
+      .then (result) ->
+        if result
+          resolve()
+        else
+          reject()
 
   self.extend
     currentPath: currentPath
+    saved: saved
     new: ->
-      if saved
+      if saved()
         currentPath ""
         self.newFile()
       else
-        Modal.confirm "You will lose unsaved progress, continue?"
-        .then (result) ->
-          if result
-            saved = true
-            self.newFile()
+        confirmUnsaved()
+        .then ->
+          saved true
+          self.newFile()
 
     open: ->
-      # TODO: Prompt if unsaved
-      # TODO: File browser
-      Modal.prompt "File Path", currentPath()
-      .then (newPath) ->
-        if newPath
-          currentPath newPath
-        else
-          throw new Error "No path given"
-      .then (path) ->
-        system.readFile path, true
-      .then (file) ->
-        self.loadFile file
+      confirmUnsaved()
+      .then  ->
+        # TODO: File browser
+        Modal.prompt "File Path", currentPath()
+        .then (newPath) ->
+          if newPath
+            currentPath newPath
+          else
+            throw new Error "No path given"
+        .then (path) ->
+          system.readFile path, true
+        .then (file) ->
+          self.loadFile file
 
     save: ->
       if currentPath()
@@ -47,6 +56,7 @@ module.exports = (I, self) ->
         .then (blob) ->
           system.writeFile currentPath(), blob, true
         .then ->
+          saved true
           currentPath()
       else
         self.saveAs()

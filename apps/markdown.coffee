@@ -10,19 +10,19 @@ module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
 
   container = document.createElement 'container'
-  container.style.padding = "1em"
+  container.style.padding = "1rem"
 
-  rootDir = "/" # TODO: Update root dir to be the parent of the file
+  baseDir = ""
 
   rewriteURL = (url) ->
     Promise.resolve()
     .then ->
       if url.match /^\.\.?\// # Relative paths
-        targetPath = absolutizePath rootDir, url
-  
+        targetPath = absolutizePath baseDir, url
+
         system.urlForPath(targetPath)
       else if url.match /^\// # Absolute paths
-        targetPath = absolutizePath "/", url
+        targetPath = absolutizePath "", url
         system.urlForPath(targetPath)
       else
         url
@@ -37,11 +37,13 @@ module.exports = ->
           img.src = url
 
   handlers = Model().include(FileIO).extend
-    loadFile: (blob) ->
+    loadFile: (blob, path) ->
+      baseDir = path.replace /\/[^/]*$/, ""
+
       blob.readAsText()
       .then (textContent) ->
         container.innerHTML = marked(textContent)
-        
+
         rewriteURLs(container)
 
     saveData: ->

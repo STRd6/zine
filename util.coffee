@@ -1,7 +1,7 @@
 fileSeparator = "/"
 
 normalizePath = (path) ->
-  path.replace(/\/\/+/, fileSeparator) # /// -> /
+  path.replace(/\/+/, fileSeparator) # /// -> /
   .replace(/\/[^/]*\/\.\./g, "") # /base/something/.. -> /base
   .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
 

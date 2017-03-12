@@ -64,7 +64,11 @@ module.exports = Explorer = (options={}) ->
           if newPath
             system.deleteFile(file.path)
             system.writeFile(newPath, file.blob)
-      properties: -> #TODO
+      properties: ->
+        pre = document.createElement "pre"
+        pre.textContent = JSON.stringify(file, null, 2)
+        pre.style = "padding: 1rem"
+        Modal.show pre
       editMIMEType: ->
         Modal.prompt "MIME Type", file.type
         .then (newType) ->

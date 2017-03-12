@@ -14,6 +14,8 @@ module.exports = (I, self) ->
   saved = Observable true
 
   confirmUnsaved = ->
+    return Promise.resolve() if saved()
+
     new Promise (resolve, reject) ->
       Modal.confirm "You will lose unsaved progress, continue?"
       .then (result) ->

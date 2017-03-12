@@ -17,14 +17,21 @@ module.exports = ->
   textarea = document.createElement "textarea"
   textarea.spellcheck = false
 
+  initialValue = ""
+
+  textarea.addEventListener "input", ->
+    handlers.saved textarea.value is initialValue
+
   handlers = Model().include(FileIO).extend
     loadFile: (blob, path) ->
       blob.readAsText()
       .then (text) ->
         handlers.currentPath path
-        textarea.value = text
+        initialValue = text
+        textarea.value = initialValue
     newFile: ->
-      textarea.value = ""
+      initialValue = ""
+      textarea.value = initialValue
     saveData: ->
       data = new Blob [textarea.value],
         type: "text/plain"
@@ -115,14 +122,33 @@ module.exports = ->
   windowView = Window
     title: ->
       path = handlers.currentPath()
-      if path
-        "Notepad.exe [#{path}]"
+      if handlers.saved()
+        savedIndicator = ""
       else
-        "Notepad.exe"
+        savedIndicator = "*"
+
+      if path
+        path = " - #{path}"
+
+      "Notepad.exe#{path}#{savedIndicator}"
+
     content: textarea
     menuBar: menuBar.element
     width: 640
     height: 480
+
+  # Key handling
+  windowView.element.setAttribute("tabindex", "-1")
+  windowView.element.addEventListener "keydown", (e) ->
+    {ctrlKey:ctrl, key} = e
+    if ctrl
+      switch key
+        when "s"
+          e.preventDefault()
+          handlers.save()
+        when "o"
+          e.preventDefault()
+          handlers.open()
 
   windowView.loadFile = handlers.loadFile
 

@@ -48,7 +48,7 @@ module.exports = (I, self) ->
     name: "Text Editor"
     filter: (file) ->
       file.type.match(/^text\//) or
-      file.type is "application/javascript"
+      file.type.match(/^application\/javascript/)
     fn: openWith(Notepad)
   }, {
     name: "Code Editor"
@@ -60,7 +60,7 @@ module.exports = (I, self) ->
     name: "Spreadsheet"
     filter: (file) ->
       # TODO: This actually only handles JSON arrays
-      file.type is "application/json"
+      file.type.match(/^application\/json/)
     fn: openWith(Spreadsheet)
   }, {
     name: "Image Viewer"

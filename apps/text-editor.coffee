@@ -49,6 +49,15 @@ module.exports = ->
     jadelet: "jade"
     js: "javascript"
 
+  mimes =
+    js: "application/javascript"
+    json: "application/json"
+
+  mimeTypeFor = (path) ->
+    type = mimes[extensionFor(path)] or "text/plain"
+
+    "#{type}; charset=utf-8"
+
   setModeFor = (path) ->
     extension = extensionFor(path)
     mode = modes[extension] or extension
@@ -73,9 +82,8 @@ module.exports = ->
     newFile: ->
       session.setValue ""
     saveData: ->
-      # TODO: Maintain proper mime type
       data = new Blob [session.getValue()],
-        type: "text/plain"
+        type: mimeTypeFor(handlers.currentPath())
 
       return Promise.resolve data
 

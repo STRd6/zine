@@ -23,7 +23,7 @@ makeSystemFS = (files) ->
   return model
 
 describe "System Module", ->
-  it "should include modules in files async", ->
+  it "should vivifyPrograms in files asynchronously", ->
     model = makeSystemFS
       "/test.js": """
         module.exports = 'yo';
@@ -43,21 +43,59 @@ describe "System Module", ->
         module.exports = Math.random();
       """
 
-    model.include(["/root.js", "/wat.js", "/rand.js", "/rand.js"])
+    model.vivifyPrograms(["/root.js", "/wat.js", "/rand.js", "/rand.js"])
     .then ([root, wat, r1, r2]) ->
       console.log root, wat, r1, r2
       assert.equal r1, r2
       assert.equal root, 'yo 2 rad hella'
 
   it "should throw an error when requiring a file that doesn't exist", (done) ->
-    @timeout 250
+    #@timeout 250
 
     model = makeSystemFS
       "/a.js": """
         module.exports = require("./b.js")
       """
 
-    model.include(["/a.js"])
+    model.vivifyPrograms(["/a.js"])
+    .catch (e) ->
+      done()
+  
+  it "should throw an error when requiring a file that throws an error", (done) ->
+    @timeout 250
+
+    model = makeSystemFS
+      "/a.js": """
+        throw new Error("I am error")
+      """
+
+    model.vivifyPrograms(["/a.js"])
+    .catch (e) ->
+      done()
+
+  it "should require valid json", ->
+    @timeout 250
+
+    model = makeSystemFS
+      "/a.json": """
+        {
+          "yolo": "wat"
+        }
+      """
+
+    model.vivifyPrograms(["/a.json"])
+    .then ([json]) ->
+      assert.equal json.yolo, "wat"
+
+  it "should throw an error when requiring invalid json", (done) ->
+    @timeout 250
+
+    model = makeSystemFS
+      "/a.json": """
+        yolo: 'wat'
+      """
+
+    model.vivifyPrograms(["/a.json"])
     .catch (e) ->
       done()
 
@@ -70,7 +108,7 @@ describe "System Module", ->
         module.exports = require("./a.js")
       """
 
-    model.include(["/a.js"])
+    model.vivifyPrograms(["/a.js"])
     .then ([a]) ->
       # Never get here
       assert false
@@ -85,7 +123,7 @@ describe "System Module", ->
         exports.yolo = "wat";
       """
 
-    model.include ["/wat.js"]
+    model.vivifyPrograms ["/wat.js"]
     .then ([wat]) ->
       assert.equal wat.yolo, "wat"
 
@@ -101,7 +139,7 @@ describe "System Module", ->
         module.exports = "b";
       """
 
-    model.include ["/main.js"]
+    model.vivifyPrograms ["/main.js"]
     .then ([main]) ->
       assert.equal main, "b"
 
@@ -117,7 +155,7 @@ describe "System Module", ->
         module.exports = "b";
       """
 
-    model.include ["/main.js"]
+    model.vivifyPrograms ["/main.js"]
     .then ([main]) ->
       assert.equal main, "b"
 
@@ -133,6 +171,6 @@ describe "System Module", ->
         button(@click)= @text
       """
 
-    model.include ["/main.coffee"]
+    model.vivifyPrograms ["/main.coffee"]
     .then ([main]) ->
       assert typeof main.buttonTemplate is "function"

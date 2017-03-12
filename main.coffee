@@ -25,3 +25,5 @@ system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-3/zine3.exe", new Blob [""], type: "application/exe"
 
 require("./issues/2017-03")()
+
+system.autoboot()

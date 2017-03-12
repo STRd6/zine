@@ -17,10 +17,14 @@ module.exports = (I, self) ->
   Circular includes will never reslove
   # TODO: Fail early on circular includes, challenging because of async
 
-  # TODO: Succeed on files that don't assign module.exports
+  # Currently can require
+  # js, coffee, jadelet, json, cson
 
-  # TODO: Require .coffee/arbitrary files
-  # images, blobs, html, json
+  # TODO: Require data files
+  # images, blobs
+  # TODO: Require special files
+  # html, csv
+  
   ###
 
   {absolutizePath, fileSeparator, normalizePath} = require "../util"
@@ -50,7 +54,7 @@ module.exports = (I, self) ->
     requirePaths = requirePaths
 
     """
-      system.include(#{JSON.stringify(requirePaths)})
+      return system.vivifyPrograms(#{JSON.stringify(requirePaths)})
       .then(function(__reqResults) {
       (function(#{tmpVars.join(', ')}){
       #{rewrittenProgram}
@@ -63,14 +67,8 @@ module.exports = (I, self) ->
       program = annotateSourceURL(rewriteRequires(content), path)
       dirname = path.split(fileSeparator)[0...-1].join(fileSeparator) or fileSeparator
 
-      # May need to scan for a module.exports to see if it is the kind of
-      # module that exports things vs just plain side effects code
       module =
         path: dirname
-
-      # This can return false positives if it just matches the string and isn't
-      # really exporting
-      hasExports = program.match /module\.exports/
 
       # Use a defineProperty setter on module.exports to trigger when the module
       # successfully exports because it can all be async madness.
@@ -83,16 +81,16 @@ module.exports = (I, self) ->
           # Trigger complete
           resolve(module)
 
-      # Apply relative path wrapper for system.include
+      # Apply relative path wrapper for system.vivifyPrograms
       localSystem = Object.assign {}, self,
-        include: (moduleIdentifiers) ->
+        vivifyPrograms: (moduleIdentifiers) ->
           relativeIdentifiers = moduleIdentifiers.map (identifier) ->
             if identifier.match /^\//
               absolutizePath "/", identifier
             else
               absolutizePath dirname, identifier
 
-          self.include relativeIdentifiers, state
+          self.vivifyPrograms relativeIdentifiers, state
       # TODO: Also make working directory relative paths for readFile and writeFile
 
       context =
@@ -111,6 +109,12 @@ module.exports = (I, self) ->
         Function(args..., program).apply(module, values)
       .catch reject
 
+      # Scan for a module.exports to see if it is the kind of
+      # module that exports things vs just plain side effects code
+      # This can return false positives if it just matches the string and isn't
+      # really exporting, regex is not a parser, yolo, etc.
+      hasExports = program.match /module\.exports/
+
       # Just resolve next tick if we're not specifically exporting
       # can be fun with race conditions, but just export your biz, yo!
       if !hasExports
@@ -119,21 +123,38 @@ module.exports = (I, self) ->
         , 0
 
   Object.assign self,
+    autoboot: ->
+      self.fs.list "/System/Boot"
+      .then (files) ->
+        bootablePaths = files.filter ({blob}) ->
+          blob?
+        .map ({path}) ->
+          path
+
+        self.vivifyPrograms(bootablePaths)
+
     # still experimenting with the API
-    # Async include in the vein of require.js
+    # Async 'require' in the vein of require.js
     # it's horrible but seems necessary
 
     # This is an internal API and isn't recommended for general use
-    # The state determines an include root and should is the same for a single
+    # The state determines an include root and should be the same for a single
     # app or process
-    # TODO: Rename to something else because this replaces `Model#include`
-    include: (moduleIdentifiers, state={}) ->
+    vivifyPrograms: (absolutePaths, state={}) ->
       state.cache ?= {}
 
-      Promise.all moduleIdentifiers.map (absolutePath) ->
+      Promise.all absolutePaths.map (absolutePath) ->
         state.cache[absolutePath] ?= self.loadProgram(absolutePath)
         .then (sourceProgram) ->
-          loadModule sourceProgram, absolutePath, state
+          # loadProgram returns an object in the case of JSON because it has no
+          # dependencies and doesn't need an require re-writing
+          # Having this special case lets us take a short cut without having to
+          # Parse/unparse json extra.
+          # This may be handy for other binary assets like images, etc. as well
+          if typeof sourceProgram is "string"
+            loadModule sourceProgram, absolutePath, state
+          else
+            exports: sourceProgram
         .then (module) ->
           module.exports
 
@@ -156,19 +177,19 @@ module.exports = (I, self) ->
 # Compile files based on type to JS program source
 compilers = [{
   filter: ({path}) ->
-    path.match /\.js/
+    path.match /\.js$/
   fn: ({blob}) ->
     blob.readAsText()
 }, {
   filter: ({path}) ->
-    path.match /\.coffee/
+    path.match /\.coffee$/
   fn: ({blob}) ->
     blob.readAsText()
     .then (coffeeSource) ->
       CoffeeScript.compile coffeeSource, bare: true
 }, {
   filter: ({path}) ->
-    path.match /\.jadelet/
+    path.match /\.jadelet$/
   fn: ({blob}) ->
     blob.readAsText()
     .then (jadeletSource) ->
@@ -176,6 +197,18 @@ compilers = [{
         compiler: CoffeeScript
         mode: "jade"
         runtime: "Hamlet"
+}, {
+  filter: ({path}) ->
+    path.match /\.json$/
+  fn: ({blob}) ->
+    blob.readAsJSON()
+}, {
+  filter: ({path}) ->
+    path.match /\.cson$/
+  fn: ({blob}) ->
+    blob.readAsText()
+    .then (coffeeSource) ->
+      "module.exports = #{CoffeeScript.compile(source, bare: true)}"
 }]
 
 annotateSourceURL = (program, path) ->

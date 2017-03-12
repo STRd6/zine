@@ -51,10 +51,11 @@ module.exports = (I, self) ->
       file.type.match(/^application\/javascript/)
     fn: openWith(Notepad)
   }, {
-    name: "Code Editor"
+    name: "Ace Editor"
     filter: (file) ->
       file.path.match(/\.coffee$/) or
-      file.path.match(/\.js$/)
+      file.path.match(/\.js$/) or
+      file.path.match(/\.md$/)
     fn: openWith(CodeEditor)
   }, {
     name: "Spreadsheet"

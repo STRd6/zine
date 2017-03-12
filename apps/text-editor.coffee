@@ -48,10 +48,12 @@ module.exports = ->
   modes =
     jadelet: "jade"
     js: "javascript"
+    md: "markdown"
 
   mimes =
     js: "application/javascript"
     json: "application/json"
+    md: "text/markdown"
 
   mimeTypeFor = (path) ->
     type = mimes[extensionFor(path)] or "text/plain"

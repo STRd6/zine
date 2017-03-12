@@ -23,6 +23,8 @@ System Features
 
 [ ] Custom Models/Views
 
+[ ] Drag 'n' Drop
+
 Applications
 ------------
 
@@ -37,6 +39,12 @@ Tactics Game Sandbox
 Markdown / Wiki
 
 Image Munger
+
+Programatic Animator
+
+Pixel Editor
+
+Music Maker
 
 Network Social
 --------------

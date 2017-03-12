@@ -40,11 +40,10 @@ module.exports = ->
   global.aceEditor = aceEditor
 
   initSession = (file, path) ->
-    # TODO: Update window title
     file.readAsText()
     .then (content) ->
       if path
-        handlers.currentFile path
+        handlers.currentPath path
       session.setValue(content)
       # TODO: Correct modes
       mode = "coffee"
@@ -78,7 +77,12 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: Observable "Ace"
+    title: ->
+      path = handlers.currentPath()
+      if path
+        "Ace [#{path}]"
+      else
+        "Ace"
     content: aceWrap
     menuBar: menuBar.element
     width: 640

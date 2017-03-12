@@ -27,6 +27,26 @@ module.exports = Explorer = (options={}) ->
         newPath = path + file.name
         system.writeFile(newPath, file, true)
 
+  explorerContextMenu = ContextMenu
+    items: parseMenu """
+      [N]ew File
+    """
+    handlers:
+      newFile: ->
+        Modal.prompt "Filename", "#{path}newfile.txt"
+        .then (newFilePath) ->
+          if newFilePath
+            system.writeFile newFilePath, new Blob [], type: "text/plain"
+
+  explorer.oncontextmenu = (e) ->
+    return if e.defaultPrevented
+    e.preventDefault()
+
+    explorerContextMenu.display
+      inElement: document.body
+      x: e.pageX
+      y: e.pageY
+
   contextMenuFor = (file, e) ->
     return if e.defaultPrevented
     e.preventDefault()
@@ -34,7 +54,6 @@ module.exports = Explorer = (options={}) ->
     contextMenuHandlers =
       open: ->
         system.open(file)
-      openWith: -> #TODO
       cut: -> #TODO
       copy: -> #TODO
       delete: ->

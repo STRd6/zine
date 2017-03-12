@@ -2,7 +2,7 @@
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
 Notepad = require "../apps/notepad"
-TextEditor = require "../apps/text-editor"
+CodeEditor = require "../apps/text-editor"
 Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
 Markdown = require "../apps/markdown"
@@ -50,6 +50,12 @@ module.exports = (I, self) ->
       file.type.match(/^text\//) or
       file.type is "application/javascript"
     fn: openWith(Notepad)
+  }, {
+    name: "Code Editor"
+    filter: (file) ->
+      file.path.match(/\.coffee$/) or
+      file.path.match(/\.js$/)
+    fn: openWith(CodeEditor)
   }, {
     name: "Spreadsheet"
     filter: (file) ->

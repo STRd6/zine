@@ -103,6 +103,11 @@ module.exports = (dbName='zine-os') ->
       path = normalizePath "/#{path}"
       fs.update(path, changes)
 
+    urlForPath: (path) ->
+      fs.read(path)
+      .then ({blob}) ->
+        URL.createObjectURL(blob)
+
     # NOTE: These are experimental commands to run code
     execJS: (path) ->
       self.readFile(path)

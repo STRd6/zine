@@ -36,3 +36,21 @@ Image.fromBlob = (blob) ->
 
 FileList::forEach ?= (args...) ->
   Array::forEach.apply(this, args)
+
+# Event#path polyfill for Firefox
+unless "path" in Event.prototype
+  Object.defineProperty Event.prototype, "path",
+    get: ->
+      path = []
+      currentElem = this.target
+      while currentElem
+        path.push currentElem
+        currentElem = currentElem.parentElement
+
+      if path.indexOf(window) is -1 && path.indexOf(document) is -1
+        path.push(document)
+
+      if path.indexOf(window) is -1
+        path.push(window)
+
+      path

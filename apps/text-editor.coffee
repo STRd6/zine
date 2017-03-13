@@ -51,6 +51,7 @@ module.exports = ->
     md: "markdown"
 
   mimes =
+    html: "text/html"
     js: "application/javascript"
     json: "application/json"
     md: "text/markdown"

@@ -40,9 +40,10 @@ module.exports = (I, self) ->
 
         system.loadModule sourceProgram, file.path
   }, {
-    name: "Markdown"
+    name: "Markdown" # TODO: This renders html now too, so may need a broader name
     filter: (file) ->
-      file.path.match /\.md$/
+      file.path.match(/\.md$/) or
+      file.path.match(/\.html$/)
     fn: openWith(Markdown)
   }, {
     name: "Text Editor"
@@ -54,6 +55,7 @@ module.exports = (I, self) ->
     name: "Ace Editor"
     filter: (file) ->
       file.path.match(/\.coffee$/) or
+      file.path.match(/\.html$/) or
       file.path.match(/\.js$/) or
       file.path.match(/\.md$/)
     fn: openWith(CodeEditor)

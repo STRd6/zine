@@ -14,6 +14,7 @@ module.exports = ->
 
   container = document.createElement 'container'
   container.style.padding = "1rem"
+  container.style.userSelect = "initial"
 
   baseDir = ""
   navigationStack = []

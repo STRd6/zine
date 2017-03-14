@@ -27,7 +27,7 @@ module.exports = (I, self) ->
     fn: (file) ->
       file.blob.readAsText()
       .then (sourceProgram) ->
-        system.loadModule sourceProgram, file.path
+        system.spawn sourceProgram, file.path
   }, {
     # CoffeeScript
     name: "Execute"
@@ -38,7 +38,7 @@ module.exports = (I, self) ->
       .then (coffeeSource) ->
         sourceProgram = CoffeeScript.compile coffeeSource, bare: true
 
-        system.loadModule sourceProgram, file.path
+        system.spawn sourceProgram, file.path
   }, {
     name: "Markdown" # TODO: This renders html now too, so may need a broader name
     filter: (file) ->
@@ -58,6 +58,7 @@ module.exports = (I, self) ->
       file.path.match(/\.cson$/) or
       file.path.match(/\.html$/) or
       file.path.match(/\.js$/) or
+      file.path.match(/\.json$/) or
       file.path.match(/\.md$/) or
       file.path.match(/\.styl$/)
     fn: openWith(CodeEditor)

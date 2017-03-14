@@ -84,13 +84,15 @@ module.exports = (I, self) ->
       # Apply relative path wrapper for system.vivifyPrograms
       localSystem = Object.assign {}, self,
         vivifyPrograms: (moduleIdentifiers) ->
-          relativeIdentifiers = moduleIdentifiers.map (identifier) ->
+          absoluteIdentifiers = moduleIdentifiers.map (identifier) ->
             if identifier.match /^\//
               absolutizePath "/", identifier
-            else
+            else if identifier.match /^.?.\//
               absolutizePath dirname, identifier
+            else
+              identifier
 
-          self.vivifyPrograms relativeIdentifiers, state
+          self.vivifyPrograms absoluteIdentifiers, state
       # TODO: Also make working directory relative paths for readFile and writeFile
 
       context =
@@ -159,8 +161,12 @@ module.exports = (I, self) ->
           module.exports
 
     loadProgram: (path, basePath="/") ->
-      self.fs.read absolutizePath(basePath, path)
+      self.readForRequire path, basePath
       .then (file) ->
+        # system modules are loaded as functions right now, so just return them
+        if typeof file is "function"
+          return file
+        
         [compiler] = compilers.filter ({filter}) ->
           filter file
 
@@ -173,6 +179,48 @@ module.exports = (I, self) ->
     loadModule: (args...) ->
       self.Achievement.unlock "Execute code"
       loadModule(args...)
+
+    spawn: (args...) ->
+      loadModule(args...)
+      .then ({exports}) ->
+        if typeof exports is "function" and exports.length is 0
+          result = exports()
+
+          if result.element
+            document.body.appendChild result.element
+
+    # Handle requiring with or without explicit extension
+    #     require "a"
+    # First check:
+    #     a
+    #     a.coffee
+    #     a.jadelet
+    #     a.js
+    readForRequire: (path, basePath) ->
+      # Hack to load 'system' modules
+      isModule = !path.match(/^.?.?\//)
+      if isModule
+        return Promise.resolve()
+        .then ->
+          require path
+
+      absolutePath = absolutizePath(basePath, path)
+
+      suffixes = ["", ".coffee", ".jadelet", ".js"]
+
+      p = suffixes.reduce (promise, suffix) ->
+        promise.then (file) ->
+          return file if file
+          self.fs.read("#{absolutePath}#{suffix}")
+      , Promise.resolve()
+
+      p.then (file) ->
+        unless file
+          tries = suffixes.map (suffix) ->
+            "#{absolutePath}#{suffix}"
+          throw new Error "File not found at path: #{absolutePath}. Tried #{tries}"
+
+        return file
 
 # Compile files based on type to JS program source
 compilers = [{

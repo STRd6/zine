@@ -55,9 +55,11 @@ module.exports = (I, self) ->
     name: "Ace Editor"
     filter: (file) ->
       file.path.match(/\.coffee$/) or
+      file.path.match(/\.cson$/) or
       file.path.match(/\.html$/) or
       file.path.match(/\.js$/) or
-      file.path.match(/\.md$/)
+      file.path.match(/\.md$/) or
+      file.path.match(/\.styl$/)
     fn: openWith(CodeEditor)
   }, {
     name: "Spreadsheet"

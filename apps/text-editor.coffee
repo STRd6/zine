@@ -46,9 +46,11 @@ module.exports = ->
       result[1]
 
   modes =
+    cson: "coffeescript"
     jadelet: "jade"
     js: "javascript"
     md: "markdown"
+    styl: "stylus"
 
   mimes =
     html: "text/html"

@@ -119,6 +119,13 @@ module.exports = (dbName='zine-os') ->
     Observable: UI.Observable
     UI: UI
 
+    dumpModules: ->
+      src = PACKAGE.source
+      Object.keys(src).forEach (path) ->
+        file = src[path]
+        blob = new Blob [file.content]
+        self.writeFile("System/#{path}", blob)
+
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"
 

@@ -24,7 +24,7 @@ module.exports = (I, self) ->
   # images, blobs
   # TODO: Require special files
   # html, csv
-  
+
   ###
 
   {absolutizePath, fileSeparator, normalizePath} = require "../util"
@@ -166,7 +166,7 @@ module.exports = (I, self) ->
         # system modules are loaded as functions right now, so just return them
         if typeof file is "function"
           return file
-        
+
         [compiler] = compilers.filter ({filter}) ->
           filter file
 
@@ -194,6 +194,8 @@ module.exports = (I, self) ->
     # First check:
     #     a
     #     a.coffee
+    #     a.coffee.md
+    #     a.litcoffee
     #     a.jadelet
     #     a.js
     readForRequire: (path, basePath) ->
@@ -206,7 +208,7 @@ module.exports = (I, self) ->
 
       absolutePath = absolutizePath(basePath, path)
 
-      suffixes = ["", ".coffee", ".jadelet", ".js"]
+      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js"]
 
       p = suffixes.reduce (promise, suffix) ->
         promise.then (file) ->
@@ -228,6 +230,14 @@ compilers = [{
     path.match /\.js$/
   fn: ({blob}) ->
     blob.readAsText()
+}, {
+  filter: ({path}) ->
+    path.match(/\.coffee.md$/) or
+    path.match(/\.litcoffee$/)
+  fn: ({blob}) ->
+    blob.readAsText()
+    .then (coffeeSource) ->
+      CoffeeScript.compile coffeeSource, bare: true, literate: true
 }, {
   filter: ({path}) ->
     path.match /\.coffee$/

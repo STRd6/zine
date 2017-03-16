@@ -40,7 +40,7 @@ module.exports = ->
   global.aceEditor = aceEditor
 
   extensionFor = (path) ->
-    result = path.match /\.(.+)$/
+    result = path.match /\.([^.]+)$/
 
     if result
       result[1]

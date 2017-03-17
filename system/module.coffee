@@ -163,8 +163,8 @@ module.exports = (I, self) ->
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
       .then (file) ->
-        # system modules are loaded as functions right now, so just return them
-        if typeof file is "function"
+        # system modules are loaded as functions/objects right now, so just return them
+        unless file?.path? and file?.blob?
           return file
 
         [compiler] = compilers.filter ({filter}) ->

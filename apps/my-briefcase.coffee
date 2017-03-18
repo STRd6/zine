@@ -21,18 +21,27 @@ do (d=document) ->
 
 
 module.exports = ->
-  {Window} = system.UI
+  {Observable, Window} = system.UI
 
   LoginTemplate = system.compileTemplate """
     a#LoginWithAmazon(@click)
       img(border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32")
   """
 
+  LoadedTemplate = system.compileTemplate """
+    section
+      h1 Loaded
+      p TODO: Show yo files
+  """
+
+  # Observable holding content element
+  content = Observable null
+
   receivedCredentials = ->
     console.log AWS.config.credentials
     id = AWS.config.credentials.identityId
 
-    content.removeChild content.querySelector('#LoginWithAmazon')
+    content LoadedTemplate()
 
     bucket = new AWS.S3
       params:
@@ -59,7 +68,7 @@ module.exports = ->
       .catch (e) ->
         console.error e
 
-  content = LoginTemplate
+  content LoginTemplate
     click: ->
       options = { scope : 'profile' }
       amazon.Login.authorize options, (resp) ->
@@ -87,7 +96,7 @@ module.exports = ->
     width: 640
     height: 480
 
-  document.body.appendChild windowView.element
+  return windowView
 
 pinvoke = (object, method, params...) ->
   new Promise (resolve, reject) ->

@@ -7,6 +7,7 @@ Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
 Markdown = require "../apps/markdown"
 DSad = require "../apps/dungeon-of-sadness"
+MyBriefcase = require "../apps/my-briefcase"
 
 openWith = (App) ->
   (file) ->
@@ -19,6 +20,17 @@ module.exports = (I, self) ->
   # to do the right thing
   # Prioritize handlers falling back to others
   handlers = [{
+    name: "Ace Editor"
+    filter: (file) ->
+      file.path.match(/\.coffee$/) or
+      file.path.match(/\.cson$/) or
+      file.path.match(/\.html$/) or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.json$/) or
+      file.path.match(/\.md$/) or
+      file.path.match(/\.styl$/)
+    fn: openWith(CodeEditor)
+  }, {
     # JavaScript
     name: "Execute"
     filter: (file) ->
@@ -51,17 +63,6 @@ module.exports = (I, self) ->
       file.type.match(/^text\//) or
       file.type.match(/^application\/javascript/)
     fn: openWith(Notepad)
-  }, {
-    name: "Ace Editor"
-    filter: (file) ->
-      file.path.match(/\.coffee$/) or
-      file.path.match(/\.cson$/) or
-      file.path.match(/\.html$/) or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.json$/) or
-      file.path.match(/\.md$/) or
-      file.path.match(/\.styl$/)
-    fn: openWith(CodeEditor)
   }, {
     name: "Spreadsheet"
     filter: (file) ->
@@ -114,6 +115,13 @@ module.exports = (I, self) ->
       file.path.match /feedback\.exe$/
     fn: ->
       require("../feedback")()
+  }, {
+    name: "My Briefcase"
+    filter: ({path}) ->
+      path.match /My Briefcase$/
+    fn: ->
+      app = MyBriefcase()
+      document.body.appendChild app.element
   }]
 
   # Open JSON arrays in spreadsheet

@@ -11,8 +11,15 @@ MyBriefcase = require "../apps/my-briefcase"
 
 openWith = (App) ->
   (file) ->
+    {path} = file
     app = App()
-    app.loadFile(file.blob, file.path)
+
+    system.readFile file.path
+    .then (blob) ->
+      app.loadFile(blob, path)
+    .catch (e) ->
+      debugger
+
     document.body.appendChild app.element
 
 module.exports = (I, self) ->

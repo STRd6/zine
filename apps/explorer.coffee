@@ -1,7 +1,6 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
-# TODO: Drag and drop files between folders
 # TODO: Drag and drop folders between folders
 # TODO: Drop files onto folders
 # TODO: Drop files onto applications
@@ -22,6 +21,8 @@ module.exports = Explorer = (options={}) ->
   explorer = document.createElement "explorer"
 
   Drop explorer, (e) ->
+    return if e.defaultPrevented
+
     fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
 
     if fileSelectionData
@@ -174,7 +175,6 @@ module.exports = Explorer = (options={}) ->
           return
 
         file.dblclick = ->
-          console.log "dblclick", file
           system.open file
 
         file.contextmenu = (e) ->
@@ -197,7 +197,7 @@ module.exports = Explorer = (options={}) ->
 
         explorer.appendChild fileElement
 
-      Object.keys(addedFolders).forEach (folderName) ->
+      Object.keys(addedFolders).reverse().forEach (folderName) ->
         folder =
           path: "#{path}#{folderName}/"
           relativePath: folderName
@@ -206,6 +206,8 @@ module.exports = Explorer = (options={}) ->
           dblclick: ->
             # Open folder in new window
             addWindow(folder.path)
+          dragstart: (e) ->
+            console.log e, folder
 
         folderElement = FolderTemplate folder
         explorer.insertBefore(folderElement, explorer.firstChild)

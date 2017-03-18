@@ -9,55 +9,12 @@ DexieFSDB = (dbName='fs') ->
 
   return db
 
-# FS Wrapper to DB
-DexieFS = (db) ->
-  Files = db.files
-
-  notify = (eventType, path) ->
-    (result) ->
-      self.trigger eventType, path
-      return result
-
-  self = Model()
-  .include(Bindable)
-  .extend
-    read: (path) ->
-      Files.get(path)
-
-    write: (path, blob) ->
-      now = +new Date
-
-      Files.put
-        path: path
-        blob: blob
-        size: blob.size
-        type: blob.type
-        createdAt: now
-        updatedAt: now
-      .then notify "write", path
-
-    update: (path, changes) ->
-      Files.update path, changes
-      .then notify "update", path
-
-    delete: (path) ->
-      Files.delete(path)
-      .then notify "delete", path
-
-    # TODO: Collapse folders
-    # .replace(/\/.*$/, "/")
-    list: (dir) ->
-      Files.where("path").startsWith(dir).toArray()
-      .then (files) ->
-        files.forEach (file) ->
-          file.relativePath = file.path.replace(dir, "")
-
-        return files
+DexieFS = require "./lib/dexie-fs"
+MountFS = require "./lib/mount-fs"
 
 uniq = (array) ->
   Array.from new Set array
 
-Bindable = require "bindable"
 Model = require "model"
 Achievement = require "./system/achievement"
 Associations = require "./system/associations"
@@ -68,7 +25,8 @@ UI = require "ui"
 module.exports = (dbName='zine-os') ->
   self = Model()
 
-  fs = DexieFS(DexieFSDB(dbName))
+  fs = MountFS()
+  fs.mount "/", DexieFS(DexieFSDB(dbName))
 
   self.include(Achievement, Associations, SystemModule, Template)
 
@@ -103,8 +61,6 @@ module.exports = (dbName='zine-os') ->
 
       path = normalizePath "/#{path}"
       fs.read(path)
-      .then ({blob}) ->
-        blob
 
     writeFile: (path, blob, userEvent) ->
       if userEvent
@@ -113,12 +69,10 @@ module.exports = (dbName='zine-os') ->
       path = normalizePath "/#{path}"
       fs.write path, blob
 
-    # TODO: Allow relative paths
     deleteFile: (path) ->
       path = normalizePath "/#{path}"
       fs.delete(path)
 
-    # TODO: Allow relative paths
     updateFile: (path, changes) ->
       path = normalizePath "/#{path}"
       fs.update(path, changes)

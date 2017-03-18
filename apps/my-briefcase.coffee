@@ -19,6 +19,7 @@ run files from it, load them in applications, save files there, and drag n drop
 between them.
 ###
 
+Explorer = require "./explorer"
 FileTemplate = require "../templates/file"
 FolderTemplate = require "../templates/folder"
 
@@ -69,11 +70,11 @@ module.exports = ->
         Bucket: "whimsy-fs"
 
     fs = S3FS(id, bucket)
-    fs.list()
-    .then (files) -> 
-      console.log files
-      update files
-      content explorer
+
+    system.fs.mount "/My Briefcase/", fs
+
+    content Explorer
+      path: "/My Briefcase/"
 
   AWS.config.update
     region: 'us-east-1'
@@ -112,49 +113,6 @@ module.exports = ->
   
           pinvoke AWS.config.credentials, "get"
           .then receivedCredentials
-
-  # TODO: Reconcile this with the Explorer view
-  explorer = document.createElement "explorer"
-  update = (files) ->
-    emptyElement explorer
-
-    addedFolders = {}
-
-    files.forEach (file) ->
-      if file.relativePath.match /\// # folder
-        folderPath = file.relativePath.replace /\/.*$/, ""
-        addedFolders[folderPath] = true
-        return
-
-      file.dblclick = ->
-        console.log "dblclick", file
-        system.open file
-
-      # file.contextmenu = (e) ->
-      #   contextMenuFor(file, e)
-
-      fileElement = FileTemplate file
-      if file.type.match /^image\//
-        file.blob.getURL()
-        .then (url) ->
-          icon = fileElement.querySelector('icon')
-          icon.style.backgroundImage = "url(#{url})"
-          icon.style.backgroundSize = "100%"
-          icon.style.backgroundPosition = "50%"
-
-      explorer.appendChild fileElement
-
-    Object.keys(addedFolders).forEach (folderName) ->
-      folder =
-        # path: "#{path}#{folderName}/"
-        relativePath: folderName
-        contextmenu: (e) -> #contextMenuForFolder(folder, e)
-        dblclick: ->
-          # Open folder in new window
-          ;# addWindow(folder.path)
-
-      folderElement = FolderTemplate folder
-      explorer.insertBefore(folderElement, explorer.firstChild)
 
 
   windowView = Window

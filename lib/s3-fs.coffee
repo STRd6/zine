@@ -1,3 +1,6 @@
+Bindable = require "bindable"
+Model = require "model"
+
 {pinvoke, startsWith, endsWith} = require "../util"
 
 delimiter = "/"
@@ -48,10 +51,8 @@ list = (bucket, id, dir) ->
     Prefix: prefix
     Delimiter: delimiter
   .then (result) ->
-    console.log result
-
     results = result.CommonPrefixes.map (p) ->
-      DirectoryEntry p.Prefix, id, prefix
+      FolderEntry p.Prefix, id, prefix
     .concat result.Contents.map (o) ->
       FileEntry o, id, prefix, bucket
     .map (entry) ->
@@ -61,7 +62,14 @@ list = (bucket, id, dir) ->
 
 module.exports = (id, bucket) ->
 
-  self =
+  notify = (eventType, path) ->
+    (result) ->
+      self.trigger eventType, path
+      return result
+
+  self = Model()
+  .include Bindable
+  .extend
     read: (path) ->
       unless startsWith path, delimiter
         path = delimiter + path
@@ -69,6 +77,7 @@ module.exports = (id, bucket) ->
       key = "#{id}#{path}"
 
       getFromS3(bucket, key)
+      .then notify "read", path
 
     write: (path, blob) ->
       unless startsWith path, delimiter
@@ -77,6 +86,7 @@ module.exports = (id, bucket) ->
       key = "#{id}#{path}"
 
       uploadToS3 bucket, key, blob
+      .then notify "write", path
 
     delete: (path) ->
       unless startsWith path, delimiter
@@ -85,9 +95,10 @@ module.exports = (id, bucket) ->
       key = "#{id}#{path}"
 
       deleteFromS3 bucket, key
+      .then notify "delete", path
 
-    list: (dir="/") ->
-      list bucket, id, dir
+    list: (folderPath="/") ->
+      list bucket, id, folderPath
 
 fetchFileMeta = (fileEntry, bucket) ->
   pinvoke bucket, "headObject",
@@ -100,12 +111,12 @@ fetchFileMeta = (fileEntry, bucket) ->
 fetchMeta = (entry, bucket) ->
   Promise.resolve()
   .then ->
-    return entry if entry.directory
+    return entry if entry.folder
 
     fetchFileMeta entry, bucket
 
-DirectoryEntry = (path, id, prefix) ->
-  directory: true
+FolderEntry = (path, id, prefix) ->
+  folder: true
   path: path.replace(id, "")
   relativePath: path.replace(prefix, "")
   remotePath: path

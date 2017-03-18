@@ -171,8 +171,12 @@ module.exports = Explorer = (options={}) ->
 
         fileElement = FileTemplate file
         if file.type.match /^image\//
-          url = URL.createObjectURL file.blob
-          fileElement.querySelector('icon').style.backgroundImage = "url(#{url})"
+          file.blob.getURL()
+          .then (url) ->
+            icon = fileElement.querySelector('icon')
+            icon.style.backgroundImage = "url(#{url})"
+            icon.style.backgroundSize = "100%"
+            icon.style.backgroundPosition = "50%"
 
         explorer.appendChild fileElement
 

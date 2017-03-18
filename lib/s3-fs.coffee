@@ -53,13 +53,14 @@ list = (bucket, id, dir) ->
     results = result.CommonPrefixes.map (p) ->
       DirectoryEntry p.Prefix, id, prefix
     .concat result.Contents.map (o) ->
-      FileEntry o, id, prefix
+      FileEntry o, id, prefix, bucket
     .map (entry) ->
       fetchMeta(entry, bucket)
 
     Promise.all results
 
 module.exports = (id, bucket) ->
+
   self =
     read: (path) ->
       unless startsWith path, delimiter
@@ -109,10 +110,25 @@ DirectoryEntry = (path, id, prefix) ->
   relativePath: path.replace(prefix, "")
   remotePath: path
 
-FileEntry = (object, id, prefix) ->
+FileEntry = (object, id, prefix, bucket) ->
   path = object.Key
 
-  path: path.replace(id, "")
-  relativePath: path.replace(prefix, "")
-  remotePath: path
-  size: object.Size
+  entry =
+    path: path.replace(id, "")
+    relativePath: path.replace(prefix, "")
+    remotePath: path
+    size: object.Size
+
+  entry.blob = BlobSham(entry, bucket)
+
+  return entry
+
+BlobSham = (entry, bucket) ->
+  remotePath = entry.remotePath
+  url = "https://#{bucket.config.params.Bucket}.s3.amazonaws.com/#{remotePath}"
+
+  getURL: -> Promise.resolve(url)
+  readAsText: ->
+    getFromS3(bucket, remotePath)
+    .then (blob) ->
+      blob.readAsText()

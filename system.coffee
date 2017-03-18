@@ -75,6 +75,28 @@ module.exports = (dbName='zine-os') ->
   self.extend
     fs: fs
 
+    moveFile: (oldPath, newPath) ->
+      self.copyFile(oldPath, newPath)
+      .then ->
+        self.deleteFile(oldPath)
+
+    copyFile: (oldPath, newPath) ->
+      return Promise.resolve() if oldPath is newPath
+
+      self.readFile(oldPath)
+      .then (blob) ->
+        self.writeFile(newPath, blob)
+
+    moveFileSelection: (selectionData, destinationPath) ->
+      Promise.resolve()
+      .then ->
+        {sourcePath, files} = selectionData
+        if sourcePath is destinationPath
+          return
+        else
+          Promise.all files.map ({relativePath}) ->
+            self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
+
     readFile: (path, userEvent) ->
       if userEvent
         self.Achievement.unlock "Load a file"

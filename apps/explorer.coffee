@@ -1,10 +1,12 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
-# TODO: Drag and drop files and folders
+# TODO: Drag and drop files between folders
+# TODO: Drag and drop folders between folders
+# TODO: Drop files onto folders
+# TODO: Drop files onto applications
 # TODO: Select multiple
 # TOOD: Keyboard Input
-# TODO: Style file types
 
 Drop = require "../lib/drop"
 FileTemplate = require "../templates/file"
@@ -20,9 +22,19 @@ module.exports = Explorer = (options={}) ->
   explorer = document.createElement "explorer"
 
   Drop explorer, (e) ->
+    fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
+
+    if fileSelectionData
+      data = JSON.parse fileSelectionData
+      system.moveFileSelection(data, path)
+      e.preventDefault()
+
+      return
+
     files = e.dataTransfer.files
 
     if files.length
+      e.preventDefault()
       files.forEach (file) ->
         newPath = path + file.name
         system.writeFile(newPath, file, true)
@@ -62,8 +74,7 @@ module.exports = Explorer = (options={}) ->
         Modal.prompt "Filename", file.path
         .then (newPath) ->
           if newPath
-            system.deleteFile(file.path)
-            system.writeFile(newPath, file.blob)
+            system.moveFile(file.path, newPath)
       properties: ->
         pre = document.createElement "pre"
         pre.textContent = JSON.stringify(file, null, 2)
@@ -168,6 +179,12 @@ module.exports = Explorer = (options={}) ->
 
         file.contextmenu = (e) ->
           contextMenuFor(file, e)
+
+        file.dragstart = (e) ->
+          # Note: Blobs don't make it through the stringify
+          e.dataTransfer.setData "zineos/file-selection", JSON.stringify
+            sourcePath: path
+            files: [ file ]
 
         fileElement = FileTemplate file
         if file.type.match /^image\//

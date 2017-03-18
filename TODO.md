@@ -3,27 +3,27 @@ TODO
 
 System Features
 ---------------
-[x] File Browser
+[X] File Browser
 
-[x] App Associations
+[X] App Associations
 
-[x] File Context Menu
+[X] File Context Menu
 
-[x] Folders
+[X] Folders
 
-[x] Desktop Icons
+[X] Desktop Icons
 
 [ ] Desktop Background
 
 [ ] Help Documentation
 
-[ ] Compiler
+[X] Compilerz
 
-[x] Require/Include Local Files
-
-[ ] Custom Models/Views
+[X] Require/Include Local Files
 
 [ ] Drag 'n' Drop
+
+[ ] Cloud Briefcase
 
 Applications
 ------------
@@ -46,13 +46,15 @@ Pixel Editor
 
 Music Maker
 
+Database?
+
 Network Social
 --------------
-
-[ ] CDN
 
 [x] Comments
 
 [ ] Sharing
 
 [ ] Remote Files
+
+[ ] Personal Homepage

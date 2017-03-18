@@ -3,6 +3,20 @@ Use the madness that is Amazon Cognito to support a 'My Briefcase' functionality
 
 This depends on having the AWS library available:
 - https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
+
+This is where you can put the files that you want to access from the cloud.
+
+They'll live in the whims-fs bucket under the path to your aws user id.
+
+The subdomain -> s3 proxy will have a map from simple names to the crazy ids.
+
+The proxy will serve the /public folder in your 'briefcase'. You can put your
+blog or apps or whatever there. The rest currently isn't 'private', but maybe
+it should be. We can set the access control when uploading.
+
+Ideally the briefcase will be browsable like the local FS and you'll be able to
+run files from it, load them in applications, save files there, and drag n drop
+between them.
 ###
 
 window.onAmazonLoginReady = ->

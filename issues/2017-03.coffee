@@ -19,7 +19,7 @@ module.exports = ->
     chateau: false
     cheevo: false
     evan: false
-  
+
   visit = (area) ->
     visitedAreas[area] = true
 
@@ -65,7 +65,7 @@ module.exports = ->
         height: 480
 
       document.body.appendChild windowView.element
-    
+
     evanAndMore: ->
       visit "evan"
       url = "https://s3.amazonaws.com/whimsyspace-databucket-1g3p6d9lcl6x1/danielx/IMG_9794.JPG"

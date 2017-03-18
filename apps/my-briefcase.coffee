@@ -71,7 +71,30 @@ module.exports = ->
 
     fs = S3FS(id, bucket)
 
+    uuidToken = id.split(":")[1]
+
     system.fs.mount "/My Briefcase/", fs
+
+    infoBlob = new Blob ["""
+      Welcome to Your Cloud Briefcase
+      ===============================
+
+      Store your files in a magical cloud that floats between computers.
+      
+      Files stored in `My Briefcase/public` are available to anyone on the 
+      internet. (Technically so are all the files in your cloud briefcase... 
+      Security: Coming Soon™)
+      
+      But the ones in /public are easily accessible, like when computing was fun
+      again. [Check this out](https://#{uuidToken}.whimsy.space/info.md) and see what I
+      mean.
+      
+      You can get your own cool and non-ugly subdomain if you contact me (the
+      creator of this computing system). Just send me your id and the short
+      name you'd prefer. DM me in the friendsofjack slack or something.
+    """] , type: "text/markdown; charset=utf-8"
+    system.writeFile "/My Briefcase/public/info.md", infoBlob
+    system.writeFile "/My Briefcase/public/.keep", new Blob []
 
     content Explorer
       path: "/My Briefcase/"
@@ -90,7 +113,8 @@ module.exports = ->
     pinvoke AWS.config.credentials, "get"
     .then receivedCredentials
     .catch (e) ->
-      console.error e
+      unless e.message is "Invalid login token."
+        console.warn e, e.message
 
   content LoginTemplate
     click: ->

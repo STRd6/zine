@@ -75,7 +75,6 @@ module.exports = (dbName='zine-os') ->
   self.extend
     fs: fs
 
-    # TODO: Allow relative paths
     readFile: (path, userEvent) ->
       if userEvent
         self.Achievement.unlock "Load a file"
@@ -85,7 +84,6 @@ module.exports = (dbName='zine-os') ->
       .then ({blob}) ->
         blob
 
-    # TODO: Allow relative paths
     writeFile: (path, blob, userEvent) ->
       if userEvent
         self.Achievement.unlock "Save a file"

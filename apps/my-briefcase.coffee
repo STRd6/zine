@@ -19,6 +19,10 @@ run files from it, load them in applications, save files there, and drag n drop
 between them.
 ###
 
+S3FS = require "../lib/s3-fs"
+
+{pinvoke} = require "../util"
+
 window.onAmazonLoginReady = ->
   amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
 
@@ -44,8 +48,8 @@ module.exports = ->
 
   LoadedTemplate = system.compileTemplate """
     section
-      h1 Loaded
-      p TODO: Show yo files
+      h1 Connected!
+      p Loading files...
   """
 
   # Observable holding content element
@@ -60,10 +64,10 @@ module.exports = ->
     bucket = new AWS.S3
       params:
         Bucket: "whimsy-fs"
-  
-    # TODO: Need to hook in to new FS
-    # fs = require('./fs')(id, bucket)
-    # os.attachFS fs
+
+    fs = S3FS(id, bucket)
+    fs.list()
+    .then console.log
 
   AWS.config.update
     region: 'us-east-1'
@@ -75,12 +79,11 @@ module.exports = ->
     IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
     Logins: logins
 
-  -> # TODO: Load cached login
-    if logins
-      pinvoke AWS.config.credentials, "get"
-      .then receivedCredentials
-      .catch (e) ->
-        console.error e
+  if logins
+    pinvoke AWS.config.credentials, "get"
+    .then receivedCredentials
+    .catch (e) ->
+      console.error e
 
   content LoginTemplate
     click: ->
@@ -111,15 +114,6 @@ module.exports = ->
     height: 480
 
   return windowView
-
-pinvoke = (object, method, params...) ->
-  new Promise (resolve, reject) ->
-    object[method] params..., (err, result) ->
-      if err
-        reject err
-        return
-
-      resolve result
 
 queryUserInfo = (token) ->
   fetch "https://api.amazon.com/user/profile",

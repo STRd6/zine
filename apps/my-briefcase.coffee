@@ -80,15 +80,15 @@ module.exports = ->
       ===============================
 
       Store your files in a magical cloud that floats between computers.
-      
+
       Files stored in `My Briefcase/public` are available to anyone on the 
       internet. (Technically so are all the files in your cloud briefcase... 
       Security: Coming Soon™)
-      
+
       But the ones in /public are easily accessible, like when computing was fun
-      again. [Check this out](https://#{uuidToken}.whimsy.space/info.md) and see what I
-      mean.
-      
+      again. [Check this out](https://#{uuidToken}.whimsy.space/info.md) 
+      and see what I mean.
+
       You can get your own cool and non-ugly subdomain if you contact me (the
       creator of this computing system). Just send me your id and the short
       name you'd prefer. DM me in the friendsofjack slack or something.
@@ -138,12 +138,11 @@ module.exports = ->
           pinvoke AWS.config.credentials, "get"
           .then receivedCredentials
 
-
   windowView = Window
-    title: "My Briefcase"
-    content: content
+    title: "💼 My Briefcase 💼"
     width: 640
     height: 480
+    content: content
 
   return windowView
 

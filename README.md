@@ -8,7 +8,8 @@ Interfaces
 FS Interface
 ------------
 
-Read a blob from a path, returns a promise fulfilled with the blob object.
+Read a blob from a path, returns a promise fulfilled with the blob object. The
+blob is annotated with the path i.e.: blob.path == path
 
     read: (path) ->
 

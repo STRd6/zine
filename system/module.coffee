@@ -163,17 +163,20 @@ module.exports = (I, self) ->
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
       .then (file) ->
+        console.log "LOADP", file
         # system modules are loaded as functions/objects right now, so just return them
-        unless file?.path? and file?.blob?
+        unless file instanceof Blob
           return file
 
         [compiler] = compilers.filter ({filter}) ->
           filter file
 
         if compiler
+          console.log compiler, file
           compiler.fn(file)
         else
-          throw new Error "Could not find a compiler for file: #{path}"
+          # Return the blob itself if we didn't find any compilers
+          return file
 
     # May want to reconsider this name
     loadModule: (args...) ->
@@ -213,7 +216,9 @@ module.exports = (I, self) ->
       p = suffixes.reduce (promise, suffix) ->
         promise.then (file) ->
           return file if file
-          self.fs.read("#{absolutePath}#{suffix}")
+          filePath = "#{absolutePath}#{suffix}"
+          self.readFile(filePath)
+          .catch -> # If read fails try next read
       , Promise.resolve()
 
       p.then (file) ->
@@ -228,27 +233,27 @@ module.exports = (I, self) ->
 compilers = [{
   filter: ({path}) ->
     path.match /\.js$/
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsText()
 }, {
   filter: ({path}) ->
     path.match(/\.coffee.md$/) or
     path.match(/\.litcoffee$/)
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsText()
     .then (coffeeSource) ->
       CoffeeScript.compile coffeeSource, bare: true, literate: true
 }, {
   filter: ({path}) ->
     path.match /\.coffee$/
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsText()
     .then (coffeeSource) ->
       CoffeeScript.compile coffeeSource, bare: true
 }, {
   filter: ({path}) ->
     path.match /\.jadelet$/
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsText()
     .then (jadeletSource) ->
       Hamlet.compile jadeletSource,
@@ -258,15 +263,22 @@ compilers = [{
 }, {
   filter: ({path}) ->
     path.match /\.json$/
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsJSON()
 }, {
   filter: ({path}) ->
     path.match /\.cson$/
-  fn: ({blob}) ->
+  fn: (blob) ->
     blob.readAsText()
     .then (coffeeSource) ->
       "module.exports = #{CoffeeScript.compile(source, bare: true)}"
+}, {
+  filter: ({path}) ->
+    path.match /\.te?xt$/
+  fn: (blob) ->
+    blob.readAsText()
+    .then (txt) ->
+      "module.exports = #{JSON.stringify(txt)}"
 }]
 
 annotateSourceURL = (program, path) ->

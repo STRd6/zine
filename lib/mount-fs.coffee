@@ -35,6 +35,13 @@ module.exports = (I) ->
             entry.path = entry.path.replace("/", mountPath)
 
           return entries
+      else if method is "read"
+        mount[method](subsystemPath, params...)
+        .then (blob) ->
+          if blob
+            blob.path = path
+
+            return blob
       else
         mount[method](subsystemPath, params...)
 

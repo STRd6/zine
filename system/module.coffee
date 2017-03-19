@@ -163,7 +163,6 @@ module.exports = (I, self) ->
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
       .then (file) ->
-        console.log "LOADP", file
         # system modules are loaded as functions/objects right now, so just return them
         unless file instanceof Blob
           return file
@@ -172,7 +171,6 @@ module.exports = (I, self) ->
           filter file
 
         if compiler
-          console.log compiler, file
           compiler.fn(file)
         else
           # Return the blob itself if we didn't find any compilers

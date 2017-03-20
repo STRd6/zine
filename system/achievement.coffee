@@ -93,6 +93,11 @@ achievementData = [{
   icon: "😉"
   group: "App"
   description: "Check your achievement status"
+}, {
+  text: "Oh no, my files!"
+  icon: "💼"
+  group: "App"
+  description: "Opened 'My Briefcase'"
 }, { # OS
   text: "Save a file"
   icon: "💾"

@@ -20,10 +20,7 @@ module.exports = (I, self) ->
   # Currently can require
   # js, coffee, jadelet, json, cson
 
-  # TODO: Require data files
-  # images, blobs
-  # TODO: Require special files
-  # html, csv
+  # Requiring other file types returns a Blob
 
   ###
 
@@ -36,8 +33,10 @@ module.exports = (I, self) ->
     namePrefix = "__req"
     requires = {}
 
-    # rewrite requires
-    rewrittenProgram = program.replace /require\(['"]([^'"]+)['"]\)/g, (match, key) ->
+    # rewrite requires like `require('cool-module')` or `require('./relative-path')`
+    # don't rewrite one that belong to another object `something.require('somepath')`
+    # don't rewrite dynamic ones like `require(someVar)`
+    rewrittenProgram = program.replace /[^.]require\(['"]([^'"]+)['"]\)/g, (match, key) ->
       if requires[key]
         tmpVar = requires[key]
       else

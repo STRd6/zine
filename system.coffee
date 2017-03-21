@@ -33,6 +33,7 @@ module.exports = (dbName='zine-os') ->
   self.extend
     fs: fs
 
+    require: require
     stylus: require "./lib/stylus.min"
 
     moveFile: (oldPath, newPath) ->

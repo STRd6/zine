@@ -17,15 +17,13 @@ openWith = (App) ->
     system.readFile file.path
     .then (blob) ->
       app.loadFile(blob, path)
-    .catch (e) ->
-      debugger
 
     document.body.appendChild app.element
 
 module.exports = (I, self) ->
-  # TODO: Handlers that can use combined type, extension, and contents info
-  # to do the right thing
-  # Prioritize handlers falling back to others
+  # Handlers use combined type, extension, and contents info to do the right thing
+  # The first handler that matches is the default handler, the rest are available
+  # from context menu
   handlers = [{
     name: "Ace Editor"
     filter: (file) ->
@@ -65,7 +63,7 @@ module.exports = (I, self) ->
       file.path.match(/\.html$/)
     fn: openWith(Markdown)
   }, {
-    name: "Text Editor"
+    name: "Notepad"
     filter: (file) ->
       file.type.match(/^text\//) or
       file.type.match(/^application\/javascript/)
@@ -149,8 +147,17 @@ module.exports = (I, self) ->
     open: (file) ->
       handle(file)
 
+    # Return a list of all handlers that can be used for this file
     openersFor: (file) ->
       handlers.filter (handler) ->
         handler.filter(file)
+
+    # Add a handler to the list of handlers, position zero is highest priority
+    # position -1 is lowest priority.
+    registerHandler: (handler, position=0) ->
+      handlers.splice(position, 0, handler)
+
+    handlers: ->
+      handlers.slice()
 
   return self

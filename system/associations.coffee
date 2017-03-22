@@ -141,6 +141,8 @@ module.exports = (I, self) ->
       throw new Error "No handler for files of type #{file.type}"
 
   Object.assign self,
+    iframeApp: require "../lib/iframe-app"
+
     # Open a file
     # TODO: Pass arguments
     # TODO: Drop files on an app to open them in that app

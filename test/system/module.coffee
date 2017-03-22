@@ -5,20 +5,25 @@ SystemModule = require "../../system/module"
 
 global.Hamlet = require "../../lib/hamlet"
 
+mocha.setup
+  globals: ['amazon']
+
 makeSystemFS = (files) ->
   model = Model()
   model.include SystemModule, Associations
 
-  model.fs =
-    read: (path) ->
+  Object.assign model,
+    readFile: (path) ->
       Promise.resolve()
       .then ->
         content = files[path]
-  
+
         throw new Error "File not found: #{path}" unless content?
 
-        path: path
-        blob: new Blob [content]
+        blob = new Blob [content]
+        blob.path = path
+
+        return blob
 
   return model
 
@@ -60,7 +65,7 @@ describe "System Module", ->
     model.vivifyPrograms(["/a.js"])
     .catch (e) ->
       done()
-  
+
   it "should throw an error when requiring a file that throws an error", (done) ->
     @timeout 250
 

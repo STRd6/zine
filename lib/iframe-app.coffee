@@ -5,10 +5,28 @@ FileIO = require "../os/file-io"
 module.exports = (opts={}) ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
 
-  {height, menuBar, src, title, width} = opts
+  {height, menuBar, src, title, width, sandbox, pkg} = opts
 
   frame = document.createElement "iframe"
-  frame.src = src
+
+  if sandbox
+    frame.setAttribute("sandbox", sandbox)
+
+  if src
+    frame.src = src
+  else if pkg
+    frame.src = URL.createObjectURL new Blob ["""
+      <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body>
+        <script>
+          #{require.executePackageWrapper(pkg)}
+        <\/script>
+        </body>
+      </html>
+    """], type: "text/html; charset=utf-8"
 
   # Keep track of waiting for child window to load, all remote invocations are
   # queued behind a promise until the child has loaded

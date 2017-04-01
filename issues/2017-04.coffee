@@ -12,7 +12,7 @@ Social = require "../social/social"
 
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
-  {Achievement} = system
+  {Achievement, ajax} = system
 
   visitedAreas =
     bikes: false
@@ -33,6 +33,16 @@ module.exports = ->
 
   system.writeFile "issue-4/izzy.txt", new Blob [require "../stories/izzy"], type: "text/plain"
   system.writeFile "issue-4/residue.txt", new Blob [require "../stories/residue"], type: "text/plain"
+
+  downloadBikes = ->
+    ["and-yet-they-rode-bikes.md", "infog.png", "lanes.png", "totally-a.html"].forEach (path) ->
+      ajax
+        url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/bikes/#{path}"
+        responseType: "blob"
+      .then (blob) ->
+        system.writeFile "issue-4/bikes/#{path}", blob
+
+  downloadBikes()
 
   system.Achievement.unlock "Issue 4"
 

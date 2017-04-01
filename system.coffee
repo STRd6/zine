@@ -15,6 +15,7 @@ MountFS = require "./lib/mount-fs"
 uniq = (array) ->
   Array.from new Set array
 
+Ajax = require "ajax"
 Model = require "model"
 Achievement = require "./system/achievement"
 Associations = require "./system/associations"
@@ -31,6 +32,7 @@ module.exports = (dbName='zine-os') ->
   self.include(Achievement, Associations, SystemModule, Template)
 
   self.extend
+    ajax: Ajax()
     fs: fs
 
     require: require

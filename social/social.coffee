@@ -14,7 +14,7 @@ module.exports = (I, self) ->
         area: self.area()
       .then (data) ->
         ajax
-          url: "https://whimsy-space.gomix.me/comments"
+          url: "https://whimsy-space.glitch.me/comments"
           data: JSON.stringify(data)
           headers:
             "Content-Type": "application/json"
@@ -23,7 +23,7 @@ module.exports = (I, self) ->
         self.viewComments()
 
     viewComments: ->
-      ajax.getJSON "https://whimsy-space.gomix.me/comments/#{self.area()}"
+      ajax.getJSON "https://whimsy-space.glitch.me/comments/#{self.area()}"
       .then (data) ->
         data = data.reverse()
 

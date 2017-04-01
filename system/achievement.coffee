@@ -63,6 +63,26 @@ achievementData = [{
   icon: "🈹"
   group: "Issue 3"
   description: "Read 'Blue Light Special'"
+}, {
+  text: "Issue 4"
+  icon: "📰"
+  group: "Issue 4"
+  description: "View Issue 4"
+}, {
+  text: "Cover-2-cover 4: Fast & Furious"
+  icon: "📗"
+  group: "Issue 4"
+  description: "Read the entire issue"
+}, {
+  text: "Izzy"
+  icon: "🈹"
+  group: "Issue 4"
+  description: "Read 'Izzy'"
+}, {
+  text: "Residue"
+  icon: "🈹"
+  group: "Issue 4"
+  description: "Read 'Residue'"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

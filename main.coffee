@@ -23,9 +23,10 @@ system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-3/zine3.exe", new Blob [""], type: "application/exe"
+system.writeFile "issue-4/zine4.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
-require("./issues/2017-03")()
+require("./issues/2017-04")()
 
 system.autoboot()
 # system.dumpModules()

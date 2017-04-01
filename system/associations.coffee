@@ -115,6 +115,12 @@ module.exports = (I, self) ->
     fn: ->
       require("../issues/2017-03")()
   }, {
+    name: "zine4.exe"
+    filter: (file) ->
+      file.path.match /zine4\.exe$/
+    fn: ->
+      require("../issues/2017-04")()
+  }, {
     name: "feedback.exe"
     filter: (file) ->
       file.path.match /feedback\.exe$/

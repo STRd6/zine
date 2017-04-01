@@ -14,11 +14,10 @@ module.exports = ->
   {Achievement} = system
 
   visitedAreas =
-    blue: false
-    csaur: false
+    izzy: false
+    residue: false
     chateau: false
     cheevo: false
-    evan: false
 
   visit = (area) ->
     visitedAreas[area] = true

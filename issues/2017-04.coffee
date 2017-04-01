@@ -52,6 +52,17 @@ module.exports = ->
     blob.path = "/issue-4/Funkytown.mp3"
     system.open blob
 
+  system.readFile "issue-4/zinecast1.mp3"
+  .then ->
+    ; # Zinecast exists, don't redownload
+  .catch ->
+    ajax
+      url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/podcasts/zinecast1.mp3"
+      responseType: "blob"
+    .then (blob) ->
+      system.writeFile "issue-4/zinecast1.mp3", blob
+      blob.path = "/issue-4/zinecast1.mp3"
+
   system.Achievement.unlock "Issue 4"
 
   handlers = Model().include(Social).extend

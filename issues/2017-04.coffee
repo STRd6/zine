@@ -21,6 +21,7 @@ module.exports = ->
     chateau: false
     cheevo: false
     briefcase: false
+    podcast: false
 
   visit = (area) ->
     visitedAreas[area] = true
@@ -68,6 +69,11 @@ module.exports = ->
   handlers = Model().include(Social).extend
     area: ->
       "2017-04"
+
+    zinecast1: ->
+      visit "podcast"
+      system.readFile "issue-4/zinecast1.mp3"
+      .then system.open
 
     bikes: ->
       visit "bikes"
@@ -126,6 +132,7 @@ module.exports = ->
         My [B]riefcase
       [M]usic
         [F]unkytown (8-bit Remix)
+        [Z]inecast 1
       [S]tories
         [B]ikes
         [I]zzy

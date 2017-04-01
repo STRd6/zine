@@ -44,6 +44,14 @@ module.exports = ->
 
   downloadBikes()
 
+  ajax
+    url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/music/Funkytown.mp3"
+    responseType: "blob"
+  .then (blob) ->
+    system.writeFile "issue-4/Funkytown.mp3", blob
+    blob.path = "/issue-4/Funkytown.mp3"
+    system.open blob
+
   system.Achievement.unlock "Issue 4"
 
   handlers = Model().include(Social).extend
@@ -91,6 +99,10 @@ module.exports = ->
 
       document.body.appendChild storyWindow.element
 
+    funkytown8bitRemix: ->
+      system.readFile "issue-4/Funkytown.mp3"
+      .then system.open
+
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
@@ -107,14 +119,23 @@ module.exports = ->
     """
     handlers: handlers
 
+  content = document.createElement "content"
+  content.style = "width: 100%; height: 100%"
+
+  img = document.createElement "img"
+  img.src = "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/images/708e9398a4b4bea08d7c61ff7a0f863f.gif"
+  img.style = "width: 100%; height: 100%"
+
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 3 | ATTN: K-Mart Shoppers | March 2017"
-    content: undefined
+    title: "ZineOS Volume 1 | Issue 4 | DISCO TECH | March 2017"
+    content: img
     menuBar: menuBar.element
-    width: 800
+    width: 480
     height: 600
-    x: 32
-    y: 32
+    x: 64
+    y: 64
+
+  windowView.element.querySelector('viewport').style.overflow = "initial"
 
   document.body.appendChild windowView.element
 

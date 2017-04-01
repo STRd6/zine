@@ -14,7 +14,7 @@ openWith = (App) ->
     {path} = file
     app = App()
 
-    system.readFile file.path
+    system.readFile path
     .then (blob) ->
       app.loadFile(blob, path)
 

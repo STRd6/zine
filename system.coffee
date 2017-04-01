@@ -82,8 +82,7 @@ module.exports = (dbName='zine-os') ->
 
     urlForPath: (path) ->
       fs.read(path)
-      .then ({blob}) ->
-        URL.createObjectURL(blob)
+      .then URL.createObjectURL
 
     # NOTE: These are experimental commands to run code
     execJS: (path) ->

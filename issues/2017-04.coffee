@@ -4,6 +4,7 @@ Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
 Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
+MyBriefcase = require "../apps/my-briefcase"
 
 Social = require "../social/social"
 
@@ -14,10 +15,12 @@ module.exports = ->
   {Achievement} = system
 
   visitedAreas =
+    bikes: false
     izzy: false
     residue: false
     chateau: false
     cheevo: false
+    briefcase: false
 
   visit = (area) ->
     visitedAreas[area] = true
@@ -37,18 +40,10 @@ module.exports = ->
     area: ->
       "2017-04"
 
-    mSAccess97: ->
-      app = Spreadsheet(system)
-      document.body.appendChild app.element
-
     chateau: ->
       visit "chateau"
       app = Chateau(system)
       document.body.appendChild app.element
-
-    contrasaurus: ->
-      visit "csaur"
-      document.body.appendChild Contrasaurus(system).element
 
     achievementStatus: ->
       visit "cheevo"
@@ -65,6 +60,11 @@ module.exports = ->
         height: 480
 
       document.body.appendChild windowView.element
+
+    myBriefcase: ->
+      visit "briefcase"
+      app = MyBriefcase()
+      document.body.appendChild app.element
 
     izzy: ->
       Achievement.unlock "Izzy"
@@ -85,7 +85,7 @@ module.exports = ->
     items: parseMenu """
       [A]pps
         [C]hateau
-        Contra[s]aurus
+        My [B]riefcase
       [M]usic
         [F]unkytown (8-bit Remix)
       [S]tories

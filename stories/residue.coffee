@@ -1,5 +1,5 @@
 module.exports = """
-                                 RESIDUE
+\u200b                                 RESIDUE
                                  =======
 
 Jules, my friend, used to take her new

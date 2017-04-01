@@ -25,6 +25,12 @@ module.exports = (I, self) ->
   # The first handler that matches is the default handler, the rest are available
   # from context menu
   handlers = [{
+    name: "Markdown" # TODO: This renders html now too, so may need a broader name
+    filter: (file) ->
+      file.path.match(/\.md$/) or
+      file.path.match(/\.html$/)
+    fn: openWith(Markdown)
+  }, {
     name: "Ace Editor"
     filter: (file) ->
       file.path.match(/\.coffee$/) or
@@ -56,12 +62,6 @@ module.exports = (I, self) ->
         sourceProgram = CoffeeScript.compile coffeeSource, bare: true
 
         system.spawn sourceProgram, file.path
-  }, {
-    name: "Markdown" # TODO: This renders html now too, so may need a broader name
-    filter: (file) ->
-      file.path.match(/\.md$/) or
-      file.path.match(/\.html$/)
-    fn: openWith(Markdown)
   }, {
     name: "Notepad"
     filter: (file) ->

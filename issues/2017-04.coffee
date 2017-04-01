@@ -58,6 +58,11 @@ module.exports = ->
     area: ->
       "2017-04"
 
+    bikes: ->
+      visit "bikes"
+      system.readFile "issue-4/bikes/and-yet-they-rode-bikes.md"
+      .then system.open
+
     chateau: ->
       visit "chateau"
       app = Chateau(system)
@@ -111,6 +116,7 @@ module.exports = ->
       [M]usic
         [F]unkytown (8-bit Remix)
       [S]tories
+        [B]ikes
         [I]zzy
         [R]esidue
       #{Social.menuText}

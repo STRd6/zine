@@ -194,7 +194,7 @@
     },
     "main.coffee": {
       "path": "main.coffee",
-      "content": "require(\"analytics\").init(\"UA-3464282-16\")\n\nrequire \"./extensions\"\n\nrequire \"./lib/outbound-clicks\"\nrequire \"./lib/error-reporter\"\n\nglobal.Hamlet = require \"./lib/hamlet\"\n\nSystem = require \"./system\"\nglobal.system = System()\n\n{Style} = system.UI\nstyle = document.createElement \"style\"\nstyle.innerHTML = Style.all + \"\\n\" + require(\"./style\")\ndocument.head.appendChild style\n\nVersionTemplate = require \"./templates/version\"\ndocument.body.appendChild VersionTemplate\n  version: \"v0.4.00.950a\"\n\n# Desktop\nExplorer = require \"./apps/explorer\"\ndocument.body.appendChild Explorer()\n\nsystem.writeFile \"feedback.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-1/zine1.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-2/zine2.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-3/zine3.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-4/zine4.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"My Briefcase\", new Blob [\"\"], type: \"application/briefcase\"\n\nrequire(\"./issues/2017-04\")()\n\nsystem.autoboot()\n# system.dumpModules()\n",
+      "content": "require(\"analytics\").init(\"UA-3464282-16\")\n\nrequire \"./extensions\"\n\nrequire \"./lib/outbound-clicks\"\nrequire \"./lib/error-reporter\"\n\nglobal.Hamlet = require \"./lib/hamlet\"\n\nSystem = require \"./system\"\nglobal.system = System()\n\n{Style} = system.UI\nstyle = document.createElement \"style\"\nstyle.innerHTML = Style.all + \"\\n\" + require(\"./style\")\ndocument.head.appendChild style\n\n{title} = require \"./pixie\"\n[..., version] = title.split('-')\n\nVersionTemplate = require \"./templates/version\"\ndocument.body.appendChild VersionTemplate\n  version: version\n\n# Desktop\nExplorer = require \"./apps/explorer\"\ndocument.body.appendChild Explorer()\n\nsystem.writeFile \"feedback.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-1/zine1.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-2/zine2.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-3/zine3.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"issue-4/zine4.exe\", new Blob [\"\"], type: \"application/exe\"\nsystem.writeFile \"My Briefcase\", new Blob [\"\"], type: \"application/briefcase\"\n\nrequire(\"./issues/2017-04\")()\n\nsystem.autoboot()\n# system.dumpModules()\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -206,7 +206,7 @@
     },
     "pixie.cson": {
       "path": "pixie.cson",
-      "content": "title: \"ZineOS\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  base64: \"distri/base64:v0.9.2\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.0\"\n  ui: \"STRd6/ui:master\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js\"\n]\n",
+      "content": "title: \"Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉\"\ndescription: \"\"\"\n  When the bombs drop, and it's OS against OS, you're gonna wish you could view source\n\"\"\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  base64: \"distri/base64:v0.9.2\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.0\"\n  ui: \"STRd6/ui:master\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js\"\n]\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -356,7 +356,7 @@
     },
     "templates/version.jadelet": {
       "path": "templates/version.jadelet",
-      "content": "version\n  span= \"ZineOS #{@version} ⌊ALPHA⌉\"\n",
+      "content": "version\n  span= @version\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -521,7 +521,7 @@
     },
     "main": {
       "path": "main",
-      "content": "(function() {\n  var Explorer, Style, System, VersionTemplate, style;\n\n  require(\"analytics\").init(\"UA-3464282-16\");\n\n  require(\"./extensions\");\n\n  require(\"./lib/outbound-clicks\");\n\n  require(\"./lib/error-reporter\");\n\n  global.Hamlet = require(\"./lib/hamlet\");\n\n  System = require(\"./system\");\n\n  global.system = System();\n\n  Style = system.UI.Style;\n\n  style = document.createElement(\"style\");\n\n  style.innerHTML = Style.all + \"\\n\" + require(\"./style\");\n\n  document.head.appendChild(style);\n\n  VersionTemplate = require(\"./templates/version\");\n\n  document.body.appendChild(VersionTemplate({\n    version: \"v0.4.00.950a\"\n  }));\n\n  Explorer = require(\"./apps/explorer\");\n\n  document.body.appendChild(Explorer());\n\n  system.writeFile(\"feedback.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-1/zine1.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-2/zine2.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-3/zine3.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-4/zine4.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"My Briefcase\", new Blob([\"\"], {\n    type: \"application/briefcase\"\n  }));\n\n  require(\"./issues/2017-04\")();\n\n  system.autoboot();\n\n}).call(this);\n",
+      "content": "(function() {\n  var Explorer, Style, System, VersionTemplate, style, title, version, _ref;\n\n  require(\"analytics\").init(\"UA-3464282-16\");\n\n  require(\"./extensions\");\n\n  require(\"./lib/outbound-clicks\");\n\n  require(\"./lib/error-reporter\");\n\n  global.Hamlet = require(\"./lib/hamlet\");\n\n  System = require(\"./system\");\n\n  global.system = System();\n\n  Style = system.UI.Style;\n\n  style = document.createElement(\"style\");\n\n  style.innerHTML = Style.all + \"\\n\" + require(\"./style\");\n\n  document.head.appendChild(style);\n\n  title = require(\"./pixie\").title;\n\n  _ref = title.split('-'), version = _ref[_ref.length - 1];\n\n  VersionTemplate = require(\"./templates/version\");\n\n  document.body.appendChild(VersionTemplate({\n    version: version\n  }));\n\n  Explorer = require(\"./apps/explorer\");\n\n  document.body.appendChild(Explorer());\n\n  system.writeFile(\"feedback.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-1/zine1.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-2/zine2.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-3/zine3.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"issue-4/zine4.exe\", new Blob([\"\"], {\n    type: \"application/exe\"\n  }));\n\n  system.writeFile(\"My Briefcase\", new Blob([\"\"], {\n    type: \"application/briefcase\"\n  }));\n\n  require(\"./issues/2017-04\")();\n\n  system.autoboot();\n\n}).call(this);\n",
       "type": "blob"
     },
     "os/file-io": {
@@ -531,7 +531,7 @@
     },
     "pixie": {
       "path": "pixie",
-      "content": "module.exports = {\"title\":\"ZineOS\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"base64\":\"distri/base64:v0.9.2\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.0\",\"ui\":\"STRd6/ui:master\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js\"]};",
+      "content": "module.exports = {\"title\":\"Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉\",\"description\":\"When the bombs drop, and it's OS against OS, you're gonna wish you could view source\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"base64\":\"distri/base64:v0.9.2\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.0\",\"ui\":\"STRd6/ui:master\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js\"]};",
       "type": "blob"
     },
     "presenters/achievement-group-progress": {
@@ -656,7 +656,7 @@
     },
     "templates/version": {
       "path": "templates/version",
-      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    __root.buffer(__root.element(\"version\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"span\", this, {}, function(__root) {\n        __root.buffer(\"ZineOS \" + this.version + \" ⌊ALPHA⌉\");\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
+      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    __root.buffer(__root.element(\"version\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"span\", this, {}, function(__root) {\n        __root.buffer(this.version);\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
       "type": "blob"
     },
     "test/system/module": {
@@ -679,7 +679,8 @@
     "url": "https://danielx.net/editor/"
   },
   "config": {
-    "title": "ZineOS",
+    "title": "Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉",
+    "description": "When the bombs drop, and it's OS against OS, you're gonna wish you could view source",
     "dependencies": {
       "ajax": "distri/ajax:master",
       "analytics": "distri/google-analytics:master",

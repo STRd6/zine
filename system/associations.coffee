@@ -14,7 +14,7 @@ openWith = (App) ->
     {path} = file
     app = App()
 
-    system.readFile file.path
+    system.readFile path
     .then (blob) ->
       app.loadFile(blob, path)
 
@@ -25,6 +25,12 @@ module.exports = (I, self) ->
   # The first handler that matches is the default handler, the rest are available
   # from context menu
   handlers = [{
+    name: "Markdown" # TODO: This renders html now too, so may need a broader name
+    filter: (file) ->
+      file.path.match(/\.md$/) or
+      file.path.match(/\.html$/)
+    fn: openWith(Markdown)
+  }, {
     name: "Ace Editor"
     filter: (file) ->
       file.path.match(/\.coffee$/) or
@@ -56,12 +62,6 @@ module.exports = (I, self) ->
         sourceProgram = CoffeeScript.compile coffeeSource, bare: true
 
         system.spawn sourceProgram, file.path
-  }, {
-    name: "Markdown" # TODO: This renders html now too, so may need a broader name
-    filter: (file) ->
-      file.path.match(/\.md$/) or
-      file.path.match(/\.html$/)
-    fn: openWith(Markdown)
   }, {
     name: "Notepad"
     filter: (file) ->
@@ -114,6 +114,12 @@ module.exports = (I, self) ->
       file.path.match /zine3\.exe$/
     fn: ->
       require("../issues/2017-03")()
+  }, {
+    name: "zine4.exe"
+    filter: (file) ->
+      file.path.match /zine4\.exe$/
+    fn: ->
+      require("../issues/2017-04")()
   }, {
     name: "feedback.exe"
     filter: (file) ->

@@ -5,7 +5,7 @@ Model = require "model"
 
 module.exports = ->
   # Global system
-  {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
+  {ContextMenu, MenuBar, Modal, Observable, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement} = system
 
   Achievement.unlock "Pump up the jam"
@@ -14,8 +14,11 @@ module.exports = ->
   audio.controls = true
   audio.autoplay = true
 
+  filePath = Observable()
+
   handlers = Model().include(FileIO).extend
     loadFile: (blob) ->
+      filePath blob.path
       audio.src = URL.createObjectURL blob
 
     exit: ->
@@ -31,7 +34,11 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: "Audio Bro"
+    title: ->
+      if path = filePath()
+        "Audio Bro - #{path}"
+      else
+        "Audio Bro"
     content: audio
     menuBar: menuBar.element
     width: 308

@@ -15,9 +15,12 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
+{title} = require "./pixie"
+[..., version] = title.split('-')
+
 VersionTemplate = require "./templates/version"
 document.body.appendChild VersionTemplate
-  version: "v0.4.00.950a"
+  version: version
 
 # Desktop
 Explorer = require "./apps/explorer"

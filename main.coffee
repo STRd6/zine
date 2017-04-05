@@ -15,6 +15,10 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
+VersionTemplate = require "./templates/version"
+document.body.appendChild VersionTemplate
+  version: "v0.4.00.950a"
+
 # Desktop
 Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()

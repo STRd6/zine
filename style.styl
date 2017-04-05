@@ -1,4 +1,5 @@
 body
+  color: rgba(0, 0, 0, 0.87)
   overflow: hidden
 
 h1
@@ -40,6 +41,7 @@ explorer
   padding: 0.5em
   user-select: none
   width: 100%
+  z-index: 1
 
   > file, > folder
     display: inline-block
@@ -208,3 +210,11 @@ achievement-badge
   &.achieved
     border: 1px solid blue
     color: blue
+
+version
+  bottom: 1em
+  display: block
+  font-weight: bold
+  pointer-events: none
+  position: absolute
+  right: 1em

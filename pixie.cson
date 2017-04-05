@@ -1,3 +1,4 @@
+title: "ZineOS"
 dependencies:
   ajax: "distri/ajax:master"
   analytics: "distri/google-analytics:master"

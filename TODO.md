@@ -23,7 +23,7 @@ System Features
 
 [ ] Drag 'n' Drop
 
-[ ] Cloud Briefcase
+[X] Cloud Briefcase
 
 Applications
 ------------
@@ -55,6 +55,6 @@ Network Social
 
 [ ] Sharing
 
-[ ] Remote Files
+[ ] Remote Files (Network Neighborhood)
 
-[ ] Personal Homepage
+[X] Personal Homepage

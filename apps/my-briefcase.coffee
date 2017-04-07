@@ -6,7 +6,7 @@ This depends on having the AWS library available:
 
 This is where you can put the files that you want to access from the cloud.
 
-They'll live in the whims-fs bucket under the path to your aws user id.
+They'll live in the whimsy-fs bucket under the path to your aws user id.
 
 The subdomain -> s3 proxy will have a map from simple names to the crazy ids.
 
@@ -141,10 +141,11 @@ module.exports = ->
           .then receivedCredentials
 
   windowView = Window
-    title: "💼 My Briefcase 💼"
+    title: "My Briefcase"
     width: 640
     height: 480
     content: content
+    iconEmoji: "💼"
 
   return windowView
 

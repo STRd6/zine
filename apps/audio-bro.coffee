@@ -43,6 +43,7 @@ module.exports = ->
     menuBar: menuBar.element
     width: 308
     height: 80
+    iconEmoji: "🎶"
 
   windowView.loadFile = handlers.loadFile
 

@@ -231,6 +231,7 @@ module.exports = Explorer = (options={}) ->
       menuBar: null
       width: 640
       height: 480
+      iconEmoji: "📂"
 
     document.body.appendChild windowView.element
 

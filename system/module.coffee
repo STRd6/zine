@@ -191,7 +191,6 @@ module.exports = (I, self) ->
             Promise.resolve().then ->
               if isRelativePath depPath
                 path = absolutizePath(fileBasePath, depPath)
-                console.log path
                 self.packageProgram path, state
               else if isAbsolutePath depPath
                 throw new Error "Absolute paths not supported yet"

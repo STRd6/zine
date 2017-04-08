@@ -9,6 +9,7 @@ global.Hamlet = require "./lib/hamlet"
 
 System = require "./system"
 global.system = System()
+system.PACKAGE = PACKAGE # For debugging
 
 {Style} = system.UI
 style = document.createElement "style"

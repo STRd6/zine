@@ -2,6 +2,8 @@
 #
 # Depends on having self.readFile defined
 
+IFrameApp = require "../lib/iframe-app"
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -24,7 +26,27 @@ module.exports = (I, self) ->
 
   ###
 
-  {absolutizePath, fileSeparator, normalizePath} = require "../util"
+  {absolutizePath, fileSeparator, normalizePath, isAbsolutePath, isRelativePath} = require "../util"
+
+  findDependencies = (sourceProgram) ->
+    requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
+    results = []
+    count = 0
+
+    loop
+      match = requireMatcher.exec sourceProgram
+
+      if match
+        results.push match[1]
+      else
+        break
+
+      # Circuit breaker for safety
+      count += 1
+      if count > 256
+        break
+
+    return results
 
   # Wrap program in async include wrapper
   # Replaces references to require('something') with local variables in an async wrapper function
@@ -84,9 +106,9 @@ module.exports = (I, self) ->
       localSystem = Object.assign {}, self,
         vivifyPrograms: (moduleIdentifiers) ->
           absoluteIdentifiers = moduleIdentifiers.map (identifier) ->
-            if identifier.match /^\//
+            if isAbsolutePath(identifier)
               absolutizePath "/", identifier
-            else if identifier.match /^.?.\//
+            else if isRelativePath(identifier)
               absolutizePath dirname, identifier
             else
               identifier
@@ -134,6 +156,59 @@ module.exports = (I, self) ->
 
         self.vivifyPrograms(bootablePaths)
 
+    # This is kind of the opposite approach of the vivifyPrograms, here we want 
+    # to load everything statically and put it in a package that can be run by
+    # `require`.
+    packageProgram: (absolutePath, state={}) ->
+      state.cache ?= {}
+      state.pkg ?= {}
+
+      fileBasePath = absolutePath.match(/^.*\//)?[0] or ""
+      state.basePath ?= fileBasePath
+
+      {pkg} = state
+      pkg.distribution ?= {}
+
+      state.cache[absolutePath] ?= self.loadProgram(absolutePath)
+      .then (sourceProgram) ->
+        if typeof sourceProgram is "string"
+          # NOTE: Things will fail if we require ../../ above our
+          # initial directory.
+          # TODO: Detect and throw if requiring relative or absolute paths above
+          # or outside of our base path
+
+          # Strip out base path and final suffix
+          # NOTE: .coffee.md type files won't like this
+          pkgPath = absolutePath.replace(state.basePath, "").replace(/\.[^.]*$/, "")
+          # Add to package
+          pkg.entryPoint ?= pkgPath
+          pkg.distribution[pkgPath] =
+            content: sourceProgram
+
+          # Pull in dependencies
+          depPaths = findDependencies(sourceProgram)
+          Promise.all depPaths.map (depPath) ->
+            Promise.resolve().then ->
+              if isRelativePath depPath
+                path = absolutizePath(fileBasePath, depPath)
+                console.log path
+                self.packageProgram path, state
+              else if isAbsolutePath depPath
+                throw new Error "Absolute paths not supported yet"
+              else
+                # package path
+                depPkg = PACKAGE.dependencies[depPath]
+                if depPkg
+                  pkg.dependencies ?= {}
+                  pkg.dependencies[depPath] = depPkg
+                else
+                  # TODO: Load from remote?
+                  throw new Error "Package '#{depPath}' not found"
+          .then ->
+            return pkg
+        else
+          throw new Error "TODO: Can't package files like #{absolutePath} yet"
+
     # still experimenting with the API
     # Async 'require' in the vein of require.js
     # it's horrible but seems necessary
@@ -180,6 +255,7 @@ module.exports = (I, self) ->
       self.Achievement.unlock "Execute code"
       loadModule(args...)
 
+    # Execute in the context of the system itself
     spawn: (args...) ->
       loadModule(args...)
       .then ({exports}) ->
@@ -188,6 +264,29 @@ module.exports = (I, self) ->
 
           if result.element
             document.body.appendChild result.element
+
+    execute: (absolutePath) ->
+      self.vivifyPrograms [absolutePath]
+      .then ([{exports}])->
+        if typeof exports is "function" and exports.length is 0
+          result = exports()
+
+          if result.element
+            document.body.appendChild result.element
+
+    executeInIFrame: (absolutePath) ->
+      self.packageProgram(absolutePath)
+      .then (pkg) ->
+        self.executePackageInIFrame pkg
+
+    # Execute a package in the context of an iframe
+    executePackageInIFrame: (pkg) ->
+      app = IFrameApp
+        pkg: pkg
+
+      document.body.appendChild app.element
+
+      return app
 
     # Handle requiring with or without explicit extension
     #     require "a"
@@ -208,7 +307,7 @@ module.exports = (I, self) ->
 
       absolutePath = absolutizePath(basePath, path)
 
-      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js"]
+      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js", ".styl"]
 
       p = suffixes.reduce (promise, suffix) ->
         promise.then (file) ->
@@ -256,7 +355,16 @@ compilers = [{
       Hamlet.compile jadeletSource,
         compiler: CoffeeScript
         mode: "jade"
-        runtime: "Hamlet"
+        runtime: "require('_lib_hamlet-runtime')"
+}, {
+  filter: ({path}) ->
+    path.match /\.styl$/
+  fn: (blob) ->
+    blob.readAsText()
+    .then (source) ->
+      cssString = system.stylus(source).render()
+
+      "module.exports = #{JSON.stringify(cssString)}"
 }, {
   filter: ({path}) ->
     path.match /\.json$/

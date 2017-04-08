@@ -36,32 +36,29 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/) or
       file.path.match(/\.cson$/) or
       file.path.match(/\.html$/) or
+      file.path.match(/\.jadelet$/) or
       file.path.match(/\.js$/) or
       file.path.match(/\.json$/) or
       file.path.match(/\.md$/) or
       file.path.match(/\.styl$/)
     fn: openWith(CodeEditor)
   }, {
-    # JavaScript
-    name: "Execute"
+    name: "Run"
     filter: (file) ->
       file.type is "application/javascript" or
-      file.path.match /\.js$/
+      file.path.match(/\.js$/) or
+      file.path.match(/\.coffee$/)
     fn: (file) ->
-      file.blob.readAsText()
-      .then (sourceProgram) ->
-        system.spawn sourceProgram, file.path
+      self.executeInIFrame(file.path)
   }, {
-    # CoffeeScript
-    name: "Execute"
+    name: "Sys Exec"
     filter: (file) ->
-      file.path.match /\.coffee$/
+      return false # TODO: Enable with super mode :P
+      file.type is "application/javascript" or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.coffee$/)
     fn: (file) ->
-      file.blob.readAsText()
-      .then (coffeeSource) ->
-        sourceProgram = CoffeeScript.compile coffeeSource, bare: true
-
-        system.spawn sourceProgram, file.path
+      self.execute(file.path)
   }, {
     name: "Notepad"
     filter: (file) ->

@@ -3,7 +3,7 @@ Postmaster = require "postmaster"
 FileIO = require "../os/file-io"
 
 module.exports = (opts={}) ->
-  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
+  {Window} = system.UI
 
   {height, menuBar, src, title, width, sandbox, pkg} = opts
 
@@ -15,12 +15,14 @@ module.exports = (opts={}) ->
   if src
     frame.src = src
   else if pkg
+    # TODO: Use pkg remote dependencies
     frame.src = URL.createObjectURL new Blob ["""
       <html>
         <head>
           <meta charset="utf-8">
         </head>
         <body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"><\/script>
         <script>
           #{require.executePackageWrapper(pkg)}
         <\/script>
@@ -48,6 +50,12 @@ module.exports = (opts={}) ->
       windowView.trigger "event", arguments...
 
       return
+
+    system: (args...) ->
+      system(args...)
+
+    exit: ->
+      windowView.element.remove()
 
   # TODO: Extend with passed in handlers?
   handlers = Model().include(FileIO).extend

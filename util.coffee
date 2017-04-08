@@ -1,7 +1,7 @@
 fileSeparator = "/"
 
 normalizePath = (path) ->
-  path.replace(/\/+/, fileSeparator) # /// -> /
+  path.replace(/\/+/g, fileSeparator) # /// -> /
   .replace(/\/[^/]*\/\.\./g, "") # /base/something/.. -> /base
   .replace(/\/\.\//g, fileSeparator) # /base/. -> /base
 
@@ -17,6 +17,12 @@ module.exports =
   fileSeparator: fileSeparator
   normalizePath: normalizePath
   absolutizePath: absolutizePath
+
+  isAbsolutePath: (path) ->
+    path.match /^\//
+
+  isRelativePath: (path) ->
+    path.match /^.?.\//
 
   parentElementOfType: (tagname, element) ->
     tagname = tagname.toLowerCase()

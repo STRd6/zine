@@ -46,28 +46,23 @@ module.exports = (opts={}) ->
       console.log "child loaded"
       resolveLoaded()
 
-    # Send events from the iframe app to the window view
+    # Send events from the iframe app to the application
     event: ->
-      windowView.trigger "event", arguments...
+      application.trigger "event", arguments...
 
       return
 
-    system: (args...) ->
-      system(args...)
+    # Add application method access to client iFrame
+    application: (method, args...) ->
+      application[method](args...)
+
+    # Add system method access to client iFrame
+    # TODO: Security :P
+    system: (method, args...) ->
+      system[method](args...)
 
     exit: ->
-      windowView.element.remove()
-
-  # Add WindowView Method access to client iFrame
-  [
-    "iconEmoji"
-    "height"
-    "width"
-    "title"
-    "raiseToTop"
-  ].forEach (method) ->
-    postmaster["window.#{method}"] = ->
-      windowView[method] arguments...
+      application.element.remove()
 
   # TODO: Extend with passed in handlers?
   handlers = Model().include(FileIO).extend
@@ -75,13 +70,13 @@ module.exports = (opts={}) ->
       loadedPromise.then ->
         postmaster.invokeRemote "loadFile", blob
 
-  windowView = Window
+  application = Window
     title: title
     content: frame
     menuBar: menuBar?.element
     width: width
     height: height
 
-  windowView.loadFile = handlers.loadFile
+  application.loadFile = handlers.loadFile
 
-  return windowView
+  return application

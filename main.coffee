@@ -20,6 +20,10 @@ document.head.appendChild style
 Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()
 
+VersionTemplate = require "./templates/version"
+document.body.appendChild VersionTemplate
+  version: system.version
+
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"

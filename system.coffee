@@ -34,10 +34,6 @@ module.exports = (dbName='zine-os') ->
   {title} = require "./pixie"
   [..., version] = title.split('-')
 
-  VersionTemplate = require "./templates/version"
-  document.body.appendChild VersionTemplate
-    version: version
-
   self.extend
     ajax: Ajax()
     fs: fs

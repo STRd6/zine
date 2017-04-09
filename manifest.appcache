@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1491703029645
+# 1491778113356
 
 CACHE:
 index.html
@@ -9,7 +9,7 @@ https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js
 https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js
 https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js
 https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js
-https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
+https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js
 
 NETWORK:
 https://*

@@ -62,6 +62,8 @@ list = (bucket, id, dir) ->
 
 module.exports = (id, bucket) ->
 
+  localCache = {}
+
   notify = (eventType, path) ->
     (result) ->
       self.trigger eventType, path
@@ -76,7 +78,18 @@ module.exports = (id, bucket) ->
 
       key = "#{id}#{path}"
 
+      cachedItem = localCache[key]
+      if cachedItem
+        if cachedItem instanceof Blob
+          return Promise.resolve(cachedItem)
+        else
+          return Promise.reject(cachedItem)
+
       getFromS3(bucket, key)
+      .catch (e) ->
+        # Cache Not Founds too, since that's often what is slow
+        localCache[key] = e
+        throw e
       .then notify "read", path
 
     write: (path, blob) ->
@@ -84,6 +97,9 @@ module.exports = (id, bucket) ->
         path = delimiter + path
 
       key = "#{id}#{path}"
+
+      # Optimistically Cache
+      localCache[key] = blob
 
       uploadToS3 bucket, key, blob
       .then notify "write", path
@@ -93,6 +109,8 @@ module.exports = (id, bucket) ->
         path = delimiter + path
 
       key = "#{id}#{path}"
+
+      localCache[key] = new Error "Not Found"
 
       deleteFromS3 bucket, key
       .then notify "delete", path

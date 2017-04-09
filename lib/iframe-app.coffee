@@ -24,6 +24,7 @@ module.exports = (opts={}) ->
         <body>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"><\/script>
         <script>
+          var ZINEOS = #{JSON.stringify system.version()};
           #{require.executePackageWrapper(pkg)}
         <\/script>
         </body>
@@ -56,6 +57,17 @@ module.exports = (opts={}) ->
 
     exit: ->
       windowView.element.remove()
+
+  # Add WindowView Method access to client iFrame
+  [
+    "iconEmoji"
+    "height"
+    "width"
+    "title"
+    "raiseToTop"
+  ].forEach (method) ->
+    postmaster["window.#{method}"] = ->
+      windowView[method] arguments...
 
   # TODO: Extend with passed in handlers?
   handlers = Model().include(FileIO).extend

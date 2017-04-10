@@ -24,6 +24,9 @@ VersionTemplate = require "./templates/version"
 document.body.appendChild VersionTemplate
   version: system.version
 
+SiteURLTemplate = require "./templates/site-url"
+document.body.appendChild SiteURLTemplate()
+
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"

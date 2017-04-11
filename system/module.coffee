@@ -165,9 +165,22 @@ module.exports = (I, self) ->
 
       fileBasePath = absolutePath.match(/^.*\//)?[0] or ""
       state.basePath ?= fileBasePath
+      # Strip out base path and final suffix
+      # NOTE: .coffee.md type files won't like this
+      pkgPath = absolutePath.replace(state.basePath, "").replace(/\.[^.]*$/, "")
 
       {pkg} = state
       pkg.distribution ?= {}
+
+      unless state.loadConfigPromise
+        configPath = absolutizePath fileBasePath, "pixie.cson"
+        state.loadConfigPromise = self.loadProgram(configPath).then (config) ->
+          pkg.config = config
+        .catch (e) ->
+          if e.message.match /File not found/i
+            pkg.config = {}
+          else
+            throw e
 
       state.cache[absolutePath] ?= self.loadProgram(absolutePath)
       .then (sourceProgram) ->
@@ -177,9 +190,6 @@ module.exports = (I, self) ->
           # TODO: Detect and throw if requiring relative or absolute paths above
           # or outside of our base path
 
-          # Strip out base path and final suffix
-          # NOTE: .coffee.md type files won't like this
-          pkgPath = absolutePath.replace(state.basePath, "").replace(/\.[^.]*$/, "")
           # Add to package
           pkg.entryPoint ?= pkgPath
           pkg.distribution[pkgPath] =
@@ -203,6 +213,8 @@ module.exports = (I, self) ->
                 else
                   # TODO: Load from remote?
                   throw new Error "Package '#{depPath}' not found"
+          .then ->
+            state.loadConfigPromise
           .then ->
             return pkg
         else
@@ -375,7 +387,9 @@ compilers = [{
   fn: (blob) ->
     blob.readAsText()
     .then (coffeeSource) ->
-      "module.exports = #{CoffeeScript.compile(source, bare: true)}"
+      jsCode = CoffeeScript.compile(coffeeSource, bare: true)
+      # TODO: Security, lol
+      Function("return " + jsCode)()
 }, {
   filter: ({path}) ->
     path.match /\.te?xt$/

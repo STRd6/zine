@@ -26,7 +26,14 @@ module.exports = (I, self) ->
 
   ###
 
-  {absolutizePath, fileSeparator, normalizePath, isAbsolutePath, isRelativePath} = require "../util"
+  {
+    absolutizePath
+    fileSeparator
+    normalizePath
+    isAbsolutePath
+    isRelativePath
+    htmlForPackage
+  } = require "../util"
 
   findDependencies = (sourceProgram) ->
     requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
@@ -156,18 +163,25 @@ module.exports = (I, self) ->
 
         self.vivifyPrograms(bootablePaths)
 
+    # TODO: A simpler, dumber, packager that reads a pixie.cson, then
+    # just packages every file recursively down in the directories
+    createPackageFromPixie: ->
+
     # This is kind of the opposite approach of the vivifyPrograms, here we want 
     # to load everything statically and put it in a package that can be run by
     # `require`.
     packageProgram: (absolutePath, state={}) ->
-      state.cache ?= {}
-      state.pkg ?= {}
+      state.cache = {}
+      state.pkg = {}
 
       fileBasePath = absolutePath.match(/^.*\//)?[0] or ""
-      state.basePath ?= fileBasePath
+      state.basePath = fileBasePath
+
       # Strip out base path and final suffix
       # NOTE: .coffee.md type files won't like this
-      pkgPath = absolutePath.replace(state.basePath, "").replace(/\.[^.]*$/, "")
+      state.pkgPath = (path) ->
+        path.replace(state.basePath, "").replace(/\.[^.]*$/, "")
+      pkgPath = state.pkgPath(absolutePath)
 
       {pkg} = state
       pkg.distribution ?= {}
@@ -175,12 +189,41 @@ module.exports = (I, self) ->
       unless state.loadConfigPromise
         configPath = absolutizePath fileBasePath, "pixie.cson"
         state.loadConfigPromise = self.loadProgram(configPath).then (config) ->
-          pkg.config = config
+          entryPoint = config.entryPoint
+          (if entryPoint
+            path = absolutizePath(fileBasePath, entryPoint)
+            self.loadProgramIntoPackage(path, state)
+          else
+            Promise.resolve()
+          ).then ->
+            pkg.config = config
         .catch (e) ->
           if e.message.match /File not found/i
             pkg.config = {}
           else
             throw e
+
+      self.loadProgramIntoPackage(absolutePath, state)
+      .then ->
+        state.loadConfigPromise
+      .then ->
+        pkg.remoteDependencies = pkg.config.remoteDependencies
+        if pkg.config.entryPoint
+          pkg.entryPoint = pkg.config.entryPoint
+        else
+          pkg.entryPoint ?= pkgPath
+
+        return pkg
+
+    # Internal helper to load a program and its dependencies into the pkg
+    # in the state
+    # TODO: Loading deps like this doesn't work at all if require is used
+    # from browserified js sources :(
+    loadProgramIntoPackage: (absolutePath, state) ->
+      console.log "load program", absolutePath
+
+      {basePath, pkg} = state
+      pkgPath = state.pkgPath(absolutePath)
 
       state.cache[absolutePath] ?= self.loadProgram(absolutePath)
       .then (sourceProgram) ->
@@ -191,7 +234,6 @@ module.exports = (I, self) ->
           # or outside of our base path
 
           # Add to package
-          pkg.entryPoint ?= pkgPath
           pkg.distribution[pkgPath] =
             content: sourceProgram
 
@@ -200,8 +242,8 @@ module.exports = (I, self) ->
           Promise.all depPaths.map (depPath) ->
             Promise.resolve().then ->
               if isRelativePath depPath
-                path = absolutizePath(fileBasePath, depPath)
-                self.packageProgram path, state
+                path = absolutizePath(basePath, depPath)
+                self.loadProgramIntoPackage path, state
               else if isAbsolutePath depPath
                 throw new Error "Absolute paths not supported yet"
               else
@@ -213,12 +255,9 @@ module.exports = (I, self) ->
                 else
                   # TODO: Load from remote?
                   throw new Error "Package '#{depPath}' not found"
-          .then ->
-            state.loadConfigPromise
-          .then ->
-            return pkg
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
+
 
     # still experimenting with the API
     # Async 'require' in the vein of require.js
@@ -335,6 +374,8 @@ module.exports = (I, self) ->
           throw new Error "File not found at path: #{absolutePath}. Tried #{tries}"
 
         return file
+
+    htmlForPackage: htmlForPackage
 
 # Compile files based on type to JS program source
 compilers = [{

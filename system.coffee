@@ -109,6 +109,10 @@ module.exports = (dbName='zine-os') ->
         blob = new Blob [file.content]
         self.writeFile("System/#{path}", blob)
 
+    dumpPackage: ->
+      blob = new Blob [JSON.stringify(PACKAGE)], type: "application/json; charset=utf-8"
+      self.writeFile("System 💾", blob)
+
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"
 

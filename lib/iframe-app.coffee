@@ -2,51 +2,6 @@ Model = require "model"
 Postmaster = require "postmaster"
 FileIO = require "../os/file-io"
 
-makeScript = (src) ->
-  "<script src=#{JSON.stringify(src)}><\/script>"
-
-dependencyScripts = (remoteDependencies=[]) ->
-  remoteDependencies.map(makeScript).join("\n")
-
-htmlForPkg = (pkg) ->
-  metas = [
-    '<meta charset="utf-8">'
-  ]
-
-  {config, progenitor} = pkg
-  config ?= {}
-
-  {title, description, remoteDependencies} = config
-
-  if remoteDependencies
-    pkg.remoteDependencies ?= remoteDependencies
-
-  if title
-    metas.push "<title>#{title}</title>"
-
-  if description
-    metas.push metaTag "description", description.replace("\n", " ")
-
-  url = pkg.progenitor?.url
-  if url
-    metas.push "<link rel=\"Progenitor\" href=#{JSON.stringify(url)}>"
-
-  """
-    <!DOCTYPE html>
-    <html>
-      <head>
-        #{metas.join("\n    ")}
-        #{dependencyScripts(pkg.remoteDependencies)}
-      </head>
-      <body>
-        <script>
-          var ZINEOS = #{JSON.stringify system.version()};
-          #{require.executePackageWrapper(pkg)}
-        <\/script>
-      </body>
-    </html>
-  """
-
 module.exports = (opts={}) ->
   {Window} = system.UI
 
@@ -60,7 +15,7 @@ module.exports = (opts={}) ->
   if src
     frame.src = src
   else if pkg
-    html = htmlForPkg(pkg)
+    html = system.htmlForPackage(pkg)
     blob = new Blob [html],
       type: "text/html; charset=utf-8"
     frame.src = URL.createObjectURL blob

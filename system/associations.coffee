@@ -51,6 +51,17 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.executeInIFrame(file.path)
   }, {
+    name: "Run"
+    filter: (file) ->
+      file.path.match(/💾$/)
+    fn: (file) ->
+      system.readFile file.path
+      .then (blob) ->
+        blob.readAsJSON()
+      .then (pkg) ->
+        console.log pkg
+        self.executePackageInIFrame(pkg)
+  }, {
     name: "Sys Exec"
     filter: (file) ->
       return false # TODO: Enable with super mode :P

@@ -1,6 +1,11 @@
 Bindable = require "bindable"
 Model = require "model"
 
+FolderEntry = (path, prefix) ->
+  folder: true
+  path: prefix + path
+  relativePath: path
+
 # FS Wrapper to Dexie database
 module.exports = (db) ->
   Files = db.files
@@ -39,11 +44,23 @@ module.exports = (db) ->
       .then notify "delete", path
 
     # TODO: Collapse folders
-    # .replace(/\/.*$/, "/")
+    # 
     list: (dir) ->
       Files.where("path").startsWith(dir).toArray()
       .then (files) ->
-        files.forEach (file) ->
+        folderPaths = {}
+
+        files = files.filter (file) ->
           file.relativePath = file.path.replace(dir, "")
 
-        return files
+          if file.relativePath.match /\// # folder
+            folderPath = file.relativePath.replace /\/.*$/, "/"
+            folderPaths[folderPath] = true
+            return
+          else
+            return file
+
+        folders = Object.keys(folderPaths).map (folderPath) ->
+          FolderEntry folderPath, dir
+
+        return folders.concat(files)

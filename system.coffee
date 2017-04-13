@@ -72,6 +72,19 @@ module.exports = (dbName='zine-os') ->
       path = normalizePath "/#{path}"
       fs.read(path)
 
+    readTree: (directoryPath) ->
+      fs.list(directoryPath)
+      .then (files) ->
+        Promise.all files.map (file) ->
+          if file.folder
+            self.readTree(file.path)
+          else
+            file
+      .then (filesAndFolderFiles) ->
+        filesAndFolderFiles.reduce (a, b) ->
+          a.concat(b)
+        , []
+
     writeFile: (path, blob, userEvent) ->
       if userEvent
         self.Achievement.unlock "Save a file"

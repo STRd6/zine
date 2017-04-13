@@ -167,7 +167,7 @@ module.exports = (I, self) ->
     # just packages every file recursively down in the directories
     createPackageFromPixie: ->
 
-    # This is kind of the opposite approach of the vivifyPrograms, here we want 
+    # This is kind of the opposite approach of the vivifyPrograms, here we want
     # to load everything statically and put it in a package that can be run by
     # `require`.
     packageProgram: (absolutePath, state={}) ->
@@ -333,6 +333,7 @@ module.exports = (I, self) ->
     executePackageInIFrame: (pkg) ->
       app = IFrameApp
         pkg: pkg
+        title: pkg.config?.title
 
       document.body.appendChild app.element
 

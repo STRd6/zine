@@ -168,9 +168,11 @@ module.exports = Explorer = (options={}) ->
 
       addedFolders = {}
 
+      console.log files
+
       files.forEach (file) ->
-        if file.relativePath.match /\// # folder
-          folderPath = file.relativePath.replace /\/.*$/, ""
+        if file.relativePath.match /\/$/ # folder
+          folderPath = file.relativePath
           addedFolders[folderPath] = true
           return
 

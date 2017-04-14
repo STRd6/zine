@@ -163,9 +163,38 @@ module.exports = (I, self) ->
 
         self.vivifyPrograms(bootablePaths)
 
-    # TODO: A simpler, dumber, packager that reads a pixie.cson, then
+    # A simpler, dumber, packager that reads a pixie.cson, then
     # just packages every file recursively down in the directories
-    createPackageFromPixie: ->
+    createPackageFromPixie: (pixiePath) ->
+      basePath = pixiePath.match(/^.*\//)?[0] or ""
+      pkg =
+        distribution: {}
+
+      self.loadProgram(pixiePath).then (config) ->
+        pkg.config = config
+      .then ->
+        self.readTree(basePath)
+      .then (files) ->
+        Promise.all files.map ({path, blob}) ->
+          (if blob instanceof Blob
+            self.compileFile(blob)
+          else
+            self.readFile(path)
+            .then(self.compileFile)
+          )
+          .then (result) ->
+            [path, result]
+        .then (results) ->
+          results.forEach ([path, result]) ->
+            pkgPath = path.replace(basePath, "").replace(/\.[^.]*$/, "")
+
+            if typeof result is "string"
+              pkg.distribution[pkgPath] =
+                content: result
+            else
+              console.warn "Can't package files like #{path} yet"
+
+          return pkg
 
     # This is kind of the opposite approach of the vivifyPrograms, here we want
     # to load everything statically and put it in a package that can be run by
@@ -174,8 +203,8 @@ module.exports = (I, self) ->
       state.cache = {}
       state.pkg = {}
 
-      fileBasePath = absolutePath.match(/^.*\//)?[0] or ""
-      state.basePath = fileBasePath
+      basePath = absolutePath.match(/^.*\//)?[0] or ""
+      state.basePath = basePath
 
       # Strip out base path and final suffix
       # NOTE: .coffee.md type files won't like this
@@ -187,11 +216,11 @@ module.exports = (I, self) ->
       pkg.distribution ?= {}
 
       unless state.loadConfigPromise
-        configPath = absolutizePath fileBasePath, "pixie.cson"
+        configPath = absolutizePath basePath, "pixie.cson"
         state.loadConfigPromise = self.loadProgram(configPath).then (config) ->
           entryPoint = config.entryPoint
           (if entryPoint
-            path = absolutizePath(fileBasePath, entryPoint)
+            path = absolutizePath(basePath, entryPoint)
             self.loadProgramIntoPackage(path, state)
           else
             Promise.resolve()
@@ -286,19 +315,21 @@ module.exports = (I, self) ->
 
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
-      .then (file) ->
-        # system modules are loaded as functions/objects right now, so just return them
-        unless file instanceof Blob
-          return file
+      .then self.compileFile
 
-        [compiler] = compilers.filter ({filter}) ->
-          filter file
+    compileFile: (file) ->
+      # system modules are loaded as functions/objects right now, so just return them
+      unless file instanceof Blob
+        return file
 
-        if compiler
-          compiler.fn(file)
-        else
-          # Return the blob itself if we didn't find any compilers
-          return file
+      [compiler] = compilers.filter ({filter}) ->
+        filter file
+
+      if compiler
+        compiler.fn(file)
+      else
+        # Return the blob itself if we didn't find any compilers
+        return file
 
     # May want to reconsider this name
     loadModule: (args...) ->

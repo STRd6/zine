@@ -168,8 +168,6 @@ module.exports = Explorer = (options={}) ->
 
       addedFolders = {}
 
-      console.log files
-
       files.forEach (file) ->
         if file.relativePath.match /\/$/ # folder
           folderPath = file.relativePath
@@ -201,8 +199,8 @@ module.exports = Explorer = (options={}) ->
 
       Object.keys(addedFolders).reverse().forEach (folderName) ->
         folder =
-          path: "#{path}#{folderName}/"
-          relativePath: folderName
+          path: "#{path}#{folderName}"
+          relativePath: folderName.replace(/\/$/, "")
           contextmenu: (e) ->
             contextMenuForFolder(folder, e)
           dblclick: ->

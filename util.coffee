@@ -54,10 +54,18 @@ htmlForPackage = (pkg) ->
     </html>
   """
 
+extensionFor = (path) ->
+  result = path.match /\.([^.]+)$/
+
+  if result
+    result[1]
+
 module.exports =
   emptyElement: (element) ->
     while element.lastChild
       element.removeChild element.lastChild
+
+  extensionFor: extensionFor
 
   fileSeparator: fileSeparator
   htmlForPackage: htmlForPackage

@@ -3,11 +3,16 @@ AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
 Notepad = require "../apps/notepad"
 CodeEditor = require "../apps/text-editor"
+Explorer = require "../apps/explorer"
 Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
 Markdown = require "../apps/markdown"
 DSad = require "../apps/dungeon-of-sadness"
 MyBriefcase = require "../apps/my-briefcase"
+
+PkgFS = require "../lib/pkg-fs"
+
+{extensionFor} = require "../util"
 
 openWith = (App) ->
   (file) ->
@@ -50,6 +55,30 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/)
     fn: (file) ->
       self.executeInIFrame(file.path)
+  }, {
+    name: "Explore"
+    filter: (file) ->
+      file.path.match(/💾$/)
+    fn: (file) ->
+      system.readFile(file.path)
+      .then (blob) ->
+        blob.readAsJSON()
+      .then (pkg) ->
+        mountPath = file.path + "/"
+        fs = PkgFS(pkg)
+        system.fs.mount mountPath, fs
+
+        element = Explorer 
+          path: mountPath
+        windowView = system.UI.Window
+          title: mountPath
+          content: element
+          menuBar: null
+          width: 640
+          height: 480
+          iconEmoji: "📂"
+
+        document.body.appendChild windowView.element
   }, {
     name: "Run"
     filter: (file) ->
@@ -154,6 +183,12 @@ module.exports = (I, self) ->
     else
       throw new Error "No handler for files of type #{file.type}"
 
+  mimes =
+    html: "text/html"
+    js: "application/javascript"
+    json: "application/json"
+    md: "text/markdown"
+
   Object.assign self,
     iframeApp: require "../lib/iframe-app"
 
@@ -175,5 +210,8 @@ module.exports = (I, self) ->
 
     handlers: ->
       handlers.slice()
+
+    mimeTypeFor: (path) ->
+      mimes[extensionFor(path)] or "text/plain"
 
   return self

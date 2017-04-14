@@ -220,9 +220,7 @@ module.exports = Explorer = (options={}) ->
   system.fs.on "update", (path) -> update()
 
   addWindow = (path) ->
-    element = document.createElement "container"
-
-    element.appendChild Explorer
+    element = Explorer
       path: path
 
     windowView = Window

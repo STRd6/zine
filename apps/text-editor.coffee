@@ -3,11 +3,7 @@ FileIO = require "../os/file-io"
 
 ace.require("ace/ext/language_tools")
 
-extraModes =
-  jadelet: "jade"
-
-mode = (mode) ->
-  extraModes[mode] or mode
+{extensionFor} = require "../util"
 
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
@@ -39,24 +35,12 @@ module.exports = ->
 
   global.aceEditor = aceEditor
 
-  extensionFor = (path) ->
-    result = path.match /\.([^.]+)$/
-
-    if result
-      result[1]
-
   modes =
     cson: "coffeescript"
     jadelet: "jade"
     js: "javascript"
     md: "markdown"
     styl: "stylus"
-
-  mimes =
-    html: "text/html"
-    js: "application/javascript"
-    json: "application/json"
-    md: "text/markdown"
 
   mimeTypeFor = (path) ->
     type = mimes[extensionFor(path)] or "text/plain"

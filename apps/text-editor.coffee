@@ -43,7 +43,7 @@ module.exports = ->
     styl: "stylus"
 
   mimeTypeFor = (path) ->
-    type = mimes[extensionFor(path)] or "text/plain"
+    type = system.mimeTypeFor(path)
 
     "#{type}; charset=utf-8"
 

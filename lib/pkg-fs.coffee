@@ -11,7 +11,7 @@ sourcePath = (path) ->
   path.replace(/^\//, "")
 
 # FS Wrapper to a pixie package
-module.exports = (pkg) ->
+module.exports = (pkg, persistencePath) ->
   notify = (eventType, path) ->
     (result) ->
       self.trigger eventType, path
@@ -37,7 +37,10 @@ module.exports = (pkg) ->
           content: text
           type: blob.type
 
-        # TODO: Persist entire pkg
+        # Persist entire pkg
+        pkgBlob = new Blob [JSON.stringify(pkg)],
+          type: "application/json; charset=utf8"
+        system.writeFile persistencePath, pkgBlob
       .then notify "write", path
 
     # Delete a file at a path

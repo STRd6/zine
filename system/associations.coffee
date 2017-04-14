@@ -65,7 +65,7 @@ module.exports = (I, self) ->
         blob.readAsJSON()
       .then (pkg) ->
         mountPath = file.path + "/"
-        fs = PkgFS(pkg)
+        fs = PkgFS(pkg, file.path)
         system.fs.mount mountPath, fs
 
         element = Explorer 

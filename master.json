@@ -206,7 +206,7 @@
     },
     "pixie.cson": {
       "path": "pixie.cson",
-      "content": "title: \"Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉\"\ndescription: \"\"\"\n  When the bombs drop, and it's OS against OS, you're gonna wish you could view source\n\"\"\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  base64: \"distri/base64:v0.9.2\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.0\"\n  ui: \"STRd6/ui:v0.1.8\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"\n]\n",
+      "content": "title: \"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\"\ndescription: \"\"\"\n  When the bombs drop, and it's OS against OS, you're gonna wish you could view source\n\"\"\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  base64: \"distri/base64:v0.9.2\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.0\"\n  ui: \"STRd6/ui:v0.1.8\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"\n]\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -542,7 +542,7 @@
     },
     "pixie": {
       "path": "pixie",
-      "content": "module.exports = {\"title\":\"Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉\",\"description\":\"When the bombs drop, and it's OS against OS, you're gonna wish you could view source\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"base64\":\"distri/base64:v0.9.2\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.0\",\"ui\":\"STRd6/ui:v0.1.8\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"]};",
+      "content": "module.exports = {\"title\":\"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\",\"description\":\"When the bombs drop, and it's OS against OS, you're gonna wish you could view source\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"base64\":\"distri/base64:v0.9.2\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.0\",\"ui\":\"STRd6/ui:v0.1.8\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js\",\"https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"]};",
       "type": "blob"
     },
     "presenters/achievement-group-progress": {
@@ -700,7 +700,7 @@
     "url": "https://danielx.net/editor/"
   },
   "config": {
-    "title": "Whimsy Space - ZineOS v0.4.00.950a ⌊ALPHA⌉",
+    "title": "Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉",
     "description": "When the bombs drop, and it's OS against OS, you're gonna wish you could view source",
     "dependencies": {
       "ajax": "distri/ajax:master",

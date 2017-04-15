@@ -43,7 +43,7 @@ module.exports = (pkg, persistencePath) ->
         pkg.distribution[distributionPath(sourcePath(path))] =
           content: compiledSource
       else
-        console.warn "Can't package files like #{path} yet"
+        console.warn "Can't package files like #{path} yet", compiledSource
 
     Promise.all [writeSource, writeCompiled]
     .then persist

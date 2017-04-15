@@ -249,8 +249,6 @@ module.exports = (I, self) ->
     # TODO: Loading deps like this doesn't work at all if require is used
     # from browserified js sources :(
     loadProgramIntoPackage: (absolutePath, state) ->
-      console.log "load program", absolutePath
-
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
 
@@ -410,6 +408,8 @@ module.exports = (I, self) ->
     htmlForPackage: htmlForPackage
 
 # Compile files based on type to JS program source
+# These compilers return a string of JS source code that assigns a 
+# result to module.exports
 compilers = [{
   filter: ({path}) ->
     path.match /\.js$/
@@ -454,6 +454,8 @@ compilers = [{
     path.match /\.json$/
   fn: (blob) ->
     blob.readAsJSON()
+    .then (jsonData) ->
+      "module.exports = #{JSON.stringify(jsonData)}"
 }, {
   filter: ({path}) ->
     path.match /\.cson$/
@@ -462,7 +464,8 @@ compilers = [{
     .then (coffeeSource) ->
       jsCode = CoffeeScript.compile(coffeeSource, bare: true)
       # TODO: Security, lol
-      Function("return " + jsCode)()
+      data = Function("return " + jsCode)()
+      "module.exports = #{JSON.stringify(data)}"
 }, {
   filter: ({path}) ->
     path.match /\.te?xt$/

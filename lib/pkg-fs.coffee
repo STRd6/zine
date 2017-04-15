@@ -10,12 +10,41 @@ FolderEntry = (path, prefix) ->
 sourcePath = (path) ->
   path.replace(/^\//, "")
 
+# Strip out extension suffixes
+distributionPath = (path) ->
+  path.replace(/\..*$/, "")
+
 # FS Wrapper to a pixie package
 module.exports = (pkg, persistencePath) ->
   notify = (eventType, path) ->
     (result) ->
       self.trigger eventType, path
       return result
+
+  persist = ->
+    # Persist entire pkg
+    pkgBlob = new Blob [JSON.stringify(pkg)],
+      type: "application/json; charset=utf8"
+    system.writeFile persistencePath, pkgBlob
+
+  compileAndWrite = (path, blob) ->
+    writeSource = blob.readAsText()
+    .then (text) ->
+      pkg.source[sourcePath(path)] =
+        content: text
+        type: blob.type
+
+    # Compilers expect blob to be annotated with the path
+    blob.path = path
+
+    writeCompiled = system.compileFile(blob)
+    .then (compiledSource) ->
+      if typeof compiledSource is "string"
+        pkg.distribution[distributionPath(sourcePath(path))] =
+          content: compiledSource
+
+    Promise.all [writeSource, writeCompiled]
+    .then persist
 
   self = Model()
   .include(Bindable)
@@ -31,16 +60,7 @@ module.exports = (pkg, persistencePath) ->
 
     # Write a blob to a path
     write: (path, blob) ->
-      blob.readAsText()
-      .then (text) ->
-        pkg.source[sourcePath(path)] =
-          content: text
-          type: blob.type
-
-        # Persist entire pkg
-        pkgBlob = new Blob [JSON.stringify(pkg)],
-          type: "application/json; charset=utf8"
-        system.writeFile persistencePath, pkgBlob
+      compileAndWrite(path, blob)
       .then notify "write", path
 
     # Delete a file at a path

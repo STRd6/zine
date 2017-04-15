@@ -42,6 +42,8 @@ module.exports = (pkg, persistencePath) ->
       if typeof compiledSource is "string"
         pkg.distribution[distributionPath(sourcePath(path))] =
           content: compiledSource
+      else
+        console.warn "Can't package files like #{path} yet"
 
     Promise.all [writeSource, writeCompiled]
     .then persist

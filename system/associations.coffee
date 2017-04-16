@@ -91,6 +91,20 @@ module.exports = (I, self) ->
         console.log pkg
         self.executePackageInIFrame(pkg)
   }, {
+    name: "Publish"
+    filter: (file) ->
+      file.path.match(/💾$/)
+    fn: (file) ->
+      system.readFile file.path
+      .then (blob) ->
+        blob.readAsJSON()
+      .then (pkg) ->
+        system.UI.Modal.prompt "Path", "/My Briefcase/public/somefolder"
+        .then (path) ->
+          blob = new Blob [system.htmlForPackage(pkg)],
+            type: "text/html; charset=utf-8"
+          system.writeFile(path + "/index.html", blob)
+  }, {
     name: "Sys Exec"
     filter: (file) ->
       return false # TODO: Enable with super mode :P

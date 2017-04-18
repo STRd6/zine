@@ -217,7 +217,11 @@ module.exports = (I, self) ->
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.loadProgram(configPath).then (config) ->
+        state.loadConfigPromise = self.loadProgram(configPath).then (configSource) ->
+          module = {}
+          Function("module", configSource)(module)
+          module.exports
+        .then (config) ->
           entryPoint = config.entryPoint
           (if entryPoint
             path = absolutizePath(basePath, entryPoint)
@@ -225,6 +229,8 @@ module.exports = (I, self) ->
           else
             Promise.resolve()
           ).then ->
+            debugger
+            pkg.remoteDependencies = config.remoteDependencies
             pkg.config = config
         .catch (e) ->
           if e.message.match /File not found/i
@@ -408,7 +414,7 @@ module.exports = (I, self) ->
     htmlForPackage: htmlForPackage
 
 # Compile files based on type to JS program source
-# These compilers return a string of JS source code that assigns a 
+# These compilers return a string of JS source code that assigns a
 # result to module.exports
 compilers = [{
   filter: ({path}) ->

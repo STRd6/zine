@@ -18,7 +18,10 @@ dependencyScripts = (remoteDependencies=[]) ->
 metaTag = (name, content) ->
   "<meta name=#{JSON.stringify(name)} content=#{JSON.stringify(content)}>"
 
-htmlForPackage = (pkg) ->
+htmlForPackage = (pkg, opts={}) ->
+  {script} = opts
+  script ?= ""
+
   metas = [
     '<meta charset="utf-8">'
   ]
@@ -38,6 +41,15 @@ htmlForPackage = (pkg) ->
   if url
     metas.push "<link rel=\"Progenitor\" href=#{JSON.stringify(url)}>"
 
+  # Add postmaster dependency so package can talk with parent window
+  pkg.dependencies ?= {}
+  pkg.dependencies.postmaster ?= PACKAGE.dependencies.postmaster
+
+  code = """
+    #{script};
+    require('./#{pkg.entryPoint}');
+  """
+
   """
     <!DOCTYPE html>
     <html>
@@ -47,8 +59,7 @@ htmlForPackage = (pkg) ->
       </head>
       <body>
         <script>
-          var ZINEOS = #{JSON.stringify system.version()};
-          #{require.executePackageWrapper(pkg)}
+          #{require.packageWrapper(pkg, code)}
         <\/script>
       </body>
     </html>

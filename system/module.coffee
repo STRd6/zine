@@ -370,6 +370,11 @@ module.exports = (I, self) ->
       app = IFrameApp
         pkg: pkg
         title: pkg.config?.title
+        packageOptions:
+          script: """
+            var ZINEOS = #{JSON.stringify system.version()};
+            #{PACKAGE.distribution["lib/system-client"].content};
+          """
 
       document.body.appendChild app.element
 

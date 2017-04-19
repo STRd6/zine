@@ -5,7 +5,7 @@ FileIO = require "../os/file-io"
 module.exports = (opts={}) ->
   {Window} = system.UI
 
-  {height, menuBar, src, title, width, sandbox, pkg} = opts
+  {height, menuBar, src, title, width, sandbox, pkg, packageOptions} = opts
 
   frame = document.createElement "iframe"
 
@@ -15,7 +15,7 @@ module.exports = (opts={}) ->
   if src
     frame.src = src
   else if pkg
-    html = system.htmlForPackage(pkg)
+    html = system.htmlForPackage(pkg, packageOptions)
     blob = new Blob [html],
       type: "text/html; charset=utf-8"
     frame.src = URL.createObjectURL blob

@@ -257,6 +257,7 @@ module.exports = (I, self) ->
     loadProgramIntoPackage: (absolutePath, state) ->
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
+      relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
 
       state.cache[absolutePath] ?= self.loadProgram(absolutePath)
       .then (sourceProgram) ->
@@ -275,7 +276,7 @@ module.exports = (I, self) ->
           Promise.all depPaths.map (depPath) ->
             Promise.resolve().then ->
               if isRelativePath depPath
-                path = absolutizePath(basePath, depPath)
+                path = absolutizePath(relativeRoot, depPath)
                 self.loadProgramIntoPackage path, state
               else if isAbsolutePath depPath
                 throw new Error "Absolute paths not supported yet"

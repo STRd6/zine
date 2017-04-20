@@ -56,6 +56,14 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.executeInIFrame(file.path)
   }, {
+    name: "Exec"
+    filter: (file) ->
+      file.type is "application/javascript" or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.coffee$/)
+    fn: (file) ->
+      self.execute(file.path)
+  }, {
     name: "Explore"
     filter: (file) ->
       file.path.match(/💾$/)
@@ -68,7 +76,7 @@ module.exports = (I, self) ->
         fs = PkgFS(pkg, file.path)
         system.fs.mount mountPath, fs
 
-        element = Explorer 
+        element = Explorer
           path: mountPath
         windowView = system.UI.Window
           title: mountPath

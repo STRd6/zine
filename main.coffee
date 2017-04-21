@@ -36,3 +36,5 @@ system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()
 # system.dumpModules()
+
+require("./issues/2017-05")()

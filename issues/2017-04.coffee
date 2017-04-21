@@ -151,7 +151,7 @@ module.exports = ->
   img.style = "width: 100%; height: 100%"
 
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 4 | DISCO TECH | March 2017"
+    title: "ZineOS Volume 1 | Issue 4 | DISCO TECH | April 2017"
     content: img
     menuBar: menuBar.element
     width: 480

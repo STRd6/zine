@@ -96,7 +96,6 @@ module.exports = (I, self) ->
       .then (blob) ->
         blob.readAsJSON()
       .then (pkg) ->
-        console.log pkg
         self.executePackageInIFrame(pkg)
   }, {
     name: "Publish"

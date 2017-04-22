@@ -104,6 +104,38 @@ module.exports = (dbName='zine-os') ->
       fs.read(path)
       .then URL.createObjectURL
 
+    # TODO: Move this into some kind of system utils
+    installModulePrompt: ->
+      UI.Modal.prompt("url", "https://danielx.net/editor/master.json")
+      .then (url) ->
+        throw new Error "No url given" unless url
+
+        baseName = url.replace(/^https:\/\/(.*)/, "$1")
+        .replace(/(\.json)?$/, "💾")
+
+        pathPrompt = UI.Modal.prompt "path", "/lib/#{baseName}"
+        .then (path) ->
+          throw new Error "No path given" unless path
+          path
+
+        blobRequest = fetch url
+        .then (result) ->
+          result.blob()
+
+        Promise.all([blobRequest, pathPrompt])
+        .then ([path, blob]) ->
+          self.writeFile(path, blob)
+
+    installModule: (url, path) ->
+      path ?= url.replace(/^https:\/\/(.*)/, "/lib/$1")
+      .replace(/(\.json)?$/, "💾")
+
+      fetch url
+      .then (result) ->
+        result.blob()
+      .then (blob) ->
+        self.writeFile(path, blob)
+
     # NOTE: These are experimental commands to run code
     execJS: (path) ->
       self.readFile(path)

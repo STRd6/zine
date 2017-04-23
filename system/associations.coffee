@@ -112,6 +112,18 @@ module.exports = (I, self) ->
             type: "text/html; charset=utf-8"
           system.writeFile(path + "/index.html", blob)
   }, {
+    name: "Run Link"
+    filter: (file) ->
+      file.path.match(/🔗$/)
+    fn: (file) ->
+      system.readFile file.path
+      .then (blob) ->
+        blob.readAsText()
+      .then system.evalCSON
+      .then system.iframeApp
+      .then ({element}) ->
+        document.body.appendChild element
+  }, {
     name: "Sys Exec"
     filter: (file) ->
       return false # TODO: Enable with super mode :P

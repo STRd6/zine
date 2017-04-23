@@ -114,3 +114,11 @@ module.exports =
 
   endsWith: (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
+
+  evalCSON: (coffeeSource) ->
+    Promise.resolve()
+    .then ->
+      CoffeeScript.compile(coffeeSource, bare: true)
+    .then (jsCode) ->
+      # TODO: Security, lol
+      Function("return " + jsCode)()

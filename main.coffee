@@ -27,6 +27,9 @@ document.body.appendChild VersionTemplate
 SiteURLTemplate = require "./templates/site-url"
 document.body.appendChild SiteURLTemplate()
 
+HomeButton = require "./presenters/home-button"
+document.body.appendChild HomeButton()
+
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
 system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"

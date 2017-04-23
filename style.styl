@@ -35,6 +35,23 @@ comment
     &::before
       content: "-"
 
+body > button.home
+  background-color: rgba(255, 255, 255, 0.5)
+  bottom: 0
+  color: rgba(0, 0, 0, 0.87)
+  font-size: 2rem
+  left: 0
+  position: absolute
+  transition-duration: 0.125s
+  transition-property: background-color, color
+  z-index: 1
+
+  &:hover
+    background-color: rgba(255, 255, 255, 0.75)
+
+  &:active
+    color: rgba(255, 255, 255, 1.0)
+
 explorer
   display: block
   height: 100%
@@ -216,7 +233,6 @@ achievement-badge
     color: blue
 
 version, site-url
-  bottom: 1rem
   color: white
   display: block
   font-size: 20px
@@ -227,6 +243,8 @@ version, site-url
   text-shadow: 2px 2px 4px black
   z-index: 1
 
+version
+  bottom: 1rem
+
 site-url
-  right: initial
-  left: 1rem
+  bottom: 3rem

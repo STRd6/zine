@@ -16,12 +16,13 @@ PkgFS = require "../lib/pkg-fs"
 
 openWith = (App) ->
   (file) ->
-    {path} = file
     app = App()
 
-    system.readFile path
-    .then (blob) ->
-      app.loadFile(blob, path)
+    if file
+      {path} = file
+      system.readFile path
+      .then (blob) ->
+        app.loadFile(blob, path)
 
     document.body.appendChild app.element
 
@@ -243,6 +244,9 @@ module.exports = (I, self) ->
 
     handlers: ->
       handlers.slice()
+
+    launchApp: (App, file) ->
+      openWith(App)(file)
 
     mimeTypeFor: (path) ->
       mimes[extensionFor(path)] or "text/plain"

@@ -1,4 +1,6 @@
 Model = require "model"
+
+AchievementStatus = require "../apps/achievement-status"
 Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
@@ -17,36 +19,20 @@ module.exports = ->
       "2017-05"
 
     achievementStatus: ->
-      cheevoElement = system.Achievement.progressView()
-      cheevoElement.style.width = "100%"
-      cheevoElement.style.padding = "1em"
-
-      system.Achievement.unlock "Check yo' self"
-
-      windowView = Window
-        title: "Cheevos"
-        content: cheevoElement
-        width: 640
-        height: 480
-
-      document.body.appendChild windowView.element
+      system.launchApp AchievementStatus
 
     chateau: ->
-      app = Chateau(system)
-      document.body.appendChild app.element
+      system.launchApp Chateau
 
     myBriefcase: ->
-      app = MyBriefcase()
-      document.body.appendChild app.element
+      system.launchApp MyBriefcase
 
     pixiePaint: ->
-      app = PixiePaint(system)
-      document.body.appendChild app.element
+      system.launchApp PixiePaint
 
     textEditor: ->
-      app = TextEditor(system)
-      document.body.appendChild app.element
-  
+      system.launchApp TextEditor
+
   menuBar = MenuBar
     items: parseMenu """
       [A]pps

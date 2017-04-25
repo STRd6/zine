@@ -35,12 +35,16 @@ comment
     &::before
       content: "-"
 
+menu
+  font-size: 1rem
+
 body > button.home
   background-color: rgba(255, 255, 255, 0.5)
   bottom: 0
   color: rgba(0, 0, 0, 0.87)
   font-size: 2rem
   left: 0
+  padding-right: 0.3em
   position: absolute
   transition-duration: 0.125s
   transition-property: background-color, color
@@ -125,6 +129,8 @@ chateau
   window > viewport > &
     margin: initial
 
+window > viewport > audio
+  width: 100%
 
 @keyframes display-achievement
   0%

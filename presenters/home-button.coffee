@@ -13,19 +13,20 @@ module.exports = ->
   {ContextMenu, Util:{parseMenu}} = system.UI
 
   contextMenu = ContextMenu
-    classes: ["bottoms-up"]
     items: parseMenu """
       🔨 [A]pplications
         📝 [A]ce Editor
         🍷 [C]hateau
         🎨 [P]ixie Paint
-        🎮 [G]ames
-          🍖 [C]ontrasaurus
-          😭 [D]ungeon of Sadness
-        💼 [M]y Briefcase
+      🎮 [G]ames
+        🍖 [C]ontrasaurus
+        😭 [D]ungeon of Sadness
       ⚙️ [S]ettings
         📱 [A]ppearance
         💯 [C]heevos
+      💼 [M]y Briefcase
+      -
+      🔌 S[h]ut Down
     """
     handlers:
       aceEditor: ->
@@ -45,17 +46,22 @@ module.exports = ->
 
       dungeonofSadness: ->
         system.launchApp DungeonOfSadness
-  
+
       myBriefcase: ->
         system.launchApp MyBriefcase
-  
+
       pixiePaint: ->
         system.launchApp PixiePaint
 
+      shutDown: ->
+        system.UI.Modal.alert "You can never shut down ZineOS... NEVER!"
 
   updateStyle = ->
-    contextMenu.element.style.fontSize = "1rem"
-    contextMenu.element.style.bottom = "0px"
+    height = element.getBoundingClientRect().height
+
+    contextMenu.element.style.fontSize = "2rem"
+    contextMenu.element.style.lineHeight = "1.5"
+    contextMenu.element.style.bottom = "#{height}px"
     contextMenu.element.style.textAlign = "left"
 
   element = HomeButtonTemplate
@@ -63,7 +69,6 @@ module.exports = ->
       contextMenu.display
         inElement: document.body
 
-      # TODO: Update menu so we don't need to overwrite this here
       updateStyle()
 
   return element

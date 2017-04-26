@@ -61,7 +61,7 @@ module.exports = ->
       enterTheDungeon: ->
         system.launchIssue("2017-02")
 
-      first: ->
+      "1First": ->
         system.launchIssue("2016-12")
 
       myBriefcase: ->
@@ -76,7 +76,7 @@ module.exports = ->
   updateStyle = ->
     height = element.getBoundingClientRect().height
 
-    contextMenu.element.style.fontSize = "2rem"
+    contextMenu.element.style.fontSize = "1.5rem"
     contextMenu.element.style.lineHeight = "1.5"
     contextMenu.element.style.bottom = "#{height}px"
     contextMenu.element.style.textAlign = "left"

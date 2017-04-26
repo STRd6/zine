@@ -5,7 +5,7 @@ FileIO = require "../os/file-io"
 module.exports = (opts={}) ->
   {Window} = system.UI
 
-  {height, menuBar, src, title, width, sandbox, pkg, packageOptions} = opts
+  {height, menuBar, src, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
 
   frame = document.createElement "iframe"
 
@@ -65,6 +65,7 @@ module.exports = (opts={}) ->
     menuBar: menuBar?.element
     width: width
     height: height
+    iconEmoji: iconEmoji
 
   application.loadFile = handlers.loadFile
 

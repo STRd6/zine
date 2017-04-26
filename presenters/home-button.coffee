@@ -19,6 +19,7 @@ module.exports = ->
         🍷 [C]hateau
         🎨 [P]ixie Paint
       🎮 [G]ames
+        🌭 [B]ionic Hotdog
         🍖 [C]ontrasaurus
         😭 [D]ungeon Of Sadness
       📰 [I]ssues
@@ -42,6 +43,17 @@ module.exports = ->
 
       aTTNKMartShoppers: ->
         system.launchIssue("2017-03")
+
+      bionicHotdog: ->
+        Promise.resolve
+          src: "https://danielx.net/grappl3r/"
+          width: 960
+          height: 540
+          iconEmoji: "🌭"
+          title: "Bionic Hotdog"
+        .then system.iframeApp
+        .then ({element}) ->
+          document.body.appendChild element
 
       chateau: ->
         system.launchApp Chateau

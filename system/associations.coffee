@@ -125,6 +125,11 @@ module.exports = (I, self) ->
       .then ({element}) ->
         document.body.appendChild element
   }, {
+    name: "Edit"
+    filter: (file) ->
+      file.path.match(/🔗$/)
+    fn: openWith(CodeEditor)
+  }, {
     name: "Sys Exec"
     filter: (file) ->
       return false # TODO: Enable with super mode :P

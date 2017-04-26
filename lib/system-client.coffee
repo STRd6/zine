@@ -1,6 +1,17 @@
-Postmaster = require "postmaster"
+# system-client is what prepares the environment for user apps
+# we hook up the postmaster and proxy messages to the OS
+# we also provide system packages for the application to use like UI
 
 do ->
+  # NOTE: These required packages get populated from the parent package when building
+  # the runnable app. See util.coffee
+  Postmaster = require "_SYS_postmaster"
+  UI = require "_SYS_ui"
+
+  style = document.createElement "style"
+  style.innerHTML = UI.Style.all
+  document.head.appendChild style
+
   postmaster = Postmaster()
 
   applicationProxy = new Proxy {},
@@ -11,12 +22,9 @@ do ->
   document.addEventListener "mousedown", ->
     applicationProxy.raiseToTop()
 
-  # TODO: Can we auto-proxy these UI methods better?
   systemProxy = new Proxy
-    UI:
-      Modal:
-        alert: ->
-          window.alert arguments...
+    Observable: UI.Observable
+    UI: UI
   ,
     get: (target, property, receiver) ->
       target[property] or

@@ -125,7 +125,7 @@ module.exports = (I, self) ->
       .then ({element}) ->
         document.body.appendChild element
   }, {
-    name: "Edit"
+    name: "Edit Link"
     filter: (file) ->
       file.path.match(/🔗$/)
     fn: openWith(CodeEditor)

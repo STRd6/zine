@@ -155,8 +155,9 @@ module.exports = (I, self) ->
 
   Object.assign self,
     autoboot: ->
-      self.fs.list "/System/Boot"
+      self.fs.list "/System/Boot/"
       .then (files) ->
+        console.log files
         bootablePaths = files.filter ({blob}) ->
           blob?
         .map ({path}) ->

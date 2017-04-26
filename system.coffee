@@ -104,6 +104,9 @@ module.exports = (dbName='zine-os') ->
       fs.read(path)
       .then URL.createObjectURL
 
+    launchIssue: (date) ->
+      require("./issues/#{date}")()
+
     # TODO: Move this into some kind of system utils
     installModulePrompt: ->
       UI.Modal.prompt("url", "https://danielx.net/editor/master.json")

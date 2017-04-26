@@ -20,7 +20,12 @@ module.exports = ->
         🎨 [P]ixie Paint
       🎮 [G]ames
         🍖 [C]ontrasaurus
-        😭 [D]ungeon of Sadness
+        😭 [D]ungeon Of Sadness
+      📰 [I]ssues
+        1️⃣ [F]irst
+        🏰 [E]nter The Dungeon
+        🏬 [A]TTN: K-Mart Shoppers
+        💃 [D]isco Tech
       ⚙️ [S]ettings
         📱 [A]ppearance
         💯 [C]heevos
@@ -35,6 +40,9 @@ module.exports = ->
       appearance: ->
         system.UI.Modal.alert "TODO :)"
 
+      aTTNKMartShoppers: ->
+        system.launchIssue("2017-03")
+
       chateau: ->
         system.launchApp Chateau
 
@@ -44,8 +52,17 @@ module.exports = ->
       contrasaurus: ->
         system.launchApp Contrasaurus
 
-      dungeonofSadness: ->
+      discoTech: ->
+        system.launchIssue("2017-04")
+
+      dungeonOfSadness: ->
         system.launchApp DungeonOfSadness
+
+      enterTheDungeon: ->
+        system.launchIssue("2017-02")
+
+      first: ->
+        system.launchIssue("2016-12")
 
       myBriefcase: ->
         system.launchApp MyBriefcase

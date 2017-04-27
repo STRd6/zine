@@ -16,6 +16,12 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
+# Drag shenanigans
+document.addEventListener "dragstart", ->
+  document.body.classList.add "drag-active"
+document.addEventListener "mouseup", ->
+  document.body.classList.remove "drag-active"
+
 # Desktop
 Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()

@@ -1,3 +1,4 @@
+Drop = require "../lib/drop"
 Model = require "model"
 Postmaster = require "postmaster"
 FileIO = require "../os/file-io"
@@ -57,5 +58,24 @@ module.exports = ->
   windowView.loadFile = handlers.loadFile
 
   system.Achievement.unlock "Pixel perfect"
+
+  # TODO: Extract this to a general drop2app thing
+  Drop windowView.element, (e) ->
+    fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
+
+    if fileSelectionData
+      data = JSON.parse(fileSelectionData)
+      e.preventDefault()
+      file = data.files[0]
+
+      # TODO: Handle multi-files
+      path = data.files[0].path
+
+      system.readFile path
+      .then handlers.loadFile
+      .then ->
+        handlers.currentPath path
+
+      return
 
   return windowView

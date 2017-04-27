@@ -1,8 +1,6 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
-# TODO: Drag and drop folders between folders
-# TODO: Drop files onto folders
 # TODO: Drop files onto applications
 # TODO: Select multiple
 # TOOD: Keyboard Input
@@ -30,11 +28,18 @@ module.exports = Explorer = (options={}) ->
   Drop explorer, (e) ->
     return if e.defaultPrevented
 
+    targetPath = extractPath(e.target) or path
+    folderTarget = targetPath.match(/\/$/)
+
     fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
 
     if fileSelectionData
       data = JSON.parse fileSelectionData
-      system.moveFileSelection(data, path)
+
+      if folderTarget
+        system.moveFileSelection(data, targetPath)
+      else
+        ; # TODO: Attempt to open file in app
       e.preventDefault()
 
       return
@@ -43,9 +48,12 @@ module.exports = Explorer = (options={}) ->
 
     if files.length
       e.preventDefault()
-      files.forEach (file) ->
-        newPath = path + file.name
-        system.writeFile(newPath, file, true)
+      if folderTarget
+        files.forEach (file) ->
+          newPath = targetPath + file.name
+          system.writeFile(newPath, file, true)
+      else
+        ; # TODO: Open files in app
 
   explorerContextMenu = ContextMenu
     items: parseMenu """
@@ -195,17 +203,20 @@ module.exports = Explorer = (options={}) ->
           addedFolders[folderPath] = true
           return
 
-        file.dblclick = ->
-          system.open file
+        Object.assign file,
+          displayName: file.relativePath
 
-        file.contextmenu = (e) ->
-          contextMenuFor(file, e)
+          dblclick: ->
+            system.open file
 
-        file.dragstart = (e) ->
-          # Note: Blobs don't make it through the stringify
-          e.dataTransfer.setData "zineos/file-selection", JSON.stringify
-            sourcePath: path
-            files: [ file ]
+          contextmenu: (e) ->
+            contextMenuFor(file, e)
+
+          dragstart: (e) ->
+            # Note: Blobs don't make it through the stringify
+            e.dataTransfer.setData "zineos/file-selection", JSON.stringify
+              sourcePath: path
+              files: [ file ]
 
         fileElement = FileTemplate file
         if file.type.match /^image\//
@@ -221,14 +232,17 @@ module.exports = Explorer = (options={}) ->
       Object.keys(addedFolders).reverse().forEach (folderName) ->
         folder =
           path: "#{path}#{folderName}"
-          relativePath: folderName.replace(/\/$/, "")
+          relativePath: folderName
+          displayName: folderName.replace(/\/$/, "")
           contextmenu: (e) ->
             contextMenuForFolder(folder, e)
           dblclick: ->
             # Open folder in new window
             addWindow(folder.path)
           dragstart: (e) ->
-            console.log e, folder
+            e.dataTransfer.setData "zineos/file-selection", JSON.stringify
+              sourcePath: folder.path.slice(0, folder.path.length - folder.relativePath.length)
+              files: [ folder ]
 
         folderElement = FolderTemplate folder
         explorer.insertBefore(folderElement, explorer.firstChild)

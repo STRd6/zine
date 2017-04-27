@@ -63,7 +63,15 @@ module.exports = (dbName='zine-os') ->
           return
         else
           Promise.all files.map ({relativePath}) ->
-            self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
+            if relativePath.match(/\/$/)
+              # Folder
+              self.readTree("#{sourcePath}#{relativePath}")
+              .then (files) ->
+                Promise.all files.map (file) ->
+                  targetPath = file.path.replace(sourcePath, destinationPath)
+                  self.moveFile(file.path, targetPath)
+            else
+              self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
 
     readFile: (path, userEvent) ->
       if userEvent

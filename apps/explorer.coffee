@@ -13,12 +13,19 @@ FolderTemplate = require "../templates/folder"
 
 {emptyElement} = require "../util"
 
+extractPath = (element) ->
+  while element
+    path = element.getAttribute("path")
+    return path if path
+    element = element.parentElement
+
 module.exports = Explorer = (options={}) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {path} = options
   path ?= '/'
 
   explorer = document.createElement "explorer"
+  explorer.setAttribute("path", path)
 
   Drop explorer, (e) ->
     return if e.defaultPrevented
@@ -150,10 +157,24 @@ module.exports = Explorer = (options={}) ->
       handlers:
         open: ->
           addWindow(folder.path)
-        delete: -> # TODO: Delete all files under folder
+        delete: ->
+          system.readTree(folder.path)
+          .then (results) ->
+            Promise.all results.map (result) ->
+              system.deleteFile(result.path)
         rename: ->
-          ;# TODO: Rename all files under folder (!)
-          # May want to think about inodes or something that makes this simpler
+          Modal.prompt "Name", folder.path
+          .then (newName) ->
+            return unless newName
+
+            # Ensure trailing slash
+            newName = newName.replace(/\/*$/, "/")
+
+            system.readTree(folder.path)
+            .then (files) ->
+              Promise.all files.map (file) ->
+                newPath = file.path.replace(folder.path, newName)
+                system.moveFile(file.path, newPath)
         properties: -> # TODO
 
     contextMenu.display

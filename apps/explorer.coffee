@@ -39,7 +39,8 @@ module.exports = Explorer = (options={}) ->
       if folderTarget
         system.moveFileSelection(data, targetPath)
       else
-        ; # TODO: Attempt to open file in app
+        # TODO: Attempt to open file in app
+        console.log "TODO: Open in app"
       e.preventDefault()
 
       return

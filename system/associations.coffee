@@ -253,6 +253,33 @@ module.exports = (I, self) ->
     launchApp: (App, file) ->
       openWith(App)(file)
 
+    pathAsApp: (path) ->
+      if path.match(/💾$/)
+        system.readFile path
+        .then (blob) ->
+          blob.readAsJSON()
+        .then (pkg) ->
+          return ->
+            self.executePackageInIFrame(pkg)
+      else if path.match(/🔗$/)
+        system.readFile path
+        .then (blob) ->
+          blob.readAsText()
+        .then system.evalCSON
+        .then (data) ->
+          return ->
+            system.iframeApp data
+      else if path.match(/\.js$|\.coffee$/)
+        ->
+          self.executeInIFrame(path)
+      else
+        Promise.reject new Error "Could not launch #{path}"
+
+    execPathWithFile: (path, file) ->
+      self.pathAsApp(path)
+      .then (App) ->
+        self.launchApp App, file
+
     mimeTypeFor: (path) ->
       mimes[extensionFor(path)] or "text/plain"
 

@@ -39,8 +39,12 @@ module.exports = Explorer = (options={}) ->
       if folderTarget
         system.moveFileSelection(data, targetPath)
       else
-        # TODO: Attempt to open file in app
-        console.log "TODO: Open in app"
+        # Attempt to open file in app
+        selectedFile = data.files[0]
+        console.log "Open in app #{targetPath} <- #{selectedFile}"
+        system.readFile(selectedFile.path)
+        .then (file) ->
+          system.execPathWithFile(targetPath, file)
       e.preventDefault()
 
       return
@@ -54,7 +58,9 @@ module.exports = Explorer = (options={}) ->
           newPath = targetPath + file.name
           system.writeFile(newPath, file, true)
       else
-        ; # TODO: Open files in app
+        system.readFile(fileSelectionData.files[0])
+        .then (file) ->
+          system.execPathWithFile(targetPath, file)
 
   explorerContextMenu = ContextMenu
     items: parseMenu """

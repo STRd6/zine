@@ -237,6 +237,10 @@ module.exports = (I, self) ->
     open: (file) ->
       handle(file)
 
+    openPath: (path) ->
+      self.readFile path
+      .then self.open
+
     # Return a list of all handlers that can be used for this file
     openersFor: (file) ->
       handlers.filter (handler) ->

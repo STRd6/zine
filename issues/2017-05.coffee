@@ -8,11 +8,25 @@ Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 
+StoryReader = require "../apps/story-reader"
+
 Social = require "../social/social"
 
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
+  
+  ggPath = "issue-5/gleep-glorp.m4a"
+
+  system.readFile ggPath
+  .then (file) ->
+    throw new Error "File not found" unless file
+  .catch ->
+    ajax
+      url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/hao/gleep-glorp.m4a"
+      responseType: "blob"
+    .then (blob) ->
+      system.writeFile ggPath, blob
 
   handlers = Model().include(Social).extend
     area: ->
@@ -24,6 +38,13 @@ module.exports = ->
     chateau: ->
       system.launchApp Chateau
 
+    crescent: ->
+      app = StoryReader
+        text: require "../stories/crescent"
+        title: "Crescent"
+
+      document.body.appendChild app.element
+
     myBriefcase: ->
       system.launchApp MyBriefcase
 
@@ -32,6 +53,9 @@ module.exports = ->
 
     textEditor: ->
       system.launchApp TextEditor
+    
+    gleepGlorp: ->
+      system.openPath ggPath
 
   menuBar = MenuBar
     items: parseMenu """
@@ -40,6 +64,9 @@ module.exports = ->
         My [B]riefcase
         [P]ixie Paint
         [T]ext Editor
+      [C]ontent
+        [C]rescent
+        [G]leep Glorp
       #{Social.menuText}
       [H]elp
         [A]chievement Status

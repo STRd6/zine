@@ -27,6 +27,7 @@ module.exports = ->
         🏰 [E]nter The Dungeon
         🏬 [A]TTN: K-Mart Shoppers
         💃 [D]isco Tech
+        🌻 [A] May Zine
       ⚙️ [S]ettings
         📱 [A]ppearance
         💯 [C]heevos
@@ -37,6 +38,9 @@ module.exports = ->
     handlers:
       aceEditor: ->
         system.launchApp AceEditor
+
+      aMayZine: ->
+        system.launchIssue("2017-05")
 
       appearance: ->
         system.UI.Modal.alert "TODO :)"
@@ -83,7 +87,7 @@ module.exports = ->
         system.launchApp PixiePaint
 
       shutDown: ->
-        system.UI.Modal.alert "You can never shut down ZineOS... NEVER!"
+        system.UI.Modal.alert "You'll never shut us down! ZineOS 5ever!"
 
   updateStyle = ->
     height = element.getBoundingClientRect().height

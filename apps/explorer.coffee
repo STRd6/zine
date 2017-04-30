@@ -58,9 +58,8 @@ module.exports = Explorer = (options={}) ->
           newPath = targetPath + file.name
           system.writeFile(newPath, file, true)
       else
-        system.readFile(fileSelectionData.files[0])
-        .then (file) ->
-          system.execPathWithFile(targetPath, file)
+        file = files[0]
+        system.execPathWithFile(targetPath, file)
 
   explorerContextMenu = ContextMenu
     items: parseMenu """

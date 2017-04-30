@@ -48,7 +48,7 @@ module.exports = ->
 
     contrasaurus: ->
       visit "csaur"
-      document.body.appendChild Contrasaurus(system).element
+      document.body.appendChild Contrasaurus().element
 
     achievementStatus: ->
       visit "cheevo"

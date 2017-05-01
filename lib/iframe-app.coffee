@@ -5,7 +5,7 @@ FileIO = require "../os/file-io"
 module.exports = (opts={}) ->
   {Window} = system.UI
 
-  {height, menuBar, src, title, width, sandbox, pkg, packageOptions} = opts
+  {height, menuBar, src, handlers, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
 
   frame = document.createElement "iframe"
 
@@ -53,8 +53,7 @@ module.exports = (opts={}) ->
     exit: ->
       application.element.remove()
 
-  # TODO: Extend with passed in handlers?
-  handlers = Model().include(FileIO).extend
+  handlers ?= Model().include(FileIO).extend
     loadFile: (blob) ->
       loadedPromise.then ->
         postmaster.invokeRemote "loadFile", blob
@@ -65,7 +64,12 @@ module.exports = (opts={}) ->
     menuBar: menuBar?.element
     width: width
     height: height
+    iconEmoji: iconEmoji
 
+  application.handlers = handlers
   application.loadFile = handlers.loadFile
+  application.send = (args...) ->
+    loadedPromise.then ->
+      postmaster.invokeRemote args...
 
   return application

@@ -1,3 +1,3 @@
-folder(draggable="true" @dragstart @dblclick @contextmenu)
+folder(draggable="true" @dragstart @dblclick @contextmenu @path)
   icon
-  label= @relativePath
+  label= @displayName

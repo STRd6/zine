@@ -16,6 +16,12 @@ style = document.createElement "style"
 style.innerHTML = Style.all + "\n" + require("./style")
 document.head.appendChild style
 
+# Drag shenanigans
+document.addEventListener "dragstart", ->
+  document.body.classList.add "drag-active"
+document.addEventListener "mouseup", ->
+  document.body.classList.remove "drag-active"
+
 # Desktop
 Explorer = require "./apps/explorer"
 document.body.appendChild Explorer()
@@ -27,12 +33,13 @@ document.body.appendChild VersionTemplate
 SiteURLTemplate = require "./templates/site-url"
 document.body.appendChild SiteURLTemplate()
 
+HomeButton = require "./presenters/home-button"
+document.body.appendChild HomeButton()
+
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
-system.writeFile "issue-1/zine1.exe", new Blob [""], type: "application/exe"
-system.writeFile "issue-2/zine2.exe", new Blob [""], type: "application/exe"
-system.writeFile "issue-3/zine3.exe", new Blob [""], type: "application/exe"
-system.writeFile "issue-4/zine4.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()
 # system.dumpModules()
+
+require("./issues/2017-05")()

@@ -1,18 +1,12 @@
-Model = require "model"
-
 module.exports = ->
-  {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
+  {Achievement, iframeApp} = system
 
-  frame = document.createElement "iframe"
-  frame.src = "https://danielx.net/ld33/"
-
-  system.Achievement.unlock "The dungeon is in our heart"
-
-  windowView = Window
+  app = iframeApp
     title: "Dungeon of Sadness"
-    content: frame
-    menuBar: null
+    src: "https://danielx.net/ld33/"
     width: 648
     height: 507
 
-  return windowView
+  Achievement.unlock "The dungeon is in our heart"
+
+  return app

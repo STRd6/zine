@@ -8,6 +8,7 @@ module.exports = ->
     width: 960
     height: 540
     title: "Chateau"
+    iconEmoji: "🍷"
 
   app.on "event", (name) ->
     switch name

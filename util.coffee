@@ -42,8 +42,10 @@ htmlForPackage = (pkg, opts={}) ->
     metas.push "<link rel=\"Progenitor\" href=#{JSON.stringify(url)}>"
 
   # Add postmaster dependency so package can talk with parent window
+  # The packages are added with the _SYS_ prefix to reduce collisions
   pkg.dependencies ?= {}
-  pkg.dependencies.postmaster ?= PACKAGE.dependencies.postmaster
+  pkg.dependencies._SYS_postmaster ?= PACKAGE.dependencies.postmaster
+  pkg.dependencies._SYS_ui ?= PACKAGE.dependencies.ui
 
   code = """
     #{script};
@@ -114,3 +116,11 @@ module.exports =
 
   endsWith: (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
+
+  evalCSON: (coffeeSource) ->
+    Promise.resolve()
+    .then ->
+      CoffeeScript.compile(coffeeSource, bare: true)
+    .then (jsCode) ->
+      # TODO: Security, lol
+      Function("return " + jsCode)()

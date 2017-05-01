@@ -28,6 +28,7 @@ module.exports = (I, self) ->
 
   {
     absolutizePath
+    evalCSON
     fileSeparator
     normalizePath
     isAbsolutePath
@@ -154,8 +155,9 @@ module.exports = (I, self) ->
 
   Object.assign self,
     autoboot: ->
-      self.fs.list "/System/Boot"
+      self.fs.list "/System/Boot/"
       .then (files) ->
+        console.log files
         bootablePaths = files.filter ({blob}) ->
           blob?
         .map ({path}) ->
@@ -419,6 +421,8 @@ module.exports = (I, self) ->
 
     htmlForPackage: htmlForPackage
 
+    evalCSON: evalCSON
+
 # Compile files based on type to JS program source
 # These compilers return a string of JS source code that assigns a
 # result to module.exports
@@ -458,34 +462,31 @@ compilers = [{
   fn: (blob) ->
     blob.readAsText()
     .then (source) ->
-      cssString = system.stylus(source).render()
-
-      "module.exports = #{JSON.stringify(cssString)}"
+      system.stylus(source).render()
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.json$/
   fn: (blob) ->
     blob.readAsJSON()
-    .then (jsonData) ->
-      "module.exports = #{JSON.stringify(jsonData)}"
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.cson$/
   fn: (blob) ->
     blob.readAsText()
-    .then (coffeeSource) ->
-      jsCode = CoffeeScript.compile(coffeeSource, bare: true)
-      # TODO: Security, lol
-      data = Function("return " + jsCode)()
-      "module.exports = #{JSON.stringify(data)}"
+    .then evalCSON
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.te?xt$/
   fn: (blob) ->
     blob.readAsText()
-    .then (txt) ->
-      "module.exports = #{JSON.stringify(txt)}"
+    .then stringifyExport
 }]
+
+stringifyExport = (data) ->
+  "module.exports = #{JSON.stringify(data)}"
 
 annotateSourceURL = (program, path) ->
   """

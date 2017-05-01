@@ -48,8 +48,11 @@ module.exports = ->
   system.Achievement.unlock "Oh no, my files!"
 
   LoginTemplate = system.compileTemplate """
-    a#LoginWithAmazon(@click)
-      img(border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32")
+    span(style="text-align: center; padding: 0 2em;")
+      h1 My Briefcase
+      p= @description
+      a#LoginWithAmazon(@click)
+        img(border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32")
   """
 
   LoadedTemplate = system.compileTemplate """
@@ -119,6 +122,13 @@ module.exports = ->
         console.warn e, e.message
 
   content LoginTemplate
+    description: ->
+      """
+        Maintain access to your files across different machines. Publish
+        effortlessly to the internet. Your briefcase holds all of your hopes
+        and dreams in a magical cloud that is available anywhere there is an
+        internet connection. 💼
+      """
     click: ->
       options = { scope : 'profile' }
       amazon.Login.authorize options, (resp) ->

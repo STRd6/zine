@@ -16,12 +16,13 @@ PkgFS = require "../lib/pkg-fs"
 
 openWith = (App) ->
   (file) ->
-    {path} = file
     app = App()
 
-    system.readFile path
-    .then (blob) ->
-      app.loadFile(blob, path)
+    if file
+      {path} = file
+      system.readFile path
+      .then (blob) ->
+        app.loadFile(blob, path)
 
     document.body.appendChild app.element
 
@@ -96,7 +97,6 @@ module.exports = (I, self) ->
       .then (blob) ->
         blob.readAsJSON()
       .then (pkg) ->
-        console.log pkg
         self.executePackageInIFrame(pkg)
   }, {
     name: "Publish"
@@ -112,6 +112,23 @@ module.exports = (I, self) ->
           blob = new Blob [system.htmlForPackage(pkg)],
             type: "text/html; charset=utf-8"
           system.writeFile(path + "/index.html", blob)
+  }, {
+    name: "Run Link"
+    filter: (file) ->
+      file.path.match(/🔗$/)
+    fn: (file) ->
+      system.readFile file.path
+      .then (blob) ->
+        blob.readAsText()
+      .then system.evalCSON
+      .then system.iframeApp
+      .then ({element}) ->
+        document.body.appendChild element
+  }, {
+    name: "Edit Link"
+    filter: (file) ->
+      file.path.match(/🔗$/)
+    fn: openWith(CodeEditor)
   }, {
     name: "Sys Exec"
     filter: (file) ->
@@ -220,6 +237,10 @@ module.exports = (I, self) ->
     open: (file) ->
       handle(file)
 
+    openPath: (path) ->
+      self.readFile path
+      .then self.open
+
     # Return a list of all handlers that can be used for this file
     openersFor: (file) ->
       handlers.filter (handler) ->
@@ -232,6 +253,36 @@ module.exports = (I, self) ->
 
     handlers: ->
       handlers.slice()
+
+    launchApp: (App, file) ->
+      openWith(App)(file)
+
+    pathAsApp: (path) ->
+      if path.match(/💾$/)
+        system.readFile path
+        .then (blob) ->
+          blob.readAsJSON()
+        .then (pkg) ->
+          return ->
+            self.executePackageInIFrame(pkg)
+      else if path.match(/🔗$/)
+        system.readFile path
+        .then (blob) ->
+          blob.readAsText()
+        .then system.evalCSON
+        .then (data) ->
+          return ->
+            system.iframeApp data
+      else if path.match(/\.js$|\.coffee$/)
+        ->
+          self.executeInIFrame(path)
+      else
+        Promise.reject new Error "Could not launch #{path}"
+
+    execPathWithFile: (path, file) ->
+      self.pathAsApp(path)
+      .then (App) ->
+        self.launchApp App, file
 
     mimeTypeFor: (path) ->
       mimes[extensionFor(path)] or "text/plain"

@@ -15,7 +15,7 @@ Social = require "../social/social"
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
-  
+
   ggPath = "issue-5/gleep-glorp.m4a"
 
   system.readFile ggPath
@@ -45,6 +45,16 @@ module.exports = ->
 
       document.body.appendChild app.element
 
+    gleepGlorp: ->
+      system.openPath ggPath
+
+    marigold: ->
+      app = StoryReader
+        text: require "../stories/marigold"
+        title: "Marigold"
+
+      document.body.appendChild app.element
+
     myBriefcase: ->
       system.launchApp MyBriefcase
 
@@ -53,9 +63,6 @@ module.exports = ->
 
     textEditor: ->
       system.launchApp TextEditor
-    
-    gleepGlorp: ->
-      system.openPath ggPath
 
   menuBar = MenuBar
     items: parseMenu """
@@ -67,6 +74,7 @@ module.exports = ->
       [C]ontent
         [C]rescent
         [G]leep Glorp
+        [M]arigold
       #{Social.menuText}
       [H]elp
         [A]chievement Status

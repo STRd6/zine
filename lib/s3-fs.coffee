@@ -5,6 +5,9 @@ Model = require "model"
 
 delimiter = "/"
 
+# NOTE: Not scoped for multi-bucket yet
+localCache = {}
+
 status = (response) ->
   if response.status >= 200 && response.status < 300
     return response
@@ -22,19 +25,41 @@ uploadToS3 = (bucket, key, file, options={}) ->
 
   cacheControl ?= 0
 
+  # Optimistically Cache
+  localCache[key] = blob
+
   pinvoke bucket, "putObject",
     Key: key
     ContentType: file.type
     Body: file
     CacheControl: "max-age=#{cacheControl}"
 
-# TODO: May need to use getObject api when we switch to better privacy model
-getFromS3 = (bucket, key) ->
-  fetch("https://#{bucket.config.params.Bucket}.s3.amazonaws.com/#{key}")
-  .then status
-  .then blob
+getRemote = (bucket, key) ->
+  cachedItem = localCache[key]
+
+  if cachedItem
+    if cachedItem instanceof Blob
+      return Promise.resolve(cachedItem)
+    else
+      return Promise.reject(cachedItem)
+
+  pinvoke bucket, "getObject",
+    Key: key
+  .then (data) ->
+    {Body, ContentType} = data
+
+    new Blob [Body],
+      type: ContentType
+  .then (data) ->
+    localCache[key] = data
+  .catch (e) ->
+    # Cache Not Founds too, since that's often what is slow
+    localCache[key] = e
+    throw e
 
 deleteFromS3 = (bucket, key) ->
+  localCache[key] = new Error "Not Found"
+  
   pinvoke bucket, "deleteObject",
     Key: key
 
@@ -62,8 +87,6 @@ list = (bucket, id, dir) ->
 
 module.exports = (id, bucket) ->
 
-  localCache = {}
-
   notify = (eventType, path) ->
     (result) ->
       self.trigger eventType, path
@@ -78,18 +101,7 @@ module.exports = (id, bucket) ->
 
       key = "#{id}#{path}"
 
-      cachedItem = localCache[key]
-      if cachedItem
-        if cachedItem instanceof Blob
-          return Promise.resolve(cachedItem)
-        else
-          return Promise.reject(cachedItem)
-
-      getFromS3(bucket, key)
-      .catch (e) ->
-        # Cache Not Founds too, since that's often what is slow
-        localCache[key] = e
-        throw e
+      getRemote(bucket, key)
       .then notify "read", path
 
     write: (path, blob) ->
@@ -97,9 +109,6 @@ module.exports = (id, bucket) ->
         path = delimiter + path
 
       key = "#{id}#{path}"
-
-      # Optimistically Cache
-      localCache[key] = blob
 
       uploadToS3 bucket, key, blob
       .then notify "write", path
@@ -109,8 +118,6 @@ module.exports = (id, bucket) ->
         path = delimiter + path
 
       key = "#{id}#{path}"
-
-      localCache[key] = new Error "Not Found"
 
       deleteFromS3 bucket, key
       .then notify "delete", path
@@ -154,10 +161,11 @@ FileEntry = (object, id, prefix, bucket) ->
 
 BlobSham = (entry, bucket) ->
   remotePath = entry.remotePath
-  url = "https://#{bucket.config.params.Bucket}.s3.amazonaws.com/#{remotePath}"
 
-  getURL: -> Promise.resolve(url)
+  getURL: -> 
+    getRemote(bucket, remotePath)
+    .then URL.createObjectURL
   readAsText: ->
-    getFromS3(bucket, remotePath)
+    getRemote(bucket, remotePath)
     .then (blob) ->
       blob.readAsText()

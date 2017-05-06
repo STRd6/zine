@@ -44,6 +44,11 @@ module.exports = (dbName='zine-os') ->
     stylus: require "./lib/stylus.min"
 
     moveFile: (oldPath, newPath) ->
+      oldPath = normalizePath oldPath
+      newPath = normalizePath newPath
+
+      return Promise.resolve() if oldPath is newPath
+
       self.copyFile(oldPath, newPath)
       .then ->
         self.deleteFile(oldPath)

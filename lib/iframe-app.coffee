@@ -29,8 +29,11 @@ module.exports = (opts={}) ->
 
   # Attach a postmaster to receive events from the child frame
   postmaster = Postmaster()
-  postmaster.remoteTarget = -> frame.contentWindow
+
   Object.assign postmaster,
+    remoteTarget: ->
+      frame.contentWindow
+
     childLoaded: ->
       console.log "child loaded"
       resolveLoaded()
@@ -50,9 +53,6 @@ module.exports = (opts={}) ->
     system: (method, args...) ->
       system[method](args...)
 
-    exit: ->
-      application.element.remove()
-
   handlers ?= Model().include(FileIO).extend
     loadFile: (blob) ->
       loadedPromise.then ->
@@ -66,10 +66,17 @@ module.exports = (opts={}) ->
     height: height
     iconEmoji: iconEmoji
 
-  application.handlers = handlers
-  application.loadFile = handlers.loadFile
-  application.send = (args...) ->
-    loadedPromise.then ->
-      postmaster.invokeRemote args...
+  Object.assign application,
+    exit: ->
+      # TODO: Prompt unsaved, etc.
+      setTimeout ->
+        application.element.remove()
+      , 0
+      return
+    handlers: handlers
+    loadFile: handlers.loadFile
+    send: (args...) ->
+      loadedPromise.then ->
+        postmaster.invokeRemote args...
 
   return application

@@ -26,7 +26,7 @@ uploadToS3 = (bucket, key, file, options={}) ->
   cacheControl ?= 0
 
   # Optimistically Cache
-  localCache[key] = blob
+  localCache[key] = file
 
   pinvoke bucket, "putObject",
     Key: key

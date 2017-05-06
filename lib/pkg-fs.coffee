@@ -30,9 +30,11 @@ module.exports = (pkg, persistencePath) ->
   compileAndWrite = (path, blob) ->
     writeSource = blob.readAsText()
     .then (text) ->
-      pkg.source[sourcePath(path)] =
+      srcPath = sourcePath(path)
+      pkg.source[srcPath] =
         content: text
-        type: blob.type
+        type: blob.type or ""
+        path: srcPath
 
     # Compilers expect blob to be annotated with the path
     blob.path = path
@@ -54,8 +56,10 @@ module.exports = (pkg, persistencePath) ->
     # Read a blob from a path
     read: (path) ->
       {content, type} = pkg.source[sourcePath(path)]
+      type ?= ""
 
-      blob = new Blob [content], type: type
+      blob = new Blob [content], 
+        type: type
 
       Promise.resolve blob
       .then notify "read", path
@@ -83,7 +87,7 @@ module.exports = (pkg, persistencePath) ->
         .map (path) ->
           path: "/" + path
           relativePath: path.replace(sourceDir, "")
-          type: pkg.source[path].type
+          type: pkg.source[path].type or ""
       .then (files) ->
         folderPaths = {}
 

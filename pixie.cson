@@ -8,7 +8,7 @@ dependencies:
   base64: "distri/base64:v0.9.2"
   bindable: "distri/bindable:master"
   model: "distri/model:master"
-  postmaster: "distri/postmaster:v0.5.2"
+  postmaster: "distri/postmaster:v0.5.3"
   ui: "STRd6/ui:v0.1.9"
 remoteDependencies: [
   "https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js"

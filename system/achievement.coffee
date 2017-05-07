@@ -143,6 +143,11 @@ achievementData = [{
   icon: "🐛"
   group: "OS"
   description: "Encountered a JavaScript error"
+}, {
+  text: "Shut Down"
+  icon: "🔌"
+  group: "OS"
+  description: "ZineOS cannot be stopped"
 }, { # Social
   text: "Do you 'like' like me?"
   icon: "💕"

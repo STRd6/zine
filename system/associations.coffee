@@ -1,3 +1,5 @@
+AppDrop = require "../lib/app-drop"
+
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
@@ -24,7 +26,7 @@ openWith = (App) ->
       .then (blob) ->
         app.loadFile(blob, path)
 
-    document.body.appendChild app.element
+    system.attachApplication(app)
 
 module.exports = (I, self) ->
   # Handlers use combined type, extension, and contents info to do the right thing
@@ -35,7 +37,7 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.path.match(/\.md$/) or
       file.path.match(/\.html$/)
-    fn: openWith(Markdown)
+    fn: openWith(Markdown) # TODO: This can be a pointer to a system package
   }, {
     name: "Ace Editor"
     filter: (file) ->
@@ -47,7 +49,7 @@ module.exports = (I, self) ->
       file.path.match(/\.json$/) or
       file.path.match(/\.md$/) or
       file.path.match(/\.styl$/)
-    fn: openWith(CodeEditor)
+    fn: openWith(CodeEditor) # TODO: This can be a pointer to a system package
   }, {
     name: "Run"
     filter: (file) ->
@@ -77,6 +79,7 @@ module.exports = (I, self) ->
         fs = PkgFS(pkg, file.path)
         system.fs.mount mountPath, fs
 
+        # TODO: Can we make the explorer less specialized here?
         element = Explorer
           path: mountPath
         windowView = system.UI.Window
@@ -93,11 +96,8 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.path.match(/💾$/)
     fn: (file) ->
-      system.readFile file.path
-      .then (blob) ->
-        blob.readAsJSON()
-      .then (pkg) ->
-        self.executePackageInIFrame(pkg)
+      # TODO: Rename?
+      system.execPathWithFile file.path, null
   }, {
     name: "Publish"
     filter: (file) ->
@@ -117,13 +117,8 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.path.match(/🔗$/)
     fn: (file) ->
-      system.readFile file.path
-      .then (blob) ->
-        blob.readAsText()
-      .then system.evalCSON
-      .then system.iframeApp
-      .then ({element}) ->
-        document.body.appendChild element
+      # TODO: Rename?
+      system.execPathWithFile file.path, null
   }, {
     name: "Edit Link"
     filter: (file) ->
@@ -171,7 +166,7 @@ module.exports = (I, self) ->
       file.path.match /dsad\.exe$/
     fn: ->
       app = DSad()
-      document.body.appendChild app.element
+      system.attachApplication app
   }, {
     name: "zine1.exe"
     filter: (file) ->
@@ -208,7 +203,7 @@ module.exports = (I, self) ->
       path.match /My Briefcase$/
     fn: ->
       app = MyBriefcase()
-      document.body.appendChild app.element
+      system.attachApplication app
   }]
 
   # Open JSON arrays in spreadsheet
@@ -254,8 +249,18 @@ module.exports = (I, self) ->
     handlers: ->
       handlers.slice()
 
-    launchApp: (App, file) ->
-      openWith(App)(file)
+    # The final step in launching an application in the OS
+    # This wires up event streams, drop events, adds the app to the list
+    # of running applications, and attaches the app's element to the DOM
+    attachApplication: (app, options={}) ->
+      # Bind Drop events
+      AppDrop(app)
+
+      # TODO: Bind to app event streams
+
+      # TODO: Add to list of apps
+
+      document.body.appendChild app.element
 
     pathAsApp: (path) ->
       if path.match(/💾$/)
@@ -282,7 +287,7 @@ module.exports = (I, self) ->
     execPathWithFile: (path, file) ->
       self.pathAsApp(path)
       .then (App) ->
-        self.launchApp App, file
+        openWith(App)(file)
 
     mimeTypeFor: (path) ->
       mimes[extensionFor(path)] or "text/plain"

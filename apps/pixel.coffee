@@ -1,4 +1,3 @@
-AppDrop = require "../lib/app-drop"
 IFrameApp = require "../lib/iframe-app"
 FileIO = require "../os/file-io"
 Model = require "model"
@@ -41,7 +40,5 @@ module.exports = ->
   app.loadFile = handlers.loadFile
 
   system.Achievement.unlock "Pixel perfect"
-
-  AppDrop(app)
 
   return app

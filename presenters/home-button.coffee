@@ -10,7 +10,12 @@ MyBriefcase = require "../apps/my-briefcase"
 HomeButtonTemplate = require "../templates/home-button"
 
 module.exports = ->
+  {Achievement} = system
   {ContextMenu, Util:{parseMenu}} = system.UI
+
+  launch = (App) ->
+    app = App()
+    system.attachApplication app
 
   contextMenu = ContextMenu
     items: parseMenu """
@@ -37,7 +42,7 @@ module.exports = ->
     """
     handlers:
       aceEditor: ->
-        system.launchApp AceEditor
+        launch AceEditor
 
       aMayZine: ->
         system.launchIssue("2017-05")
@@ -56,23 +61,22 @@ module.exports = ->
           iconEmoji: "🌭"
           title: "Bionic Hotdog"
         .then system.iframeApp
-        .then ({element}) ->
-          document.body.appendChild element
+        .then system.attachApplication
 
       chateau: ->
-        system.launchApp Chateau
+        launch Chateau
 
       cheevos: ->
-        system.launchApp AchievementStatus
+        launch AchievementStatus
 
       contrasaurus: ->
-        system.launchApp Contrasaurus
+        launch Contrasaurus
 
       discoTech: ->
         system.launchIssue("2017-04")
 
       dungeonOfSadness: ->
-        system.launchApp DungeonOfSadness
+        launch DungeonOfSadness
 
       enterTheDungeon: ->
         system.launchIssue("2017-02")
@@ -81,12 +85,13 @@ module.exports = ->
         system.launchIssue("2016-12")
 
       myBriefcase: ->
-        system.launchApp MyBriefcase
+        launch MyBriefcase
 
       pixiePaint: ->
-        system.launchApp PixiePaint
+        launch PixiePaint
 
       shutDown: ->
+        Achievement.unlock "Shut Down"
         system.UI.Modal.alert "You'll never shut us down! ZineOS 5ever!"
 
   updateStyle = ->

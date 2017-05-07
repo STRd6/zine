@@ -377,6 +377,7 @@ module.exports = (I, self) ->
             var ZINEOS = #{JSON.stringify system.version()};
             #{PACKAGE.distribution["lib/system-client"].content};
           """
+        sandbox: "allow-scripts allow-forms"
 
       document.body.appendChild app.element
 

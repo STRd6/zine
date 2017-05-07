@@ -30,7 +30,7 @@ module.exports = (opts={}) ->
   loaded = false
   setTimeout ->
     console.warn "Child never loaded" unless loaded
-  , 10000
+  , 5000
 
   # Attach a postmaster to receive events from the child frame
   postmaster = Postmaster()
@@ -61,7 +61,6 @@ module.exports = (opts={}) ->
 
   handlers ?= Model().include(FileIO).extend
     loadFile: (blob) ->
-      debugger
       loadedPromise.then ->
         postmaster.invokeRemote "loadFile", blob
 

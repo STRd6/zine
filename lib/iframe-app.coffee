@@ -27,6 +27,11 @@ module.exports = (opts={}) ->
   loadedPromise = new Promise (resolve) ->
     resolveLoaded = resolve
 
+  loaded = false
+  setTimeout ->
+    console.warn "Child never loaded" unless loaded
+  , 10000
+
   # Attach a postmaster to receive events from the child frame
   postmaster = Postmaster()
 
@@ -37,6 +42,7 @@ module.exports = (opts={}) ->
     childLoaded: ->
       console.log "child loaded"
       resolveLoaded()
+      loaded = true
 
     # Send events from the iframe app to the application
     event: ->
@@ -55,6 +61,7 @@ module.exports = (opts={}) ->
 
   handlers ?= Model().include(FileIO).extend
     loadFile: (blob) ->
+      debugger
       loadedPromise.then ->
         postmaster.invokeRemote "loadFile", blob
 

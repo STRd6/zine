@@ -59,7 +59,7 @@ getRemote = (bucket, key) ->
 
 deleteFromS3 = (bucket, key) ->
   localCache[key] = new Error "Not Found"
-  
+
   pinvoke bucket, "deleteObject",
     Key: key
 
@@ -162,7 +162,7 @@ FileEntry = (object, id, prefix, bucket) ->
 BlobSham = (entry, bucket) ->
   remotePath = entry.remotePath
 
-  getURL: -> 
+  getURL: ->
     getRemote(bucket, remotePath)
     .then URL.createObjectURL
   readAsText: ->

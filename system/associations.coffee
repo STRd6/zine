@@ -156,6 +156,17 @@ module.exports = (I, self) ->
       file.type.match /^image\//
     fn: openWith(PixelEditor)
   }, {
+    name: "PDF Viewer"
+    filter: (file) ->
+      file.path.match /\.pdf$/
+    fn: (file) ->
+      file.blob.getURL()
+      .then (url) ->
+        app = system.iframeApp
+          src: url
+          title: file.path
+        system.attachApplication app
+  }, {
     name: "Audio Bro"
     filter: (file) ->
       file.type.match /^audio\//

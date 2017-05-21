@@ -1,10 +1,9 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
-# TODO: Drag and drop files and folders
+# TODO: Drop files onto applications
 # TODO: Select multiple
 # TOOD: Keyboard Input
-# TODO: Style file types
 
 Drop = require "../lib/drop"
 FileTemplate = require "../templates/file"
@@ -12,20 +11,75 @@ FolderTemplate = require "../templates/folder"
 
 {emptyElement} = require "../util"
 
+extractPath = (element) ->
+  while element
+    path = element.getAttribute("path")
+    return path if path
+    element = element.parentElement
+
 module.exports = Explorer = (options={}) ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {path} = options
   path ?= '/'
 
   explorer = document.createElement "explorer"
+  explorer.setAttribute("path", path)
 
   Drop explorer, (e) ->
+    return if e.defaultPrevented
+
+    targetPath = extractPath(e.target) or path
+    folderTarget = targetPath.match(/\/$/)
+
+    fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
+
+    if fileSelectionData
+      data = JSON.parse fileSelectionData
+
+      if folderTarget
+        system.moveFileSelection(data, targetPath)
+      else
+        # Attempt to open file in app
+        selectedFile = data.files[0]
+        console.log "Open in app #{targetPath} <- #{selectedFile}"
+        system.readFile(selectedFile.path)
+        .then (file) ->
+          system.execPathWithFile(targetPath, file)
+      e.preventDefault()
+
+      return
+
     files = e.dataTransfer.files
 
     if files.length
-      files.forEach (file) ->
-        newPath = path + file.name
-        system.writeFile(newPath, file, true)
+      e.preventDefault()
+      if folderTarget
+        files.forEach (file) ->
+          newPath = targetPath + file.name
+          system.writeFile(newPath, file, true)
+      else
+        file = files[0]
+        system.execPathWithFile(targetPath, file)
+
+  explorerContextMenu = ContextMenu
+    items: parseMenu """
+      [N]ew File
+    """
+    handlers:
+      newFile: ->
+        Modal.prompt "Filename", "#{path}newfile.txt"
+        .then (newFilePath) ->
+          if newFilePath
+            system.writeFile newFilePath, new Blob [], type: "text/plain"
+
+  explorer.oncontextmenu = (e) ->
+    return if e.defaultPrevented
+    e.preventDefault()
+
+    explorerContextMenu.display
+      inElement: document.body
+      x: e.pageX
+      y: e.pageY
 
   contextMenuFor = (file, e) ->
     return if e.defaultPrevented
@@ -34,7 +88,6 @@ module.exports = Explorer = (options={}) ->
     contextMenuHandlers =
       open: ->
         system.open(file)
-      openWith: -> #TODO
       cut: -> #TODO
       copy: -> #TODO
       delete: ->
@@ -43,9 +96,12 @@ module.exports = Explorer = (options={}) ->
         Modal.prompt "Filename", file.path
         .then (newPath) ->
           if newPath
-            system.deleteFile(file.path)
-            system.writeFile(newPath, file.blob)
-      properties: -> #TODO
+            system.moveFile(file.path, newPath)
+      properties: ->
+        pre = document.createElement "pre"
+        pre.textContent = JSON.stringify(file, null, 2)
+        pre.style = "padding: 1rem"
+        Modal.show pre
       editMIMEType: ->
         Modal.prompt "MIME Type", file.type
         .then (newType) ->
@@ -115,10 +171,24 @@ module.exports = Explorer = (options={}) ->
       handlers:
         open: ->
           addWindow(folder.path)
-        delete: -> # TODO: Delete all files under folder
+        delete: ->
+          system.readTree(folder.path)
+          .then (results) ->
+            Promise.all results.map (result) ->
+              system.deleteFile(result.path)
         rename: ->
-          ;# TODO: Rename all files under folder (!)
-          # May want to think about inodes or something that makes this simpler
+          Modal.prompt "Name", folder.path
+          .then (newName) ->
+            return unless newName
+
+            # Ensure trailing slash
+            newName = newName.replace(/\/*$/, "/")
+
+            system.readTree(folder.path)
+            .then (files) ->
+              Promise.all files.map (file) ->
+                newPath = file.path.replace(folder.path, newName)
+                system.moveFile(file.path, newPath)
         properties: -> # TODO
 
     contextMenu.display
@@ -134,34 +204,51 @@ module.exports = Explorer = (options={}) ->
       addedFolders = {}
 
       files.forEach (file) ->
-        if file.relativePath.match /\// # folder
-          folderPath = file.relativePath.replace /\/.*$/, ""
+        if file.relativePath.match /\/$/ # folder
+          folderPath = file.relativePath
           addedFolders[folderPath] = true
           return
 
-        file.dblclick = ->
-          console.log "dblclick", file
-          system.open file
+        Object.assign file,
+          displayName: file.relativePath
 
-        file.contextmenu = (e) ->
-          contextMenuFor(file, e)
+          dblclick: ->
+            system.open file
+
+          contextmenu: (e) ->
+            contextMenuFor(file, e)
+
+          dragstart: (e) ->
+            # Note: Blobs don't make it through the stringify
+            e.dataTransfer.setData "zineos/file-selection", JSON.stringify
+              sourcePath: path
+              files: [ file ]
 
         fileElement = FileTemplate file
         if file.type.match /^image\//
-          url = URL.createObjectURL file.blob
-          fileElement.querySelector('icon').style.backgroundImage = "url(#{url})"
+          file.blob.getURL()
+          .then (url) ->
+            icon = fileElement.querySelector('icon')
+            icon.style.backgroundImage = "url(#{url})"
+            icon.style.backgroundSize = "100%"
+            icon.style.backgroundPosition = "50%"
 
         explorer.appendChild fileElement
 
-      Object.keys(addedFolders).forEach (folderName) ->
+      Object.keys(addedFolders).reverse().forEach (folderName) ->
         folder =
-          path: "#{path}#{folderName}/"
+          path: "#{path}#{folderName}"
           relativePath: folderName
+          displayName: folderName.replace(/\/$/, "")
           contextmenu: (e) ->
             contextMenuForFolder(folder, e)
           dblclick: ->
             # Open folder in new window
             addWindow(folder.path)
+          dragstart: (e) ->
+            e.dataTransfer.setData "zineos/file-selection", JSON.stringify
+              sourcePath: folder.path.slice(0, folder.path.length - folder.relativePath.length)
+              files: [ folder ]
 
         folderElement = FolderTemplate folder
         explorer.insertBefore(folderElement, explorer.firstChild)
@@ -174,9 +261,7 @@ module.exports = Explorer = (options={}) ->
   system.fs.on "update", (path) -> update()
 
   addWindow = (path) ->
-    element = document.createElement "container"
-
-    element.appendChild Explorer
+    element = Explorer
       path: path
 
     windowView = Window
@@ -185,6 +270,7 @@ module.exports = Explorer = (options={}) ->
       menuBar: null
       width: 640
       height: 480
+      iconEmoji: "📂"
 
     document.body.appendChild windowView.element
 

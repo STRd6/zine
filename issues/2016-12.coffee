@@ -44,7 +44,7 @@ module.exports = ->
         area: issueTag
       .then (data) ->
         ajax
-          url: "https://whimsy-space.gomix.me/comments"
+          url: "https://whimsy-space.glitch.me/comments"
           data: JSON.stringify(data)
           headers:
             "Content-Type": "application/json"
@@ -53,7 +53,7 @@ module.exports = ->
         handlers.viewComments()
 
     viewComments: ->
-      ajax.getJSON "https://whimsy-space.gomix.me/comments/#{issueTag}"
+      ajax.getJSON "https://whimsy-space.glitch.me/comments/#{issueTag}"
       .then (data) ->
         data = data.reverse()
 
@@ -77,7 +77,7 @@ module.exports = ->
       document.body.appendChild app.element
     mysterySmell: ->
       system.Achievement.unlock "Cover-2-cover"
-      
+
       div = document.createElement "div"
       div.textContent = require "../stories/mystery-smell"
       div.style.padding = "1em"

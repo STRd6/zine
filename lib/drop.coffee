@@ -6,6 +6,4 @@ module.exports = (element, handler) ->
   element.addEventListener "dragover", cancel
   element.addEventListener "dragenter", cancel
   element.addEventListener "drop", (e) ->
-    e.preventDefault()
     handler(e)
-    return false

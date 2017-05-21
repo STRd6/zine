@@ -1,3 +1,9 @@
+# Pretend Hamlet Runtime is a real package
+PACKAGE.dependencies["_lib_hamlet-runtime"] =
+  entryPoint: "main"
+  distribution:
+    main: PACKAGE.distribution["lib/hamlet-runtime"]
+
 # Add some utility readers to the Blob API
 Blob::readAsText = ->
   file = this

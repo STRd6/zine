@@ -1,9 +1,9 @@
-# zine
+# Zine OS
+
 DIY E-Zine and Operating System
 
-
 Interfaces
-----------
+==========
 
 FS Interface
 ------------
@@ -24,14 +24,14 @@ Delete a file at a path, returns a promise that is fulfilled when the delete suc
 Returns a promise
 
     list: (directoryPath) ->
-      
+
 
 FileEntry Interface
-------------------
+-------------------
 
-    path: 
-    size: 
-    type: 
+    path:
+    size:
+    type:
 
 FolderEntry Interface
 ---------------------

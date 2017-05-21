@@ -31,14 +31,24 @@ module.exports = (dbName='zine-os') ->
 
   self.include(Achievement, Associations, SystemModule, Template)
 
+  {title} = require "./pixie"
+  [..., version] = title.split('-')
+
   self.extend
     ajax: Ajax()
     fs: fs
+
+    version: -> version
 
     require: require
     stylus: require "./lib/stylus.min"
 
     moveFile: (oldPath, newPath) ->
+      oldPath = normalizePath oldPath
+      newPath = normalizePath newPath
+
+      return Promise.resolve() if oldPath is newPath
+
       self.copyFile(oldPath, newPath)
       .then ->
         self.deleteFile(oldPath)
@@ -58,7 +68,15 @@ module.exports = (dbName='zine-os') ->
           return
         else
           Promise.all files.map ({relativePath}) ->
-            self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
+            if relativePath.match(/\/$/)
+              # Folder
+              self.readTree("#{sourcePath}#{relativePath}")
+              .then (files) ->
+                Promise.all files.map (file) ->
+                  targetPath = file.path.replace(sourcePath, destinationPath)
+                  self.moveFile(file.path, targetPath)
+            else
+              self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
 
     readFile: (path, userEvent) ->
       if userEvent
@@ -66,6 +84,19 @@ module.exports = (dbName='zine-os') ->
 
       path = normalizePath "/#{path}"
       fs.read(path)
+
+    readTree: (directoryPath) ->
+      fs.list(directoryPath)
+      .then (files) ->
+        Promise.all files.map (file) ->
+          if file.folder
+            self.readTree(file.path)
+          else
+            file
+      .then (filesAndFolderFiles) ->
+        filesAndFolderFiles.reduce (a, b) ->
+          a.concat(b)
+        , []
 
     writeFile: (path, blob, userEvent) ->
       if userEvent
@@ -86,6 +117,41 @@ module.exports = (dbName='zine-os') ->
       fs.read(path)
       .then URL.createObjectURL
 
+    launchIssue: (date) ->
+      require("./issues/#{date}")()
+
+    # TODO: Move this into some kind of system utils
+    installModulePrompt: ->
+      UI.Modal.prompt("url", "https://danielx.net/editor/master.json")
+      .then (url) ->
+        throw new Error "No url given" unless url
+
+        baseName = url.replace(/^https:\/\/(.*)/, "$1")
+        .replace(/(\.json)?$/, "💾")
+
+        pathPrompt = UI.Modal.prompt "path", "/lib/#{baseName}"
+        .then (path) ->
+          throw new Error "No path given" unless path
+          path
+
+        blobRequest = fetch url
+        .then (result) ->
+          result.blob()
+
+        Promise.all([blobRequest, pathPrompt])
+        .then ([path, blob]) ->
+          self.writeFile(path, blob)
+
+    installModule: (url, path) ->
+      path ?= url.replace(/^https:\/\/(.*)/, "/lib/$1")
+      .replace(/(\.json)?$/, "💾")
+
+      fetch url
+      .then (result) ->
+        result.blob()
+      .then (blob) ->
+        self.writeFile(path, blob)
+
     # NOTE: These are experimental commands to run code
     execJS: (path) ->
       self.readFile(path)
@@ -103,6 +169,10 @@ module.exports = (dbName='zine-os') ->
         file = src[path]
         blob = new Blob [file.content]
         self.writeFile("System/#{path}", blob)
+
+    dumpPackage: ->
+      blob = new Blob [JSON.stringify(PACKAGE)], type: "application/json; charset=utf-8"
+      self.writeFile("System 💾", blob)
 
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"

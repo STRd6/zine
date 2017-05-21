@@ -3,11 +3,7 @@ FileIO = require "../os/file-io"
 
 ace.require("ace/ext/language_tools")
 
-extraModes =
-  jadelet: "jade"
-
-mode = (mode) ->
-  extraModes[mode] or mode
+{extensionFor} = require "../util"
 
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Observable, Progress, Table, Util:{parseMenu}, Window} = system.UI
@@ -39,23 +35,44 @@ module.exports = ->
 
   global.aceEditor = aceEditor
 
-  initSession = (file) ->
-    # TODO: Update window title
+  modes =
+    cson: "coffeescript"
+    jadelet: "jade"
+    js: "javascript"
+    md: "markdown"
+    styl: "stylus"
+
+  mimeTypeFor = (path) ->
+    type = system.mimeTypeFor(path)
+
+    "#{type}; charset=utf-8"
+
+  setModeFor = (path) ->
+    extension = extensionFor(path)
+    mode = modes[extension] or extension
+
+    session.setMode("ace/mode/#{mode}")
+
+  initSession = (file, path) ->
     file.readAsText()
     .then (content) ->
+      if path
+        handlers.currentPath path
+        setModeFor(path)
+
       session.setValue(content)
-      # TODO: Correct modes
-      mode = "coffee"
-      session.setMode("ace/mode/#{mode}")
+      handlers.saved true
+
+  session.on "change", ->
+    handlers.saved false
 
   handlers = Model().include(FileIO).extend
     loadFile: initSession
     newFile: ->
       session.setValue ""
     saveData: ->
-      # TODO: Maintain proper mime type
       data = new Blob [session.getValue()],
-        type: "text/plain"
+        type: mimeTypeFor(handlers.currentPath())
 
       return Promise.resolve data
 
@@ -76,7 +93,18 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: Observable "Ace"
+    title: ->
+      path = handlers.currentPath()
+      if handlers.saved()
+        savedIndicator = ""
+      else
+        savedIndicator = "*"
+
+      if path
+        path = " - #{path}"
+
+      "Ace#{path}#{savedIndicator}"
+
     content: aceWrap
     menuBar: menuBar.element
     width: 640
@@ -86,5 +114,18 @@ module.exports = ->
 
   windowView.on "resize", ->
     aceEditor.resize()
+
+  # Key handling
+  windowView.element.setAttribute("tabindex", "-1")
+  windowView.element.addEventListener "keydown", (e) ->
+    {ctrlKey:ctrl, key} = e
+    if ctrl
+      switch key
+        when "s"
+          e.preventDefault()
+          handlers.save()
+        when "o"
+          e.preventDefault()
+          handlers.open()
 
   return windowView

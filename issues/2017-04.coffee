@@ -10,6 +10,18 @@ Social = require "../social/social"
 
 {parentElementOfType, emptyElement} = require "../util"
 
+writeIfNotPresent = (destination, sourceURL) ->
+  system.readFile destination
+  .then (file) ->
+    throw new Error "File not found" unless file
+    return file
+  .catch ->
+    ajax
+      url: sourceURL
+      responseType: "blob"
+    .then (blob) ->
+      system.writeFile destination, blob
+
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
@@ -37,32 +49,17 @@ module.exports = ->
 
   downloadBikes = ->
     ["and-yet-they-rode-bikes.md", "infog.png", "lanes.png", "totally-a.html"].forEach (path) ->
-      ajax
-        url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/bikes/#{path}"
-        responseType: "blob"
-      .then (blob) ->
-        system.writeFile "issue-4/bikes/#{path}", blob
+      filePath = "issue-4/bikes/#{path}"
+
+      writeIfNotPresent filePath, "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/bikes/#{path}"
 
   downloadBikes()
 
-  ajax
-    url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/music/Funkytown.mp3"
-    responseType: "blob"
-  .then (blob) ->
-    system.writeFile "issue-4/Funkytown.mp3", blob
-    blob.path = "/issue-4/Funkytown.mp3"
-    system.open blob
-
-  system.readFile "issue-4/zinecast1.mp3"
+  writeIfNotPresent "issue-4/Funkytown.mp3", "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/music/Funkytown.mp3"
   .then ->
-    ; # Zinecast exists, don't redownload
-  .catch ->
-    ajax
-      url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/podcasts/zinecast1.mp3"
-      responseType: "blob"
-    .then (blob) ->
-      system.writeFile "issue-4/zinecast1.mp3", blob
-      blob.path = "/issue-4/zinecast1.mp3"
+    system.openPath "issue-4/Funkytown.mp3"
+
+  writeIfNotPresent "issue-4/zinecast1.mp3", "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/podcasts/zinecast1.mp3"
 
   system.Achievement.unlock "Issue 4"
 
@@ -151,7 +148,7 @@ module.exports = ->
   img.style = "width: 100%; height: 100%"
 
   windowView = Window
-    title: "ZineOS Volume 1 | Issue 4 | DISCO TECH | March 2017"
+    title: "ZineOS Volume 1 | Issue 4 | DISCO TECH | April 2017"
     content: img
     menuBar: menuBar.element
     width: 480

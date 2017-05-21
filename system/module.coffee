@@ -2,6 +2,8 @@
 #
 # Depends on having self.readFile defined
 
+IFrameApp = require "../lib/iframe-app"
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -24,7 +26,35 @@ module.exports = (I, self) ->
 
   ###
 
-  {absolutizePath, fileSeparator, normalizePath} = require "../util"
+  {
+    absolutizePath
+    evalCSON
+    fileSeparator
+    normalizePath
+    isAbsolutePath
+    isRelativePath
+    htmlForPackage
+  } = require "../util"
+
+  findDependencies = (sourceProgram) ->
+    requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
+    results = []
+    count = 0
+
+    loop
+      match = requireMatcher.exec sourceProgram
+
+      if match
+        results.push match[1]
+      else
+        break
+
+      # Circuit breaker for safety
+      count += 1
+      if count > 256
+        break
+
+    return results
 
   # Wrap program in async include wrapper
   # Replaces references to require('something') with local variables in an async wrapper function
@@ -84,9 +114,9 @@ module.exports = (I, self) ->
       localSystem = Object.assign {}, self,
         vivifyPrograms: (moduleIdentifiers) ->
           absoluteIdentifiers = moduleIdentifiers.map (identifier) ->
-            if identifier.match /^\//
+            if isAbsolutePath(identifier)
               absolutizePath "/", identifier
-            else if identifier.match /^.?.\//
+            else if isRelativePath(identifier)
               absolutizePath dirname, identifier
             else
               identifier
@@ -125,14 +155,145 @@ module.exports = (I, self) ->
 
   Object.assign self,
     autoboot: ->
-      self.fs.list "/System/Boot"
+      self.fs.list "/System/Boot/"
       .then (files) ->
+        console.log files
         bootablePaths = files.filter ({blob}) ->
           blob?
         .map ({path}) ->
           path
 
         self.vivifyPrograms(bootablePaths)
+
+    # A simpler, dumber, packager that reads a pixie.cson, then
+    # just packages every file recursively down in the directories
+    createPackageFromPixie: (pixiePath) ->
+      basePath = pixiePath.match(/^.*\//)?[0] or ""
+      pkg =
+        distribution: {}
+
+      self.loadProgram(pixiePath).then (config) ->
+        pkg.config = config
+      .then ->
+        self.readTree(basePath)
+      .then (files) ->
+        Promise.all files.map ({path, blob}) ->
+          (if blob instanceof Blob
+            self.compileFile(blob)
+          else
+            self.readFile(path)
+            .then(self.compileFile)
+          )
+          .then (result) ->
+            [path, result]
+        .then (results) ->
+          results.forEach ([path, result]) ->
+            pkgPath = path.replace(basePath, "").replace(/\.[^.]*$/, "")
+
+            if typeof result is "string"
+              pkg.distribution[pkgPath] =
+                content: result
+            else
+              console.warn "Can't package files like #{path} yet"
+
+          return pkg
+
+    # This is kind of the opposite approach of the vivifyPrograms, here we want
+    # to load everything statically and put it in a package that can be run by
+    # `require`.
+    packageProgram: (absolutePath, state={}) ->
+      state.cache = {}
+      state.pkg = {}
+
+      basePath = absolutePath.match(/^.*\//)?[0] or ""
+      state.basePath = basePath
+
+      # Strip out base path and final suffix
+      # NOTE: .coffee.md type files won't like this
+      state.pkgPath = (path) ->
+        path.replace(state.basePath, "").replace(/\.[^.]*$/, "")
+      pkgPath = state.pkgPath(absolutePath)
+
+      {pkg} = state
+      pkg.distribution ?= {}
+
+      unless state.loadConfigPromise
+        configPath = absolutizePath basePath, "pixie.cson"
+        state.loadConfigPromise = self.loadProgram(configPath).then (configSource) ->
+          module = {}
+          Function("module", configSource)(module)
+          module.exports
+        .then (config) ->
+          entryPoint = config.entryPoint
+          (if entryPoint
+            path = absolutizePath(basePath, entryPoint)
+            self.loadProgramIntoPackage(path, state)
+          else
+            Promise.resolve()
+          ).then ->
+            debugger
+            pkg.remoteDependencies = config.remoteDependencies
+            pkg.config = config
+        .catch (e) ->
+          if e.message.match /File not found/i
+            pkg.config = {}
+          else
+            throw e
+
+      self.loadProgramIntoPackage(absolutePath, state)
+      .then ->
+        state.loadConfigPromise
+      .then ->
+        pkg.remoteDependencies = pkg.config.remoteDependencies
+        if pkg.config.entryPoint
+          pkg.entryPoint = pkg.config.entryPoint
+        else
+          pkg.entryPoint ?= pkgPath
+
+        return pkg
+
+    # Internal helper to load a program and its dependencies into the pkg
+    # in the state
+    # TODO: Loading deps like this doesn't work at all if require is used
+    # from browserified js sources :(
+    loadProgramIntoPackage: (absolutePath, state) ->
+      {basePath, pkg} = state
+      pkgPath = state.pkgPath(absolutePath)
+      relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
+
+      state.cache[absolutePath] ?= self.loadProgram(absolutePath)
+      .then (sourceProgram) ->
+        if typeof sourceProgram is "string"
+          # NOTE: Things will fail if we require ../../ above our
+          # initial directory.
+          # TODO: Detect and throw if requiring relative or absolute paths above
+          # or outside of our base path
+
+          # Add to package
+          pkg.distribution[pkgPath] =
+            content: sourceProgram
+
+          # Pull in dependencies
+          depPaths = findDependencies(sourceProgram)
+          Promise.all depPaths.map (depPath) ->
+            Promise.resolve().then ->
+              if isRelativePath depPath
+                path = absolutizePath(relativeRoot, depPath)
+                self.loadProgramIntoPackage path, state
+              else if isAbsolutePath depPath
+                throw new Error "Absolute paths not supported yet"
+              else
+                # package path
+                depPkg = PACKAGE.dependencies[depPath]
+                if depPkg
+                  pkg.dependencies ?= {}
+                  pkg.dependencies[depPath] = depPkg
+                else
+                  # TODO: Load from remote?
+                  throw new Error "Package '#{depPath}' not found"
+        else
+          throw new Error "TODO: Can't package files like #{absolutePath} yet"
+
 
     # still experimenting with the API
     # Async 'require' in the vein of require.js
@@ -161,25 +322,28 @@ module.exports = (I, self) ->
 
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
-      .then (file) ->
-        # system modules are loaded as functions/objects right now, so just return them
-        unless file instanceof Blob
-          return file
+      .then self.compileFile
 
-        [compiler] = compilers.filter ({filter}) ->
-          filter file
+    compileFile: (file) ->
+      # system modules are loaded as functions/objects right now, so just return them
+      unless file instanceof Blob
+        return file
 
-        if compiler
-          compiler.fn(file)
-        else
-          # Return the blob itself if we didn't find any compilers
-          return file
+      [compiler] = compilers.filter ({filter}) ->
+        filter file
+
+      if compiler
+        compiler.fn(file)
+      else
+        # Return the blob itself if we didn't find any compilers
+        return file
 
     # May want to reconsider this name
     loadModule: (args...) ->
       self.Achievement.unlock "Execute code"
       loadModule(args...)
 
+    # Execute in the context of the system itself
     spawn: (args...) ->
       loadModule(args...)
       .then ({exports}) ->
@@ -188,6 +352,36 @@ module.exports = (I, self) ->
 
           if result.element
             document.body.appendChild result.element
+
+    execute: (absolutePath) ->
+      self.vivifyPrograms [absolutePath]
+      .then ([{exports}])->
+        if typeof exports is "function" and exports.length is 0
+          result = exports()
+
+          if result.element
+            document.body.appendChild result.element
+
+    executeInIFrame: (absolutePath) ->
+      self.packageProgram(absolutePath)
+      .then (pkg) ->
+        self.executePackageInIFrame pkg
+
+    # Execute a package in the context of an iframe
+    executePackageInIFrame: (pkg) ->
+      app = IFrameApp
+        pkg: pkg
+        title: pkg.config?.title
+        packageOptions:
+          script: """
+            var ZINEOS = #{JSON.stringify system.version()};
+            #{PACKAGE.distribution["lib/system-client"].content};
+          """
+        sandbox: "allow-scripts allow-forms"
+
+      document.body.appendChild app.element
+
+      return app
 
     # Handle requiring with or without explicit extension
     #     require "a"
@@ -208,7 +402,7 @@ module.exports = (I, self) ->
 
       absolutePath = absolutizePath(basePath, path)
 
-      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js"]
+      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js", ".styl"]
 
       p = suffixes.reduce (promise, suffix) ->
         promise.then (file) ->
@@ -226,7 +420,13 @@ module.exports = (I, self) ->
 
         return file
 
+    htmlForPackage: htmlForPackage
+
+    evalCSON: evalCSON
+
 # Compile files based on type to JS program source
+# These compilers return a string of JS source code that assigns a
+# result to module.exports
 compilers = [{
   filter: ({path}) ->
     path.match /\.js$/
@@ -256,27 +456,38 @@ compilers = [{
       Hamlet.compile jadeletSource,
         compiler: CoffeeScript
         mode: "jade"
-        runtime: "Hamlet"
+        runtime: "require('_lib_hamlet-runtime')"
+}, {
+  filter: ({path}) ->
+    path.match /\.styl$/
+  fn: (blob) ->
+    blob.readAsText()
+    .then (source) ->
+      system.stylus(source).render()
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.json$/
   fn: (blob) ->
     blob.readAsJSON()
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.cson$/
   fn: (blob) ->
     blob.readAsText()
-    .then (coffeeSource) ->
-      "module.exports = #{CoffeeScript.compile(source, bare: true)}"
+    .then evalCSON
+    .then stringifyExport
 }, {
   filter: ({path}) ->
     path.match /\.te?xt$/
   fn: (blob) ->
     blob.readAsText()
-    .then (txt) ->
-      "module.exports = #{JSON.stringify(txt)}"
+    .then stringifyExport
 }]
+
+stringifyExport = (data) ->
+  "module.exports = #{JSON.stringify(data)}"
 
 annotateSourceURL = (program, path) ->
   """

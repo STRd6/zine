@@ -1,2 +1,2 @@
 version
-  span= "ZineOS #{@version} ⌊ALPHA⌉"
+  span= @version

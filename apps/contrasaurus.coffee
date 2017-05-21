@@ -1,9 +1,7 @@
-IFrameApp = require "../lib/iframe-app"
-
 module.exports = ->
-  {Achievement} = system
+  {Achievement, iframeApp} = system
 
-  app = IFrameApp
+  app = iframeApp
     src: "https://contrasaur.us/"
     width: 960
     height: 540

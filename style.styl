@@ -35,6 +35,30 @@ comment
     &::before
       content: "-"
 
+menu
+  font-size: 1rem
+
+body.drag-active iframe
+  pointer-events: none
+
+body > button.home
+  background-color: rgba(255, 255, 255, 0.5)
+  bottom: 0
+  color: rgba(0, 0, 0, 0.87)
+  font-size: 2rem
+  left: 0
+  padding-right: 0.3em
+  position: absolute
+  transition-duration: 0.125s
+  transition-property: background-color, color
+  z-index: 1
+
+  &:hover
+    background-color: rgba(255, 255, 255, 0.75)
+
+  &:active
+    color: rgba(255, 255, 255, 1.0)
+
 explorer
   display: block
   height: 100%
@@ -42,6 +66,10 @@ explorer
   user-select: none
   width: 100%
   z-index: 1
+
+  body > &
+    background-image: url(https://i.imgur.com/hKOGoex.jpg)
+    background-size: cover
 
   > file, > folder
     display: inline-block
@@ -64,6 +92,11 @@ explorer
 
   > file[type="application/javascript"] > icon
     background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAACHd3d3d3d3d3d3dwcAAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA////AAD//3BwAAAI////////AwsDAP9wcAAACP8AAAD//zu7uzD/cHAAAAj///////M7MDsAD3BwAAAI///////zuwgLsw9wcAAACP8AAAAAAzswOwAPcHAAAAj///////87u7sw/3BwAAAI/wAAAAAAMwsDAP9wcAAACP////////8zM///cHAAAAj/AAAAAAAAAAAA/3BwAAAI//////////////9wcAAACP8AAAAAAAAAAAD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP8AAAD/////////cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAj/AAAA/////////3BwAAAI//////////////9wcAAACP8AAAD////w8AD/cHAAAAj//////////////3BwAAAI//////////////9wcAAACP//////////////cHAAAAjw/w/w/w/w/w/w/4BwAAAI8P8P8P8P8P8P8P+AcAAAAI+I+I+I+I+I+I+I+AAAAAAAAAAAAAAAAAAAAAAAAA8AAAH+AAAA/AAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAH4AAAD/JJJL8oAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvwAAvwAAAL+/AL8AAAC/AL8Av78AAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAACHd3d3d3cAAI//////9wAAj///Aw/3AACP8Ac7MPcAAI//87Cz9wAAj/AHOzD3AACP//9zf/cAAI/wAAAP9wAAj//////3AACP8ADwD/cAAI//////9wAAj//////3AACPDw8PDw8AAAD4+Pj48AAAAAAAAAAAAAwAcAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAIADAADABwAA6q8AAA==")
+
+  > file[path$="💾"] > icon
+    background-image: url("http://www.myiconfinder.com/uploads/iconsets/256-256-517c80793c96fa23c342ae1a5560ddf6.png")
+    background-size: cover
+    image-rendering: pixelated
 
   > folder > icon
     background-image: url("data:image/x-icon;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACDMzMzMzMzMzMzMzMzMzMwj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI97e3t7e3t7e3t7e3t7ezCPt7e3t7e3t7e3t7e3t7cwj3t7e3t7e3t7e3t7e3t7MI+3t7e3t7e3t7e3t7e3tzCPe3t7e3t7e3t7e3t7e3swj7e3t7e3t7e3t7e3t7e3MI///////////////////wCHd3d3d3d3d4iIiIiIiIgACPt7e3t7e3gAAAAAAAAAAACPt7e3t7eAAAAAAAAAAAAACP/////4AAAAAAAAAAAAAACIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////////gAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAP//wAH//+AD///wB/////////////8oAAAAEAAAACAAAAABAAQAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIiIiIiIiIgAj7e3t7e3uACPe3t7e3t4AI+3t7e3t7gAj3t7e3t7eACPt7e3t7e4AI97e3t7e3gAj7e3t7e3uACP///////4AIe3t7eIiIgACHt7eAAAAAAAiIiAAAAAAAAAAAAAAAAA//8AAP//AACAAQCgAAHOAAABzgAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAID/AADB/wAA//8AAA==")
@@ -104,6 +137,8 @@ chateau
   window > viewport > &
     margin: initial
 
+window > viewport > audio
+  width: 100%
 
 @keyframes display-achievement
   0%
@@ -211,10 +246,19 @@ achievement-badge
     border: 1px solid blue
     color: blue
 
-version
-  bottom: 1em
+version, site-url
+  color: white
   display: block
+  font-size: 20px
   font-weight: bold
   pointer-events: none
   position: absolute
-  right: 1em
+  right: 1rem
+  text-shadow: 2px 2px 4px black
+  z-index: 1
+
+version
+  bottom: 1rem
+
+site-url
+  bottom: 3rem

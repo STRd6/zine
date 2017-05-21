@@ -7,7 +7,7 @@ document.addEventListener "click", (e) ->
   if anchor
     href = anchor.getAttribute('href')
 
-    if href.match /^http/
+    if href?.match /^http/
       e.preventDefault()
 
       if href.match /frogfeels\.com/

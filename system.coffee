@@ -9,55 +9,13 @@ DexieFSDB = (dbName='fs') ->
 
   return db
 
-# FS Wrapper to DB
-DexieFS = (db) ->
-  Files = db.files
-
-  notify = (eventType, path) ->
-    (result) ->
-      self.trigger eventType, path
-      return result
-
-  self = Model()
-  .include(Bindable)
-  .extend
-    read: (path) ->
-      Files.get(path)
-
-    write: (path, blob) ->
-      now = +new Date
-
-      Files.put
-        path: path
-        blob: blob
-        size: blob.size
-        type: blob.type
-        createdAt: now
-        updatedAt: now
-      .then notify "write", path
-
-    update: (path, changes) ->
-      Files.update path, changes
-      .then notify "update", path
-
-    delete: (path) ->
-      Files.delete(path)
-      .then notify "delete", path
-
-    # TODO: Collapse folders
-    # .replace(/\/.*$/, "/")
-    list: (dir) ->
-      Files.where("path").startsWith(dir).toArray()
-      .then (files) ->
-        files.forEach (file) ->
-          file.relativePath = file.path.replace(dir, "")
-
-        return files
+DexieFS = require "./lib/dexie-fs"
+MountFS = require "./lib/mount-fs"
 
 uniq = (array) ->
   Array.from new Set array
 
-Bindable = require "bindable"
+Ajax = require "ajax"
 Model = require "model"
 Achievement = require "./system/achievement"
 Associations = require "./system/associations"
@@ -68,24 +26,78 @@ UI = require "ui"
 module.exports = (dbName='zine-os') ->
   self = Model()
 
-  fs = DexieFS(DexieFSDB(dbName))
+  fs = MountFS()
+  fs.mount "/", DexieFS(DexieFSDB(dbName))
 
   self.include(Achievement, Associations, SystemModule, Template)
 
+  {title} = require "./pixie"
+  [..., version] = title.split('-')
+
   self.extend
+    ajax: Ajax()
     fs: fs
 
-    # TODO: Allow relative paths
+    version: -> version
+
+    require: require
+    stylus: require "./lib/stylus.min"
+
+    moveFile: (oldPath, newPath) ->
+      oldPath = normalizePath oldPath
+      newPath = normalizePath newPath
+
+      return Promise.resolve() if oldPath is newPath
+
+      self.copyFile(oldPath, newPath)
+      .then ->
+        self.deleteFile(oldPath)
+
+    copyFile: (oldPath, newPath) ->
+      return Promise.resolve() if oldPath is newPath
+
+      self.readFile(oldPath)
+      .then (blob) ->
+        self.writeFile(newPath, blob)
+
+    moveFileSelection: (selectionData, destinationPath) ->
+      Promise.resolve()
+      .then ->
+        {sourcePath, files} = selectionData
+        if sourcePath is destinationPath
+          return
+        else
+          Promise.all files.map ({relativePath}) ->
+            if relativePath.match(/\/$/)
+              # Folder
+              self.readTree("#{sourcePath}#{relativePath}")
+              .then (files) ->
+                Promise.all files.map (file) ->
+                  targetPath = file.path.replace(sourcePath, destinationPath)
+                  self.moveFile(file.path, targetPath)
+            else
+              self.moveFile("#{sourcePath}#{relativePath}", "#{destinationPath}#{relativePath}")
+
     readFile: (path, userEvent) ->
       if userEvent
         self.Achievement.unlock "Load a file"
 
       path = normalizePath "/#{path}"
       fs.read(path)
-      .then ({blob}) ->
-        blob
 
-    # TODO: Allow relative paths
+    readTree: (directoryPath) ->
+      fs.list(directoryPath)
+      .then (files) ->
+        Promise.all files.map (file) ->
+          if file.folder
+            self.readTree(file.path)
+          else
+            file
+      .then (filesAndFolderFiles) ->
+        filesAndFolderFiles.reduce (a, b) ->
+          a.concat(b)
+        , []
+
     writeFile: (path, blob, userEvent) ->
       if userEvent
         self.Achievement.unlock "Save a file"
@@ -93,15 +105,52 @@ module.exports = (dbName='zine-os') ->
       path = normalizePath "/#{path}"
       fs.write path, blob
 
-    # TODO: Allow relative paths
     deleteFile: (path) ->
       path = normalizePath "/#{path}"
       fs.delete(path)
 
-    # TODO: Allow relative paths
     updateFile: (path, changes) ->
       path = normalizePath "/#{path}"
       fs.update(path, changes)
+
+    urlForPath: (path) ->
+      fs.read(path)
+      .then URL.createObjectURL
+
+    launchIssue: (date) ->
+      require("./issues/#{date}")()
+
+    # TODO: Move this into some kind of system utils
+    installModulePrompt: ->
+      UI.Modal.prompt("url", "https://danielx.net/editor/master.json")
+      .then (url) ->
+        throw new Error "No url given" unless url
+
+        baseName = url.replace(/^https:\/\/(.*)/, "$1")
+        .replace(/(\.json)?$/, "💾")
+
+        pathPrompt = UI.Modal.prompt "path", "/lib/#{baseName}"
+        .then (path) ->
+          throw new Error "No path given" unless path
+          path
+
+        blobRequest = fetch url
+        .then (result) ->
+          result.blob()
+
+        Promise.all([blobRequest, pathPrompt])
+        .then ([path, blob]) ->
+          self.writeFile(path, blob)
+
+    installModule: (url, path) ->
+      path ?= url.replace(/^https:\/\/(.*)/, "/lib/$1")
+      .replace(/(\.json)?$/, "💾")
+
+      fetch url
+      .then (result) ->
+        result.blob()
+      .then (blob) ->
+        self.writeFile(path, blob)
 
     # NOTE: These are experimental commands to run code
     execJS: (path) ->
@@ -111,7 +160,19 @@ module.exports = (dbName='zine-os') ->
       .then (programText) ->
         Function(programText)()
 
+    Observable: UI.Observable
     UI: UI
+
+    dumpModules: ->
+      src = PACKAGE.source
+      Object.keys(src).forEach (path) ->
+        file = src[path]
+        blob = new Blob [file.content]
+        self.writeFile("System/#{path}", blob)
+
+    dumpPackage: ->
+      blob = new Blob [JSON.stringify(PACKAGE)], type: "application/json; charset=utf-8"
+      self.writeFile("System 💾", blob)
 
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"

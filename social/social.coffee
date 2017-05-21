@@ -14,7 +14,7 @@ module.exports = (I, self) ->
         area: self.area()
       .then (data) ->
         ajax
-          url: "https://whimsy-space.gomix.me/comments"
+          url: "https://whimsy-space.glitch.me/comments"
           data: JSON.stringify(data)
           headers:
             "Content-Type": "application/json"
@@ -23,7 +23,7 @@ module.exports = (I, self) ->
         self.viewComments()
 
     viewComments: ->
-      ajax.getJSON "https://whimsy-space.gomix.me/comments/#{self.area()}"
+      ajax.getJSON "https://whimsy-space.glitch.me/comments/#{self.area()}"
       .then (data) ->
         data = data.reverse()
 
@@ -37,7 +37,7 @@ module.exports = (I, self) ->
 
     like: ->
       system.Achievement.unlock "Do you 'like' like me?"
-      Modal.alert "I like you too, but we don't have a facebook or anything yet :)"
+      window.open "https://www.facebook.com/whimsyspace/"
     subscribe: ->
       require("../mailchimp").show()
 

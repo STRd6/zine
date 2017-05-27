@@ -4,6 +4,16 @@
 
 IFrameApp = require "../lib/iframe-app"
 
+{
+  absolutizePath
+  evalCSON
+  fileSeparator
+  normalizePath
+  isAbsolutePath
+  isRelativePath
+  htmlForPackage
+} = require "../util"
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -25,16 +35,6 @@ module.exports = (I, self) ->
   # Requiring other file types returns a Blob
 
   ###
-
-  {
-    absolutizePath
-    evalCSON
-    fileSeparator
-    normalizePath
-    isAbsolutePath
-    isRelativePath
-    htmlForPackage
-  } = require "../util"
 
   findDependencies = (sourceProgram) ->
     requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
@@ -219,7 +219,10 @@ module.exports = (I, self) ->
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.loadProgram(configPath).then (configSource) ->
+        state.loadConfigPromise = self
+        .loadProgram(configPath)
+        .then (configSource) ->
+          console.log "aaa", configSource
           module = {}
           Function("module", configSource)(module)
           module.exports
@@ -475,6 +478,7 @@ compilers = [{
   filter: ({path}) ->
     path.match /\.cson$/
   fn: (blob) ->
+    debugger
     blob.readAsText()
     .then evalCSON
     .then stringifyExport

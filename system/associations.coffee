@@ -290,8 +290,10 @@ module.exports = (I, self) ->
           return ->
             system.iframeApp data
       else if path.match(/\.js$|\.coffee$/)
-        ->
-          self.executeInIFrame(path)
+        self.packageProgram(path)
+        .then (pkg) ->
+          return ->
+            self.executePackageInIFrame pkg
       else
         Promise.reject new Error "Could not launch #{path}"
 

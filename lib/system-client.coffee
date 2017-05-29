@@ -14,8 +14,12 @@ do ->
 
   postmaster = Postmaster()
 
-  applicationProxy = new Proxy {},
+  applicationProxy = new Proxy
+    ready: ->
+      postmaster.invokeRemote "childLoaded"
+  ,
     get: (target, property, receiver) ->
+      target[property] or
       ->
         postmaster.invokeRemote "application", property, arguments...
 

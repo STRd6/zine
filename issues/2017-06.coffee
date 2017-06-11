@@ -30,6 +30,7 @@ module.exports = ->
   {Achievement, ajax} = system
 
   fetchContent "bee.md"
+  fetchContent "tree.md"
 
   system.Achievement.unlock "Issue 6"
 
@@ -43,6 +44,10 @@ module.exports = ->
     bee: ->
       system.Achievement.unlock "Bee afraid"
       system.openPath "/issue-6/bee.md"
+
+    tree: ->
+      system.Achievement.unlock "Tree story"
+      system.openPath "/issue-6/tree.md"
 
     achievementStatus: ->
       launch AchievementStatus
@@ -82,6 +87,7 @@ module.exports = ->
         [T]ext Editor
       [C]ontent
         [B]ee
+        [T]ree
       #{Social.menuText}
       [H]elp
         [A]chievement Status

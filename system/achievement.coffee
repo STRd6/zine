@@ -98,6 +98,11 @@ achievementData = [{
   icon: "🐝"
   group: "Issue 6"
   description: "Learn the truth about 'Bee Movie'"
+}, {
+  text: "Tree story"
+  icon: "🐝"
+  group: "Issue 6"
+  description: "Read Tree"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

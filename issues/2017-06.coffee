@@ -89,7 +89,7 @@ module.exports = ->
     handlers: handlers
 
   img = document.createElement "img"
-  img.src = "https://i.imgur.com/hKOGoex.jpg"
+  img.src = "https://forgettheprotocol.com/wp-content/uploads/2017/04/09-bee-movie.w536.h357.2x.jpg"
   img.style = "width: 100%; height: 100%"
 
   windowView = Window
@@ -97,8 +97,8 @@ module.exports = ->
     content: img
     iconEmoji: "🐝"
     menuBar: menuBar.element
-    width: 640
-    height: 360
+    width: 536 + 8
+    height: 357 + 46
     x: 64
     y: 64
 

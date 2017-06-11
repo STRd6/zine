@@ -63,6 +63,8 @@ module.exports = (opts={}) ->
     loadFile: (blob) ->
       loadedPromise.then ->
         postmaster.invokeRemote "loadFile", blob
+        .catch (e) ->
+          console.error "invokeRemote 'loadFile' failed", e
 
   application = Window
     title: title

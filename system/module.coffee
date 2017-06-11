@@ -4,6 +4,16 @@
 
 IFrameApp = require "../lib/iframe-app"
 
+{
+  absolutizePath
+  evalCSON
+  fileSeparator
+  normalizePath
+  isAbsolutePath
+  isRelativePath
+  htmlForPackage
+} = require "../util"
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -294,7 +304,6 @@ module.exports = (I, self) ->
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
 
-
     # still experimenting with the API
     # Async 'require' in the vein of require.js
     # it's horrible but seems necessary
@@ -475,6 +484,7 @@ compilers = [{
   filter: ({path}) ->
     path.match /\.cson$/
   fn: (blob) ->
+    debugger
     blob.readAsText()
     .then evalCSON
     .then stringifyExport

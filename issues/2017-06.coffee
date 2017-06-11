@@ -12,19 +12,43 @@ StoryReader = require "../apps/story-reader"
 
 Social = require "../social/social"
 
+fetchContent = (targetFile, sourcePath=targetFile) ->
+  targetPath = "/issue-6/#{targetFile}"
+
+  system.readFile targetPath
+  .then (file) ->
+    throw new Error "File not found" unless file
+  .catch ->
+    system.ajax
+      url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/#{sourcePath}"
+      responseType: "blob"
+    .then (blob) ->
+      system.writeFile targetPath, blob
+
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
+
+  fetchContent "bee.md"
+
+  system.Achievement.unlock "Issue 6"
+
+  launch = (App) ->
+    system.attachApplication App()
 
   handlers = Model().include(Social).extend
     area: ->
       "2017-06"
 
+    bee: ->
+      system.Achievement.unlock "Bee afraid"
+      system.openPath "/issue-6/bee.md"
+
     achievementStatus: ->
-      system.launchApp AchievementStatus
+      launch AchievementStatus
 
     chateau: ->
-      system.launchApp Chateau
+      launch Chateau
 
     crescent: ->
       app = StoryReader
@@ -32,9 +56,6 @@ module.exports = ->
         title: "Crescent"
 
       document.body.appendChild app.element
-
-    gleepGlorp: ->
-      system.openPath ggPath
 
     marigold: ->
       app = StoryReader
@@ -44,13 +65,13 @@ module.exports = ->
       document.body.appendChild app.element
 
     myBriefcase: ->
-      system.launchApp MyBriefcase
+      launch MyBriefcase
 
     pixiePaint: ->
-      system.launchApp PixiePaint
+      launch PixiePaint
 
     textEditor: ->
-      system.launchApp TextEditor
+      launch TextEditor
 
   menuBar = MenuBar
     items: parseMenu """
@@ -60,7 +81,7 @@ module.exports = ->
         [P]ixie Paint
         [T]ext Editor
       [C]ontent
-        [T]ODO
+        [B]ee
       #{Social.menuText}
       [H]elp
         [A]chievement Status
@@ -74,6 +95,7 @@ module.exports = ->
   windowView = Window
     title: "WhimsySpace Volume 1 | Episode 6 | Summertime Radness | June 2017"
     content: img
+    iconEmoji: "🐝"
     menuBar: menuBar.element
     width: 640
     height: 360

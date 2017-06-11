@@ -36,6 +36,16 @@ module.exports = (I, self) ->
 
   ###
 
+  {
+    absolutizePath
+    evalCSON
+    fileSeparator
+    normalizePath
+    isAbsolutePath
+    isRelativePath
+    htmlForPackage
+  } = require "../util"
+
   findDependencies = (sourceProgram) ->
     requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
     results = []
@@ -219,10 +229,7 @@ module.exports = (I, self) ->
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self
-        .loadProgram(configPath)
-        .then (configSource) ->
-          console.log "aaa", configSource
+        state.loadConfigPromise = self.loadProgram(configPath).then (configSource) ->
           module = {}
           Function("module", configSource)(module)
           module.exports
@@ -296,7 +303,6 @@ module.exports = (I, self) ->
                   throw new Error "Package '#{depPath}' not found"
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
-
 
     # still experimenting with the API
     # Async 'require' in the vein of require.js

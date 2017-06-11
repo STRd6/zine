@@ -83,6 +83,26 @@ achievementData = [{
   icon: "🈹"
   group: "Issue 4"
   description: "Read 'Residue'"
+}, {
+  text: "Issue 5"
+  icon: "📰"
+  group: "Issue 5"
+  description: "View Issue 5"
+}, {
+  text: "Issue 6"
+  icon: "🐝"
+  group: "Issue 6"
+  description: "View Issue 6"
+}, {
+  text: "Bee afraid"
+  icon: "🐝"
+  group: "Issue 6"
+  description: "Learn the truth about 'Bee Movie'"
+}, {
+  text: "Tree story"
+  icon: "🐝"
+  group: "Issue 6"
+  description: "Read Tree"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

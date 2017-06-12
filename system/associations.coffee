@@ -39,18 +39,6 @@ module.exports = (I, self) ->
       file.path.match(/\.html$/)
     fn: openWith(Markdown) # TODO: This can be a pointer to a system package
   }, {
-    name: "Ace Editor"
-    filter: (file) ->
-      file.path.match(/\.coffee$/) or
-      file.path.match(/\.cson$/) or
-      file.path.match(/\.html$/) or
-      file.path.match(/\.jadelet$/) or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.json$/) or
-      file.path.match(/\.md$/) or
-      file.path.match(/\.styl$/)
-    fn: openWith(CodeEditor) # TODO: This can be a pointer to a system package
-  }, {
     name: "Run"
     filter: (file) ->
       file.type is "application/javascript" or
@@ -69,7 +57,8 @@ module.exports = (I, self) ->
   }, {
     name: "Explore"
     filter: (file) ->
-      file.path.match(/💾$/)
+      file.path.match(/💾$/) or
+      file.path.match(/\.json$/)
     fn: (file) ->
       system.readFile(file.path)
       .then (blob) ->
@@ -91,6 +80,18 @@ module.exports = (I, self) ->
           iconEmoji: "📂"
 
         document.body.appendChild windowView.element
+  }, {
+    name: "Ace Editor"
+    filter: (file) ->
+      file.path.match(/\.coffee$/) or
+      file.path.match(/\.cson$/) or
+      file.path.match(/\.html$/) or
+      file.path.match(/\.jadelet$/) or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.json$/) or
+      file.path.match(/\.md$/) or
+      file.path.match(/\.styl$/)
+    fn: openWith(CodeEditor) # TODO: This can be a pointer to a system package
   }, {
     name: "Run"
     filter: (file) ->

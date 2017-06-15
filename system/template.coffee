@@ -2,11 +2,10 @@
 
 module.exports = (I, self) ->
   self.extend
-    compileTemplate: (source, mode="jade") ->
-      templateSource = Hamlet.compile source,
+    compileTemplate: (source) ->
+      templateSource = Jadelet.compile source,
         compiler: CoffeeScript
-        mode: mode
-        runtime: "Hamlet"
+        runtime: "Jadelet" # TODO: Avoid the use of this global
         exports: false
 
       Function("return " + templateSource)()

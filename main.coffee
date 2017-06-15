@@ -5,7 +5,8 @@ require "./extensions"
 require "./lib/outbound-clicks"
 require "./lib/error-reporter"
 
-global.Hamlet = require "./lib/hamlet"
+# global.Hamlet = require "./lib/hamlet"
+global.Jadelet = require "./lib/jadelet.min"
 
 System = require "./system"
 global.system = System()

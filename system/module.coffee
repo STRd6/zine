@@ -14,6 +14,8 @@ IFrameApp = require "../lib/iframe-app"
   htmlForPackage
 } = require "../util"
 
+Jadelet = require "../lib/jadelet.min"
+
 module.exports = (I, self) ->
   ###
   Load a module from a file in the file system.
@@ -452,10 +454,10 @@ compilers = [{
   fn: (blob) ->
     blob.readAsText()
     .then (jadeletSource) ->
-      Hamlet.compile jadeletSource,
+      Jadelet.compile jadeletSource,
         compiler: CoffeeScript
         mode: "jade"
-        runtime: "require('_lib_hamlet-runtime')"
+        runtime: "require('_SYS_jadelet')"
 }, {
   filter: ({path}) ->
     path.match /\.styl$/

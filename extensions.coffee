@@ -1,8 +1,8 @@
-# Pretend Hamlet Runtime is a real package
-PACKAGE.dependencies["_lib_hamlet-runtime"] =
+# Pretend Jadelet is a real package
+PACKAGE.dependencies["_SYS_jadelet"] =
   entryPoint: "main"
   distribution:
-    main: PACKAGE.distribution["lib/hamlet-runtime"]
+    main: PACKAGE.distribution["lib/jadelet.min"]
 
 # Add some utility readers to the Blob API
 Blob::readAsText = ->

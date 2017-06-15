@@ -36,16 +36,6 @@ module.exports = (I, self) ->
 
   ###
 
-  {
-    absolutizePath
-    evalCSON
-    fileSeparator
-    normalizePath
-    isAbsolutePath
-    isRelativePath
-    htmlForPackage
-  } = require "../util"
-
   findDependencies = (sourceProgram) ->
     requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
     results = []

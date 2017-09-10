@@ -76,10 +76,7 @@ module.exports = ->
 
     fs = S3FS(id, bucket)
 
-    fs.on "write", (path) ->
-      # This taps into all writes, we should be able to trigger an Algolia
-      # index action here
-      console.log "Write: #{path}"
+    bindAlgoliaIndex(fs)
 
     uuidToken = id.split(":")[1]
 
@@ -175,3 +172,42 @@ queryUserInfo = (token) ->
     console.log json
   .catch (e) ->
     console.error e
+
+bindAlgoliaIndex = (fs) ->
+  client = algoliasearch("QM41V7R53B", localStorage.ALGOLIA_SECRET)
+  index = client.initIndex('My Briefcase')
+
+  matchesContentType = (type) ->
+    type.match /text|javascript/
+
+  isPublic = (path) ->
+    path.match /^\/public\//
+
+  indexableContent = (blob) ->
+    if matchesContentType(blob.type)
+      blob.readAsText()
+    else
+      Promise.resolve()
+
+  performIndex = (path, blob) ->
+    return unless isPublic(path)
+
+    indexableContent(blob)
+    .then (content) ->
+      new Promise (resolve, reject) ->
+        index.addObjects [{
+          objectID: path
+          path: path
+          content: content
+          type: blob.type
+          size: blob.size
+        }], (err, content) ->
+          return reject(err) if err
+          resolve(content)
+
+  fs.on "write", (path) ->
+    # This taps into all writes, we should be able to trigger an Algolia
+    # index action here
+    console.log "Write: #{path}"
+    fs.read(path).then (blob) ->
+      performIndex(path, blob)

@@ -17,4 +17,5 @@ remoteDependencies: [
   "https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"
   "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"
   "https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"
+  "https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
 ]

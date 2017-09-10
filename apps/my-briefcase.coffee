@@ -76,7 +76,7 @@ module.exports = ->
 
     fs = S3FS(id, bucket)
 
-    bindAlgoliaIndex(fs)
+    bindAlgoliaIndex(id, fs)
 
     uuidToken = id.split(":")[1]
 
@@ -173,7 +173,7 @@ queryUserInfo = (token) ->
   .catch (e) ->
     console.error e
 
-bindAlgoliaIndex = (fs) ->
+bindAlgoliaIndex = (id, fs) ->
   client = algoliasearch("QM41V7R53B", localStorage.ALGOLIA_SECRET)
   index = client.initIndex('My Briefcase')
 
@@ -196,9 +196,9 @@ bindAlgoliaIndex = (fs) ->
     .then (content) ->
       new Promise (resolve, reject) ->
         index.addObjects [{
-          objectID: path
+          objectID: id + path
           path: path
-          content: content
+          content: content.slice(0, 8192) # There's limits to the "full text" amount in the Algolia free tier. Records above 10k are rejected.
           type: blob.type
           size: blob.size
         }], (err, content) ->

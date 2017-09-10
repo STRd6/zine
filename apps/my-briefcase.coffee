@@ -76,6 +76,11 @@ module.exports = ->
 
     fs = S3FS(id, bucket)
 
+    fs.on "write", (path) ->
+      # This taps into all writes, we should be able to trigger an Algolia
+      # index action here
+      console.log "Write: #{path}"
+
     uuidToken = id.split(":")[1]
 
     system.fs.mount "/My Briefcase/", fs

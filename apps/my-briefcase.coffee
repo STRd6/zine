@@ -174,7 +174,14 @@ queryUserInfo = (token) ->
     console.error e
 
 bindAlgoliaIndex = (id, fs) ->
-  client = algoliasearch("QM41V7R53B", localStorage.ALGOLIA_SECRET)
+  {ALGOLIA_SECRET} = localStorage
+  unless ALGOLIA_SECRET
+    console.warn "No Algolia key present, 'My Briefcase' will not be indexed."
+    return
+  
+  console.log "Initializing Algolia indexing of 'My Briefcase'"
+
+  client = algoliasearch("QM41V7R53B", ALGOLIA_SECRET)
   index = client.initIndex('My Briefcase')
 
   matchesContentType = (type) ->
@@ -198,7 +205,7 @@ bindAlgoliaIndex = (id, fs) ->
         index.addObjects [{
           objectID: id + path
           path: path
-          content: content.slice(0, 8192) # There's limits to the "full text" amount in the Algolia free tier. Records above 10k are rejected.
+          content: content?.slice(0, 8192) # There's limits to the "full text" amount in the Algolia free tier. Records above 10k are rejected.
           type: blob.type
           size: blob.size
         }], (err, content) ->
@@ -211,3 +218,5 @@ bindAlgoliaIndex = (id, fs) ->
     console.log "Write: #{path}"
     fs.read(path).then (blob) ->
       performIndex(path, blob)
+
+  return

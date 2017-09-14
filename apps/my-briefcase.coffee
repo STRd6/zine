@@ -217,6 +217,10 @@ bindAlgoliaIndex = (id, fs) ->
           return reject(err) if err
           resolve(content)
 
+  # TODO: Remove on delete
+  # TODO: Public URLs
+  # TODO: Image metadata (width x height)
+
   fs.on "write", (path) ->
     # This taps into all writes, we should be able to trigger an Algolia
     # index action here

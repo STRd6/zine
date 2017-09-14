@@ -25,7 +25,7 @@ FolderTemplate = require "../templates/folder"
 
 S3FS = require "../lib/s3-fs"
 
-{emptyElement, pinvoke} = require "../util"
+{emptyElement, extensionFor, generalType, pinvoke} = require "../util"
 
 window.onAmazonLoginReady = ->
   amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
@@ -178,7 +178,7 @@ bindAlgoliaIndex = (id, fs) ->
   unless ALGOLIA_SECRET
     console.warn "No Algolia key present, 'My Briefcase' will not be indexed."
     return
-  
+
   console.log "Initializing Algolia indexing of 'My Briefcase'"
 
   client = algoliasearch("QM41V7R53B", ALGOLIA_SECRET)
@@ -199,14 +199,19 @@ bindAlgoliaIndex = (id, fs) ->
   performIndex = (path, blob) ->
     return unless isPublic(path)
 
+    contentType = blob.type
+    type = generalType(contentType)
+
     indexableContent(blob)
     .then (content) ->
       new Promise (resolve, reject) ->
         index.addObjects [{
           objectID: id + path
           path: path
+          extension: extensionFor(path)
           content: content?.slice(0, 8192) # There's limits to the "full text" amount in the Algolia free tier. Records above 10k are rejected.
-          type: blob.type
+          contentType: contentType
+          type: type
           size: blob.size
         }], (err, content) ->
           return reject(err) if err

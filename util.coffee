@@ -124,3 +124,6 @@ module.exports =
     .then (jsCode) ->
       # TODO: Security, lol
       Function("return " + jsCode)()
+
+  generalType: (type="") ->
+    type.replace(/^application\/|\/.*$/, "").replace(/;.*$/, "")

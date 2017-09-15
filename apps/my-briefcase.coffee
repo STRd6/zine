@@ -217,7 +217,6 @@ bindAlgoliaIndex = (id, fs) ->
           return reject(err) if err
           resolve(content)
 
-  # TODO: Remove on delete
   # TODO: Public URLs
   # TODO: Image metadata (width x height)
 
@@ -227,5 +226,12 @@ bindAlgoliaIndex = (id, fs) ->
     console.log "Write: #{path}"
     fs.read(path).then (blob) ->
       performIndex(path, blob)
+
+  # Remove index on delete
+  fs.on "delete", (path) ->
+    new Promise (resolve, reject) ->
+      index.deleteObject id + path, (err) ->
+        return reject(err) if err
+        resolve()
 
   return

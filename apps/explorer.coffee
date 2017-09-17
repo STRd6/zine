@@ -1,7 +1,7 @@
 # Explorer File Browser
 #
 # Explore the file system like adventureres of old!
-# TODO: Drop files onto applications
+
 # TODO: Select multiple
 # TOOD: Keyboard Input
 

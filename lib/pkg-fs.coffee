@@ -58,7 +58,7 @@ module.exports = (pkg, persistencePath) ->
       {content, type} = pkg.source[sourcePath(path)]
       type ?= ""
 
-      blob = new Blob [content], 
+      blob = new Blob [content],
         type: type
 
       Promise.resolve blob

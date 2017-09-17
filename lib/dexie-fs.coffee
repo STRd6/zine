@@ -21,8 +21,8 @@ module.exports = (db) ->
     # Read a blob from a path
     read: (path) ->
       Files.get(path)
-      .then ({blob}) ->
-        blob
+      .then (result) ->
+        result?.blob
       .then notify "read", path
 
     # Write a blob to a path

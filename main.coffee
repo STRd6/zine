@@ -42,5 +42,21 @@ system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()
 # system.dumpModules()
+system.initAppSettings()
+
+->
+  system.removeApp("Test")
+
+-> # For testing
+  system.installApp
+    name: "Test"
+    src: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/test2/index.html"
+    launchAtStartup: true
+    width: 100
+    height: 100
+    icon: "T"
+    associations:
+      type: []
+      extension: ["test"]
 
 require("./issues/2017-06")()

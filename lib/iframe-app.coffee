@@ -1,3 +1,15 @@
+###
+IFrameApp loads an app in an iframe and returns a UI window that the system can
+use to interact with it.
+
+The apps can be sandboxed by passing in the sandbox option.
+
+Apps can be loaded from a json package or from a source url.
+
+Apps are communicated with via `postMessage`
+
+###
+
 Model = require "model"
 Postmaster = require "postmaster"
 FileIO = require "../os/file-io"

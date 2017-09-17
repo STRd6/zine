@@ -4,6 +4,10 @@ PACKAGE.dependencies["_SYS_jadelet"] =
   distribution:
     main: PACKAGE.distribution["lib/jadelet.min"]
 
+# Extend JSON with toBlob method
+JSON.toBlob ?= (object) ->
+  new Blob [JSON.stringify(object)], type: "application/json; charset=utf-8"
+
 # Add some utility readers to the Blob API
 Blob::readAsText = ->
   file = this

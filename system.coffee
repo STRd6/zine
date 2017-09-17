@@ -171,8 +171,46 @@ module.exports = (dbName='zine-os') ->
         self.writeFile("System/#{path}", blob)
 
     dumpPackage: ->
-      blob = new Blob [JSON.stringify(PACKAGE)], type: "application/json; charset=utf-8"
-      self.writeFile("System 💾", blob)
+      self.writeFile("System 💾", JSON.toBlob(PACKAGE))
+
+    _appData: null
+
+    initAppSettings: ->
+      self.readFile("System/apps.json")
+      .then (blob) ->
+        if blob
+          blob.readAsJSON()
+        else
+          []
+      .then (data) ->
+        self._appData = data
+
+        data.forEach (datum) ->
+          {launchAtStartup, name, icon, width, height, src} = datum
+
+          console.log "dat", datum
+
+          if launchAtStartup
+            system.attachApplication self.iframeApp
+              title: name
+              emojiIcon: icon
+              width: width
+              height: height
+              src: src
+
+    removeApp: (name, noPersist) ->
+      self._appData = (self._appData or []).filter (datum) ->
+        datum.name != name
+
+      self.writeFile "System/apps.json", JSON.toBlob(self._appData) unless noPersist
+
+    installApp: (appData) ->
+      console.log "install", appData
+      # Only one app per name
+      self.removeApp(appData.name, true) 
+      .concat [appData]
+
+      self.writeFile "System/apps.json", JSON.toBlob(self._appData)
 
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"

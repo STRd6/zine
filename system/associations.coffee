@@ -29,7 +29,7 @@ openWith = (App) ->
     system.attachApplication(app)
 
 module.exports = (I, self) ->
-  # Handlers use combined type, extension, and contents info to do the right thing
+  # Handlers use type and contents path info to do the right thing
   # The first handler that matches is the default handler, the rest are available
   # from context menu
   handlers = [{
@@ -116,14 +116,14 @@ module.exports = (I, self) ->
   }, {
     name: "Run Link"
     filter: (file) ->
-      file.path.match(/🔗$/)
+      file.path.match(/🔗$|\.link$/)
     fn: (file) ->
       # TODO: Rename?
       system.execPathWithFile file.path, null
   }, {
     name: "Edit Link"
     filter: (file) ->
-      file.path.match(/🔗$/)
+      file.path.match(/🔗$|\.link$/)
     fn: openWith(CodeEditor)
   }, {
     name: "Sys Exec"
@@ -282,7 +282,7 @@ module.exports = (I, self) ->
         .then (pkg) ->
           return ->
             self.executePackageInIFrame(pkg)
-      else if path.match(/🔗$/)
+      else if path.match(/🔗$|\.link$/)
         system.readFile path
         .then (blob) ->
           blob.readAsText()

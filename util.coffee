@@ -73,7 +73,20 @@ extensionFor = (path) ->
   if result
     result[1]
 
-module.exports =
+readTree = (fs, directoryPath) ->
+  fs.list(directoryPath)
+  .then (files) ->
+    Promise.all files.map (file) ->
+      if file.folder
+        readTree(fs, file.path)
+      else
+        file
+  .then (filesAndFolderFiles) ->
+    filesAndFolderFiles.reduce (a, b) ->
+      a.concat(b)
+    , []
+
+module.exports = Util =
   emptyElement: (element) ->
     while element.lastChild
       element.removeChild element.lastChild
@@ -127,3 +140,5 @@ module.exports =
 
   generalType: (type="") ->
     type.replace(/^application\/|\/.*$/, "").replace(/;.*$/, "")
+
+  readTree: readTree

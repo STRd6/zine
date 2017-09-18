@@ -1,4 +1,4 @@
-{fileSeparator, normalizePath} = require "./util"
+{fileSeparator, normalizePath, readTree} = require "./util"
 
 # DexieDB Containing our FS
 DexieFSDB = (dbName='fs') ->
@@ -86,17 +86,7 @@ module.exports = (dbName='zine-os') ->
       fs.read(path)
 
     readTree: (directoryPath) ->
-      fs.list(directoryPath)
-      .then (files) ->
-        Promise.all files.map (file) ->
-          if file.folder
-            self.readTree(file.path)
-          else
-            file
-      .then (filesAndFolderFiles) ->
-        filesAndFolderFiles.reduce (a, b) ->
-          a.concat(b)
-        , []
+      readTree(fs, directoryPath)
 
     writeFile: (path, blob, userEvent) ->
       if userEvent
@@ -207,7 +197,7 @@ module.exports = (dbName='zine-os') ->
     installApp: (appData) ->
       console.log "install", appData
       # Only one app per name
-      self.removeApp(appData.name, true) 
+      self.removeApp(appData.name, true)
       .concat [appData]
 
       self.writeFile "System/apps.json", JSON.toBlob(self._appData)

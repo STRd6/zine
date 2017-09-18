@@ -25,7 +25,7 @@ FolderTemplate = require "../templates/folder"
 
 S3FS = require "../lib/s3-fs"
 
-{emptyElement, extensionFor, generalType, pinvoke} = require "../util"
+{emptyElement, extensionFor, generalType, pinvoke, readTree} = require "../util"
 
 window.onAmazonLoginReady = ->
   amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
@@ -199,6 +199,8 @@ bindAlgoliaIndex = (id, fs) ->
   performIndex = (path, blob) ->
     return unless isPublic(path)
 
+    console.log "Indexing:", path
+
     contentType = blob.type
     type = generalType(contentType)
 
@@ -233,5 +235,50 @@ bindAlgoliaIndex = (id, fs) ->
       index.deleteObject id + path, (err) ->
         return reject(err) if err
         resolve()
+
+  global.reindexBriefcase = ->
+    readTree fs, "/public"
+    .then (files) ->
+      console.log "All Bfiles", files
+
+      queue = files
+      RETRY = {}
+
+      processFile = (file) ->
+        path = file.path
+        
+        fs.read(path)
+        .then (blob) ->
+          performIndex(path, blob)
+        .catch (e) ->
+          handleError e, file
+        .then (result) ->
+          if result is RETRY
+            processFile(file)
+          else
+            return result
+
+      handleError = (e, file) ->
+        console.error e
+
+        file.retries ?= 3
+        if file.retries <= 0
+          throw e
+        else # retry
+          file.retries -= 1
+          return RETRY
+
+      work = ->
+        file = files.shift()
+
+        if file
+          processFile(file)
+          .then ->
+            work()
+
+      work()
+      work()
+      work()
+      work()
 
   return

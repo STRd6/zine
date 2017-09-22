@@ -14,6 +14,8 @@ Model = require "model"
 Postmaster = require "postmaster"
 FileIO = require "../os/file-io"
 
+{version} = require "../pixie"
+
 module.exports = (opts={}) ->
   {Window} = system.UI
 
@@ -55,6 +57,11 @@ module.exports = (opts={}) ->
       console.log "child loaded"
       resolveLoaded()
       loaded = true
+
+      ZineOS:
+        version: version
+        env: {} # TODO: Can pass env vars here
+        args: {} # TODO: Can pass args here, args can be an object
 
     # Send events from the iframe app to the application
     event: ->

@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>README</title>
+  <title>NOTES</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
@@ -16,9 +16,7 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <h1 id="zine-os">Zine OS</h1>
-<p>DIY E-Zine and Operating System</p>
-<h1 id="interfaces">Interfaces</h1>
+    <h2 id="apps-and-associations">Apps and Associations</h2>
 
   </div>
   <div class="content"><pre><code>
@@ -30,103 +28,24 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-2">&#182;</a>
     </div>
-    <h2 id="fs-interface">FS Interface</h2>
+    <p>Would be cool to have apps that can auto-update and register associations.</p>
+<p>What&#39;s needed?</p>
+<p>name: String
+icon: Emoji (maybe could get from favicon in url?)
+src: URL
+associations: associations for paths and types that this app can open
+launchAtStartup: false|true|&quot;hidden&quot;  whether this application auto-starts 
+width:
+height:</p>
+<p>We could also have json urls that point to a package that is installed. The
+package could contain its own metadata. We can cache it locally and check for
+updates periodically.</p>
+<p>We need a way to persist the list of apps locally, maybe just a file in the
+<code>/System/</code> folder. Perhaps <code>/System/apps.json</code></p>
 
   </div>
   <div class="content"><pre><code>
 </code></pre>
-</div>
-</li>
-<li id="section-3">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-3">&#182;</a>
-    </div>
-    <p>Read a blob from a path, returns a promise fulfilled with the blob object. The
-blob is annotated with the path i.e.: blob.path == path</p>
-
-  </div>
-  <div class="content"><pre><code>read: (path) -&gt;</code></pre>
-</div>
-</li>
-<li id="section-4">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-4">&#182;</a>
-    </div>
-    <p>Write a blob to a path, returns a promise that is fulfilled when the write succeeds.</p>
-
-  </div>
-  <div class="content"><pre><code>write: (path, blob) -&gt;</code></pre>
-</div>
-</li>
-<li id="section-5">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-5">&#182;</a>
-    </div>
-    <p>Delete a file at a path, returns a promise that is fulfilled when the delete succeeds.</p>
-
-  </div>
-  <div class="content"><pre><code>delete: (path) -&gt;</code></pre>
-</div>
-</li>
-<li id="section-6">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-6">&#182;</a>
-    </div>
-    <p>Returns a promise</p>
-
-  </div>
-  <div class="content"><pre><code>list: (directoryPath) -&gt;</code></pre>
-</div>
-</li>
-<li id="section-7">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-7">&#182;</a>
-    </div>
-    <h2 id="fileentry-interface">FileEntry Interface</h2>
-
-  </div>
-  <div class="content"><pre><code>
-</code></pre>
-</div>
-</li>
-<li id="section-8">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-8">&#182;</a>
-    </div>
-    
-  </div>
-  <div class="content"><pre><code>path:
-size:
-type:</code></pre>
-</div>
-</li>
-<li id="section-9">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-9">&#182;</a>
-    </div>
-    <h2 id="folderentry-interface">FolderEntry Interface</h2>
-
-  </div>
-  <div class="content"><pre><code>
-</code></pre>
-</div>
-</li>
-<li id="section-10">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-10">&#182;</a>
-    </div>
-    
-  </div>
-  <div class="content"><pre><code>folder: true
-path:</code></pre>
 </div>
 </li>
     </ul>

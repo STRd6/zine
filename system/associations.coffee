@@ -258,6 +258,14 @@ module.exports = (I, self) ->
     registerHandler: (handler, position=0) ->
       handlers.splice(position, 0, handler)
 
+    removeHandler: (handler) ->
+      position = handlers.indexOf(handler)
+      if position >= 0
+        handlers.splice(position, 1)
+        return handler
+
+      return
+
     handlers: ->
       handlers.slice()
 

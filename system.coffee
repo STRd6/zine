@@ -165,6 +165,25 @@ module.exports = (dbName='zine-os') ->
 
     _appData: null
 
+    launchAppByAppData: (datum) ->
+      {name, icon, width, height, src} = datum
+
+      console.log "launch app", datum
+
+      system.attachApplication self.iframeApp
+        title: name
+        emojiIcon: icon
+        width: width
+        height: height
+        src: src
+
+    launchAppByName: (name) ->
+      [datum] = self._appData.filter (datum) ->
+        datum.name is name
+
+      if datum
+        self.launchAppByAppData(datum)
+
     initAppSettings: ->
       self.readFile("System/apps.json")
       .then (blob) ->
@@ -176,21 +195,16 @@ module.exports = (dbName='zine-os') ->
         self._appData = data
 
         data.forEach (datum) ->
-          {launchAtStartup, name, icon, width, height, src} = datum
-
-          console.log "dat", datum
-
-          if launchAtStartup
-            system.attachApplication self.iframeApp
-              title: name
-              emojiIcon: icon
-              width: width
-              height: height
-              src: src
+          self.installAppHandler(datum)
+          
+          if datum.launchAtStartup
+            launchAppByAppData(datum)
 
     removeApp: (name, noPersist) ->
       self._appData = (self._appData or []).filter (datum) ->
         datum.name != name
+
+      self.removeAppHandler(datum.handler)
 
       self.writeFile "System/apps.json", JSON.toBlob(self._appData) unless noPersist
 
@@ -198,9 +212,26 @@ module.exports = (dbName='zine-os') ->
       console.log "install", appData
       # Only one app per name
       self.removeApp(appData.name, true)
-      .concat [appData]
+
+      self._appData = self._appData.concat [appData]
+
+      self.installAppHandler(appData)
 
       self.writeFile "System/apps.json", JSON.toBlob(self._appData)
+
+    installAppHandler: (datum) ->
+      # TODO: Real regex, skip apps with no handler
+      {name} = datum
+      
+      datum.handler =
+        name: name
+        filter: ({path}) ->
+          path.match /\.md$|\.html$/
+        fn: ->
+          self.launchAppByName name
+
+      self.registerHandler datum.handler
+
 
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"

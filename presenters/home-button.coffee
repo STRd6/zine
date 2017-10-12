@@ -17,6 +17,8 @@ module.exports = ->
     app = App()
     system.attachApplication app
 
+  # TODO: Generate menu from list of installed apps!
+
   contextMenu = ContextMenu
     items: parseMenu """
       🔨 [A]pplications
@@ -94,7 +96,7 @@ module.exports = ->
         Achievement.unlock "Shut Down"
         system.UI.Modal.alert "You'll never shut us down! ZineOS 5ever!"
 
-  updateStyle = ->
+  updateStyle = (contextMenu) ->
     height = element.getBoundingClientRect().height
 
     contextMenu.element.style.fontSize = "1.5rem"
@@ -107,6 +109,6 @@ module.exports = ->
       contextMenu.display
         inElement: document.body
 
-      updateStyle()
+      updateStyle(contextMenu)
 
   return element

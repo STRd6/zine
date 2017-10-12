@@ -196,7 +196,7 @@ module.exports = (dbName='zine-os') ->
 
         data.forEach (datum) ->
           self.installAppHandler(datum)
-          
+
           if datum.launchAtStartup
             launchAppByAppData(datum)
 
@@ -222,7 +222,7 @@ module.exports = (dbName='zine-os') ->
     installAppHandler: (datum) ->
       # TODO: Real regex, skip apps with no handler
       {name} = datum
-      
+
       datum.handler =
         name: name
         filter: ({path}) ->

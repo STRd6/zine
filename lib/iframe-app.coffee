@@ -8,6 +8,9 @@ Apps can be loaded from a json package or from a source url.
 
 Apps are communicated with via `postMessage`
 
+The iframed app is responsible for sending the `ready` message when it is in a
+state that can respond to messages from the OS.
+
 ###
 
 Model = require "model"
@@ -49,19 +52,29 @@ module.exports = (opts={}) ->
   # Attach a postmaster to receive events from the child frame
   postmaster = Postmaster()
 
+  acceptClient = ->
+    resolveLoaded()
+    loaded = true
+
+    ZineOS:
+      version: version
+      env: {} # TODO: Can pass env vars here
+      args: {} # TODO: Can pass args here, args can be an object
+
+  # TODO: use postmaster.delegate
+  # TODO: Set menu bar from within app
+
   Object.assign postmaster,
     remoteTarget: ->
       frame.contentWindow
 
+    ready: (clientData) ->
+      console.info clientData
+      acceptClient()
+
     childLoaded: ->
       console.log "child loaded"
-      resolveLoaded()
-      loaded = true
-
-      ZineOS:
-        version: version
-        env: {} # TODO: Can pass env vars here
-        args: {} # TODO: Can pass args here, args can be an object
+      acceptClient()
 
     # Send events from the iframe app to the application
     event: ->

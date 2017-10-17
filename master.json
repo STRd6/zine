@@ -164,7 +164,7 @@
     },
     "lib/app-drop.coffee": {
       "path": "lib/app-drop.coffee",
-      "content": "Drop = require \"./drop\"\n{fileFromDropEvent}  = require \"../util\"\n\n# General drop handling for apps\nmodule.exports = (app) ->\n  {element} = app\n\n  Drop element, (e) ->\n    {handlers} = app\n\n    fileFromDropEvent e\n    .then (file) ->\n      if file\n        path = file.path\n\n        handlers.loadFile file\n        .then ->\n          if path\n            handlers.currentPath path\n          else\n            handlers.currentPath null\n      else\n        handlers.currentPath null\n",
+      "content": "Drop = require \"./drop\"\n{fileFromDropEvent}  = require \"../util\"\n\n# General drop handling for apps\nmodule.exports = (app) ->\n  {element} = app\n\n  Drop element, (e) ->\n    {handlers} = app\n\n    fileFromDropEvent e\n    .then (file) ->\n      if file\n        path = file.path\n\n        handlers.loadFile file\n        .then ->\n          if path\n            handlers.currentPath path\n          else\n            handlers.currentPath null\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -575,7 +575,7 @@
     },
     "lib/app-drop": {
       "path": "lib/app-drop",
-      "content": "(function() {\n  var Drop, fileFromDropEvent;\n\n  Drop = require(\"./drop\");\n\n  fileFromDropEvent = require(\"../util\").fileFromDropEvent;\n\n  module.exports = function(app) {\n    var element;\n    element = app.element;\n    return Drop(element, function(e) {\n      var handlers;\n      handlers = app.handlers;\n      return fileFromDropEvent(e).then(function(file) {\n        var path;\n        if (file) {\n          path = file.path;\n          return handlers.loadFile(file).then(function() {\n            if (path) {\n              return handlers.currentPath(path);\n            } else {\n              return handlers.currentPath(null);\n            }\n          });\n        } else {\n          return handlers.currentPath(null);\n        }\n      });\n    });\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var Drop, fileFromDropEvent;\n\n  Drop = require(\"./drop\");\n\n  fileFromDropEvent = require(\"../util\").fileFromDropEvent;\n\n  module.exports = function(app) {\n    var element;\n    element = app.element;\n    return Drop(element, function(e) {\n      var handlers;\n      handlers = app.handlers;\n      return fileFromDropEvent(e).then(function(file) {\n        var path;\n        if (file) {\n          path = file.path;\n          return handlers.loadFile(file).then(function() {\n            if (path) {\n              return handlers.currentPath(path);\n            } else {\n              return handlers.currentPath(null);\n            }\n          });\n        }\n      });\n    });\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/dexie-fs": {

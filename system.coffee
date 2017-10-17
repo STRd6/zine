@@ -165,24 +165,29 @@ module.exports = (dbName='zine-os') ->
 
     _appData: null
 
-    launchAppByAppData: (datum) ->
+    launchAppByAppData: (datum, path) ->
       {name, icon, width, height, src} = datum
 
-      console.log "launch app", datum
-
-      system.attachApplication self.iframeApp
+      app = self.iframeApp
         title: name
         emojiIcon: icon
         width: width
         height: height
         src: src
+      
+      if path
+        self.readFile path
+        .then (blob) ->
+          app.loadFile(blob, path)
 
-    launchAppByName: (name) ->
+      self.attachApplication app
+
+    launchAppByName: (name, path) ->
       [datum] = self._appData.filter (datum) ->
         datum.name is name
 
       if datum
-        self.launchAppByAppData(datum)
+        self.launchAppByAppData(datum, path)
 
     initAppSettings: ->
       self.readFile("System/apps.json")
@@ -232,8 +237,8 @@ module.exports = (dbName='zine-os') ->
         filter: ({path}) ->
           associations.some (association) ->
             endsWith path, association
-        fn: ->
-          self.launchAppByName name
+        fn: (file) ->
+          self.launchAppByName name, file?.path
 
       self.registerHandler datum.handler
 

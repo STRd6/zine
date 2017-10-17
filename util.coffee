@@ -149,14 +149,13 @@ module.exports = Util =
 
   We also handle the special case of dragging and dropping files from the system
   explorer.
-  
+
   Returns a promise that is fulfilled with the file.
   ###
-  dropEventToFile: (e) ->
+  fileFromDropEvent: (e) ->
     return if e.defaultPrevented
 
     fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
-
     if fileSelectionData
       e.preventDefault()
       data = JSON.parse fileSelectionData
@@ -165,7 +164,6 @@ module.exports = Util =
       return system.readFile(selectedFile.path)
 
     files = e.dataTransfer.files
-
     if files.length
       e.preventDefault()
       return Promise.resolve(files[0])

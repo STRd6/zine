@@ -20,8 +20,6 @@ FileIO = require "../os/file-io"
 
 {version} = require "../pixie"
 
-{dropEventToFile} = require "../util"
-
 module.exports = (opts={}) ->
   {Window} = system.UI
 
@@ -108,12 +106,6 @@ module.exports = (opts={}) ->
     width: width
     height: height
     iconEmoji: iconEmoji
-
-  Drop application.element, (e) ->
-    dropEventToFile(e)
-    .then (file) ->
-      if file
-        application.loadFile(file, file.path)
 
   Object.assign application,
     exit: ->

@@ -1,4 +1,5 @@
 Drop = require "./drop"
+{fileFromDropEvent}  = require "../util"
 
 # General drop handling for apps
 module.exports = (app) ->
@@ -7,29 +8,16 @@ module.exports = (app) ->
   Drop element, (e) ->
     {handlers} = app
 
-    fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
+    fileFromDropEvent e
+    .then (file) ->
+      if file
+        path = file.path
 
-    if fileSelectionData
-      data = JSON.parse(fileSelectionData)
-      e.preventDefault()
-      file = data.files[0]
-
-      # TODO: Handle multi-files
-      path = data.files[0].path
-
-      system.readFile path
-      .then handlers.loadFile
-      .then ->
-        handlers.currentPath path
-
-      return
-
-    files = e.dataTransfer.files
-
-    if files.length
-      e.preventDefault()
-
-      file = files[0]
-      handlers.loadFile file
-      .then ->
+        handlers.loadFile file
+        .then ->
+          if path
+            handlers.currentPath path
+          else
+            handlers.currentPath null
+      else
         handlers.currentPath null

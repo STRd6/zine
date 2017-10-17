@@ -20,8 +20,10 @@ document.head.appendChild style
 # Drag shenanigans
 document.addEventListener "dragstart", ->
   document.body.classList.add "drag-active"
-document.addEventListener "mouseup", ->
+endDrag = ->
   document.body.classList.remove "drag-active"
+document.addEventListener "mouseup", endDrag
+document.addEventListener "dragend", endDrag
 
 # Desktop
 Explorer = require "./apps/explorer"

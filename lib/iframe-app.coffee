@@ -93,11 +93,9 @@ module.exports = (opts={}) ->
       system[method](args...)
 
   handlers ?= Model().include(FileIO).extend
-    loadFile: (blob) ->
+    loadFile: (blob, path) ->
       loadedPromise.then ->
-        postmaster.invokeRemote "loadFile", blob
-        .catch (e) ->
-          console.error "invokeRemote 'loadFile' failed", e
+        postmaster.invokeRemote "loadFile", blob, path
 
   application = Window
     title: title

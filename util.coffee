@@ -142,3 +142,32 @@ module.exports = Util =
     type.replace(/^application\/|\/.*$/, "").replace(/;.*$/, "")
 
   readTree: readTree
+
+  ###
+  Get the first file from a drop event. Does nothing if the event has had
+  defaultPrevented. Calls preventDefault if we handle the drop.
+
+  We also handle the special case of dragging and dropping files from the system
+  explorer.
+  
+  Returns a promise that is fulfilled with the file.
+  ###
+  dropEventToFile: (e) ->
+    return if e.defaultPrevented
+
+    fileSelectionData = e.dataTransfer.getData("zineos/file-selection")
+
+    if fileSelectionData
+      e.preventDefault()
+      data = JSON.parse fileSelectionData
+
+      selectedFile = data.files[0]
+      return system.readFile(selectedFile.path)
+
+    files = e.dataTransfer.files
+
+    if files.length
+      e.preventDefault()
+      return Promise.resolve(files[0])
+
+    return Promise.resolve()

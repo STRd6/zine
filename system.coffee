@@ -1,4 +1,4 @@
-{fileSeparator, normalizePath, readTree} = require "./util"
+{endsWith, fileSeparator, normalizePath, readTree} = require "./util"
 
 # DexieDB Containing our FS
 DexieFSDB = (dbName='fs') ->
@@ -202,9 +202,12 @@ module.exports = (dbName='zine-os') ->
 
     removeApp: (name, noPersist) ->
       self._appData = (self._appData or []).filter (datum) ->
-        datum.name != name
-
-      self.removeAppHandler(datum.handler)
+        if datum.name != name
+          true
+        else
+          # Remove handler
+          self.removeHandler(datum.handler)
+          return false
 
       self.writeFile "System/apps.json", JSON.toBlob(self._appData) unless noPersist
 
@@ -220,13 +223,15 @@ module.exports = (dbName='zine-os') ->
       self.writeFile "System/apps.json", JSON.toBlob(self._appData)
 
     installAppHandler: (datum) ->
-      # TODO: Real regex, skip apps with no handler
-      {name} = datum
+      {name, associations} = datum
+
+      associations = [].concat(associations or [])
 
       datum.handler =
         name: name
         filter: ({path}) ->
-          path.match /\.md$|\.html$/
+          associations.some (association) ->
+            endsWith path, association
         fn: ->
           self.launchAppByName name
 

@@ -9,7 +9,7 @@ name: String
 icon: Emoji (maybe could get from favicon in url?)
 src: URL
 associations: associations for paths and types that this app can open
-launchAtStartup: false|true|"hidden"  whether this application auto-starts 
+launchAtStartup: false|true|"hidden"  whether this application auto-starts
 width:
 height:
 

@@ -19,5 +19,3 @@ module.exports = (app) ->
             handlers.currentPath path
           else
             handlers.currentPath null
-      else
-        handlers.currentPath null

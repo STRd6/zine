@@ -1,20 +1,15 @@
-AppDrop = require "../lib/app-drop"
-
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
 Notepad = require "../apps/notepad"
 CodeEditor = require "../apps/text-editor"
 Explorer = require "../apps/explorer"
-Spreadsheet = require "../apps/spreadsheet"
 PixelEditor = require "../apps/pixel"
 Markdown = require "../apps/markdown"
 DSad = require "../apps/dungeon-of-sadness"
 MyBriefcase = require "../apps/my-briefcase"
 
 PkgFS = require "../lib/pkg-fs"
-
-{extensionFor} = require "../util"
 
 openWith = (App) ->
   (file) ->
@@ -141,12 +136,6 @@ module.exports = (I, self) ->
       file.type.match(/^application\/javascript/)
     fn: openWith(Notepad)
   }, {
-    name: "Spreadsheet"
-    filter: (file) ->
-      # TODO: This actually only handles JSON arrays
-      file.type.match(/^application\/json/)
-    fn: openWith(Spreadsheet)
-  }, {
     name: "Image Viewer"
     filter: (file) ->
       file.type.match /^image\//
@@ -218,8 +207,6 @@ module.exports = (I, self) ->
       system.attachApplication app
   }]
 
-  # Open JSON arrays in spreadsheet
-  # Open text in notepad
   handle = (file) ->
     handler = handlers.find ({filter}) ->
       filter(file)
@@ -228,12 +215,6 @@ module.exports = (I, self) ->
       handler.fn(file)
     else
       throw new Error "No handler for files of type #{file.type}"
-
-  mimes =
-    html: "text/html"
-    js: "application/javascript"
-    json: "application/json"
-    md: "text/markdown"
 
   Object.assign self,
     iframeApp: require "../lib/iframe-app"
@@ -269,19 +250,6 @@ module.exports = (I, self) ->
     handlers: ->
       handlers.slice()
 
-    # The final step in launching an application in the OS
-    # This wires up event streams, drop events, adds the app to the list
-    # of running applications, and attaches the app's element to the DOM
-    attachApplication: (app, options={}) ->
-      # Bind Drop events
-      AppDrop(app)
-
-      # TODO: Bind to app event streams
-
-      # TODO: Add to list of apps
-
-      document.body.appendChild app.element
-
     pathAsApp: (path) ->
       if path.match(/💾$/)
         system.readFile path
@@ -310,8 +278,5 @@ module.exports = (I, self) ->
       self.pathAsApp(path)
       .then (App) ->
         openWith(App)(file)
-
-    mimeTypeFor: (path) ->
-      mimes[extensionFor(path)] or "text/plain"
 
   return self

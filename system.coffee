@@ -18,7 +18,9 @@ uniq = (array) ->
 Ajax = require "ajax"
 Model = require "model"
 Achievement = require "./system/achievement"
+Applications = require "./system/applications"
 Associations = require "./system/associations"
+Mimes = require "./system/mimes"
 SystemModule = require "./system/module"
 Template = require "./system/template"
 UI = require "ui"
@@ -29,7 +31,7 @@ module.exports = (dbName='zine-os') ->
   fs = MountFS()
   fs.mount "/", DexieFS(DexieFSDB(dbName))
 
-  self.include(Achievement, Associations, SystemModule, Template)
+  self.include(Achievement, Applications, Associations, Mimes, SystemModule, Template)
 
   {title} = require "./pixie"
   [..., version] = title.split('-')
@@ -162,86 +164,6 @@ module.exports = (dbName='zine-os') ->
 
     dumpPackage: ->
       self.writeFile("System 💾", JSON.toBlob(PACKAGE))
-
-    _appData: null
-
-    launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src} = datum
-
-      app = self.iframeApp
-        title: name
-        emojiIcon: icon
-        width: width
-        height: height
-        src: src
-      
-      if path
-        self.readFile path
-        .then (blob) ->
-          app.loadFile(blob, path)
-
-      self.attachApplication app
-
-    launchAppByName: (name, path) ->
-      [datum] = self._appData.filter (datum) ->
-        datum.name is name
-
-      if datum
-        self.launchAppByAppData(datum, path)
-
-    initAppSettings: ->
-      self.readFile("System/apps.json")
-      .then (blob) ->
-        if blob
-          blob.readAsJSON()
-        else
-          []
-      .then (data) ->
-        self._appData = data
-
-        data.forEach (datum) ->
-          self.installAppHandler(datum)
-
-          if datum.launchAtStartup
-            launchAppByAppData(datum)
-
-    removeApp: (name, noPersist) ->
-      self._appData = (self._appData or []).filter (datum) ->
-        if datum.name != name
-          true
-        else
-          # Remove handler
-          self.removeHandler(datum.handler)
-          return false
-
-      self.writeFile "System/apps.json", JSON.toBlob(self._appData) unless noPersist
-
-    installApp: (appData) ->
-      console.log "install", appData
-      # Only one app per name
-      self.removeApp(appData.name, true)
-
-      self._appData = self._appData.concat [appData]
-
-      self.installAppHandler(appData)
-
-      self.writeFile "System/apps.json", JSON.toBlob(self._appData)
-
-    installAppHandler: (datum) ->
-      {name, associations} = datum
-
-      associations = [].concat(associations or [])
-
-      datum.handler =
-        name: name
-        filter: ({path}) ->
-          associations.some (association) ->
-            endsWith path, association
-        fn: (file) ->
-          self.launchAppByName name, file?.path
-
-      self.registerHandler datum.handler
-
 
   invokeBefore UI.Modal, "hide", ->
     self.Achievement.unlock "Dismiss modal"

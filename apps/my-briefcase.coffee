@@ -11,12 +11,12 @@ They'll live in the whimsy-fs bucket under the path to your aws user id.
 The subdomain -> s3 proxy will have a map from simple names to the crazy ids.
 
 The proxy will serve the /public folder in your 'briefcase'. You can put your
-blog or apps or whatever there. The rest currently isn't 'private', but maybe
-it should be. We can set the access control when uploading.
+blog or apps or whatever there. The rest is 'private' thanks to an AWS ACL on
+the whimsy-fs bucket.
 
-Ideally the briefcase will be browsable like the local FS and you'll be able to
-run files from it, load them in applications, save files there, and drag n drop
-between them.
+The briefcase is browsable like the local FS. You can run files from it, load 
+them in applications, save files there, and drag 'n' drop between them.
+
 ###
 
 Explorer = require "./explorer"
@@ -246,7 +246,7 @@ bindAlgoliaIndex = (id, fs) ->
 
       processFile = (file) ->
         path = file.path
-        
+
         fs.read(path)
         .then (blob) ->
           performIndex(path, blob)

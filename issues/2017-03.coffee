@@ -2,7 +2,6 @@ Model = require "model"
 Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
@@ -36,10 +35,6 @@ module.exports = ->
   handlers = Model().include(Social).extend
     area: ->
       "2017-03"
-
-    mSAccess97: ->
-      app = Spreadsheet(system)
-      document.body.appendChild app.element
 
     chateau: ->
       visit "chateau"

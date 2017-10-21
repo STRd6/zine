@@ -1,3 +1,5 @@
+# TODO: Kick out of core
+
 Model = require "model"
 FileIO = require "../os/file-io"
 
@@ -110,7 +112,8 @@ module.exports = ->
     width: 640
     height: 480
 
-  windowView.loadFile = initSession
+  windowView.send = (method, args...) ->
+    handlers[method](args...)
 
   windowView.on "resize", ->
     aceEditor.resize()

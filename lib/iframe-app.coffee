@@ -23,7 +23,10 @@ FileIO = require "../os/file-io"
 module.exports = (opts={}) ->
   {Window} = system.UI
 
-  {height, menuBar, src, handlers, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
+  {achievement, height, menuBar, src, handlers, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
+
+  if achievement
+    system.Achievement.unlock achievement
 
   frame = document.createElement "iframe"
 
@@ -94,8 +97,7 @@ module.exports = (opts={}) ->
 
   handlers ?= Model().include(FileIO).extend
     loadFile: (blob, path) ->
-      loadedPromise.then ->
-        postmaster.invokeRemote "loadFile", blob, path
+      application.send "loadFile", blob, path
 
   application = Window
     title: title
@@ -113,7 +115,6 @@ module.exports = (opts={}) ->
       , 0
       return
     handlers: handlers
-    loadFile: handlers.loadFile
     send: (args...) ->
       loadedPromise.then ->
         postmaster.invokeRemote args...

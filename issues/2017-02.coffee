@@ -2,7 +2,6 @@ Achievement = require "../lib/achievement"
 Model = require "model"
 Chateau = require "../apps/chateau"
 PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
@@ -19,7 +18,13 @@ module.exports = ->
   system.writeFile "issue-2/around.md", new Blob [require "../stories/around-the-world"], type: "text/markdown"
   system.writeFile "issue-2/provision.txt", new Blob [require "../stories/provision"], type: "text/plain"
   system.writeFile "issue-2/dungeon-dog.txt", new Blob [require "../stories/dungeon-dog"], type: "text/plain"
-  system.writeFile "issue-2/dsad.exe", new Blob [""], type: "application/exe"
+  system.writeFile "issue-2/dsad.exe", new Blob [JSON.stringify(
+    title: "Dungeon of Sadness"
+    src: "https://danielx.net/ld33/"
+    achievement: "The dungeon is in our heart"
+    width: 648
+    height: 507
+  )], type: "application/json"
 
   pages =
     front: """
@@ -96,9 +101,6 @@ module.exports = ->
   handlers = Model().include(Social).extend
     area: ->
       "2017-01"
-    mSAccess97: ->
-      app = Spreadsheet(system)
-      document.body.appendChild app.element
     textEditor: ->
       app = TextEditor(system)
       document.body.appendChild app.element

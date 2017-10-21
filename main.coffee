@@ -46,6 +46,8 @@ system.autoboot()
 # system.dumpModules()
 system.initAppSettings()
 
+system.installDefaultApplications()
+
 ->
   system.removeApp("Test")
 

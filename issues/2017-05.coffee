@@ -4,7 +4,6 @@ AchievementStatus = require "../apps/achievement-status"
 Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
 TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 

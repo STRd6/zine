@@ -72,9 +72,6 @@ module.exports = ->
     notepadexe: ->
       app = Notepad()
       document.body.appendChild app.element
-    mSAccess97: ->
-      app = Spreadsheet()
-      document.body.appendChild app.element
     mysterySmell: ->
       system.Achievement.unlock "Cover-2-cover"
 

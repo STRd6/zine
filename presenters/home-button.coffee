@@ -2,12 +2,12 @@ AceEditor = require "../apps/text-editor"
 AchievementStatus = require "../apps/achievement-status"
 Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
-DungeonOfSadness = require "../apps/dungeon-of-sadness"
 PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
 MyBriefcase = require "../apps/my-briefcase"
 
 HomeButtonTemplate = require "../templates/home-button"
+
+# TODO: Restore DSAD
 
 module.exports = ->
   {Achievement} = system
@@ -76,9 +76,6 @@ module.exports = ->
 
       discoTech: ->
         system.launchIssue("2017-04")
-
-      dungeonOfSadness: ->
-        launch DungeonOfSadness
 
       enterTheDungeon: ->
         system.launchIssue("2017-02")

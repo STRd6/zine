@@ -13,7 +13,7 @@ module.exports = (app) ->
       if file
         path = file.path
 
-        handlers.loadFile file
+        app.send "loadFile", file, path
         .then ->
           if path
             handlers.currentPath path

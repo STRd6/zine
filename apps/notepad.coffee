@@ -1,3 +1,5 @@
+# TODO: Kick out of core
+
 FileIO = require "../os/file-io"
 Model = require "model"
 
@@ -150,6 +152,7 @@ module.exports = ->
           e.preventDefault()
           handlers.open()
 
-  windowView.loadFile = handlers.loadFile
+  windowView.send = (method, args...) ->
+    handlers[method](args...)
 
   return windowView

@@ -1,9 +1,46 @@
 AppDrop = require "../lib/app-drop"
+{endsWith} = require "../util"
 
 module.exports = (I, self) ->
   appData = null
 
   self.extend
+    iframeApp: require "../lib/iframe-app"
+
+    openPath: (path) ->
+      self.readFile path
+      .then self.open
+
+    pathAsApp: (path) ->
+      if path.match(/\.exe$/)
+        self.readFile path
+        .then (blob) ->
+          blob.readAsJSON()
+        .then (data) ->
+          self.iframeApp data
+      else if path.match(/🔗$|\.link$/)
+        self.readFile path
+        .then (blob) ->
+          blob.readAsText()
+        .then self.evalCSON
+        .then (data) ->
+          self.iframeApp data
+      else if path.match(/\.js$|\.coffee$/)
+        self.executeInIFrame(path)
+      else
+        Promise.reject new Error "Could not launch #{path}"
+
+    execPathWithFile: (path, file) ->
+      self.pathAsApp(path)
+      .then (app) ->
+        if file
+          {path} = file
+          self.readFile path
+          .then (blob) ->
+            app.send "loadFile", blob, path
+
+        self.attachApplication(app)
+
     # The final step in launching an application in the OS
     # This wires up event streams, drop events, adds the app to the list
     # of running applications, and attaches the app's element to the DOM
@@ -30,7 +67,7 @@ module.exports = (I, self) ->
       if path
         self.readFile path
         .then (blob) ->
-          app.loadFile(blob, path)
+          app.send "loadFile", blob, path
 
       self.attachApplication app
 
@@ -93,3 +130,10 @@ module.exports = (I, self) ->
           self.launchAppByName name, file?.path
 
       self.registerHandler datum.handler
+
+    installDefaultApplications: ->
+      [{
+        name: "Dr Wiki"
+        associations: ["md", "html"]
+        src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
+      }]

@@ -1,7 +1,6 @@
 Model = require "model"
 
 AchievementStatus = require "../apps/achievement-status"
-Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
@@ -34,9 +33,6 @@ module.exports = ->
     achievementStatus: ->
       system.launchApp AchievementStatus
 
-    chateau: ->
-      system.launchApp Chateau
-
     crescent: ->
       app = StoryReader
         text: require "../stories/crescent"
@@ -66,7 +62,6 @@ module.exports = ->
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
-        [C]hateau
         My [B]riefcase
         [P]ixie Paint
         [T]ext Editor

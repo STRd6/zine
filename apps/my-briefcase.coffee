@@ -14,7 +14,7 @@ The proxy will serve the /public folder in your 'briefcase'. You can put your
 blog or apps or whatever there. The rest is 'private' thanks to an AWS ACL on
 the whimsy-fs bucket.
 
-The briefcase is browsable like the local FS. You can run files from it, load 
+The briefcase is browsable like the local FS. You can run files from it, load
 them in applications, save files there, and drag 'n' drop between them.
 
 ###

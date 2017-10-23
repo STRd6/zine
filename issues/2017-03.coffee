@@ -1,5 +1,4 @@
 Model = require "model"
-Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
@@ -38,8 +37,7 @@ module.exports = ->
 
     chateau: ->
       visit "chateau"
-      app = Chateau(system)
-      document.body.appendChild app.element
+      system.launchAppByName("Chateau")
 
     contrasaurus: ->
       visit "csaur"

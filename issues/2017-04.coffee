@@ -29,7 +29,6 @@ module.exports = ->
     bikes: false
     izzy: false
     residue: false
-    chateau: false
     cheevo: false
     briefcase: false
     podcast: false
@@ -75,11 +74,6 @@ module.exports = ->
       visit "bikes"
       system.readFile "issue-4/bikes/and-yet-they-rode-bikes.md"
       .then system.open
-
-    chateau: ->
-      visit "chateau"
-      app = Chateau(system)
-      document.body.appendChild app.element
 
     achievementStatus: ->
       visit "cheevo"

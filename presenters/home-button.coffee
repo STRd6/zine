@@ -1,6 +1,5 @@
 AceEditor = require "../apps/text-editor"
 AchievementStatus = require "../apps/achievement-status"
-Chateau = require "../apps/chateau"
 Contrasaurus = require "../apps/contrasaurus"
 PixiePaint = require "../apps/pixel"
 MyBriefcase = require "../apps/my-briefcase"
@@ -55,18 +54,8 @@ module.exports = ->
       aTTNKMartShoppers: ->
         system.launchIssue("2017-03")
 
-      bionicHotdog: ->
-        Promise.resolve
-          src: "https://danielx.net/grappl3r/"
-          width: 960
-          height: 540
-          iconEmoji: "🌭"
-          title: "Bionic Hotdog"
-        .then system.iframeApp
-        .then system.attachApplication
-
       chateau: ->
-        launch Chateau
+        system.launchAppByName("Chateau")
 
       cheevos: ->
         launch AchievementStatus

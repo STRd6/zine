@@ -72,6 +72,7 @@ module.exports = (I, self) ->
       self.attachApplication app
 
     launchAppByName: (name, path) ->
+      debugger
       [datum] = appData.filter (datum) ->
         datum.name is name
 
@@ -87,6 +88,8 @@ module.exports = (I, self) ->
           []
       .then (data) ->
         appData = data
+
+        self.installDefaultApplications()
 
         data.forEach (datum) ->
           self.installAppHandler(datum)
@@ -105,14 +108,14 @@ module.exports = (I, self) ->
 
       self.writeFile "System/apps.json", JSON.toBlob(appData) unless noPersist
 
-    installApp: (appData) ->
-      console.log "install", appData
+    installApp: (datum) ->
+      console.log "install", datum
       # Only one app per name
-      self.removeApp(appData.name, true)
+      self.removeApp(datum.name, true)
 
-      appData = appData.concat [appData]
+      appData = appData.concat [datum]
 
-      self.installAppHandler(appData)
+      self.installAppHandler(datum)
 
       self.writeFile "System/apps.json", JSON.toBlob(appData)
 
@@ -136,4 +139,19 @@ module.exports = (I, self) ->
         name: "Dr Wiki"
         associations: ["md", "html"]
         src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
-      }]
+      }, {
+        name: "Bionic Hotdog"
+        category: "Games"
+        src: "https://danielx.net/grappl3r/"
+        width: 960
+        height: 540
+        icon: "🌭"
+      }, {
+        name: "Chateau"
+        src: "https://danielx.net/chateau/"
+        width: 960
+        height: 540
+        icon: "🍷"
+      }].forEach self.installApp
+
+  return self

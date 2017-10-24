@@ -1,6 +1,5 @@
 Achievement = require "../lib/achievement"
 Model = require "model"
-PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
@@ -104,8 +103,7 @@ module.exports = ->
       app = TextEditor(system)
       document.body.appendChild app.element
     pixiePaint: ->
-      app = PixiePaint(system)
-      document.body.appendChild app.element
+      system.launchAppByName("Pixie Paint")
     chateau: ->
       system.launchAppByName("Chateau")
     credits: ->

@@ -4,7 +4,6 @@ Filter = require "../apps/filter"
 Notepad = require "../apps/notepad"
 CodeEditor = require "../apps/text-editor"
 Explorer = require "../apps/explorer"
-PixelEditor = require "../apps/pixel"
 MyBriefcase = require "../apps/my-briefcase"
 
 PkgFS = require "../lib/pkg-fs"
@@ -132,11 +131,6 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match /^image\//
     fn: openWith(Filter)
-  }, {
-    name: "Pixel Editor"
-    filter: (file) ->
-      file.type.match /^image\//
-    fn: openWith(PixelEditor)
   }, {
     name: "PDF Viewer"
     filter: (file) ->

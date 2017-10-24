@@ -232,7 +232,6 @@ module.exports = (I, self) ->
           else
             Promise.resolve()
           ).then ->
-            debugger
             pkg.remoteDependencies = config.remoteDependencies
             pkg.config = config
         .catch (e) ->
@@ -475,7 +474,6 @@ compilers = [{
   filter: ({path}) ->
     path.match /\.cson$/
   fn: (blob) ->
-    debugger
     blob.readAsText()
     .then evalCSON
     .then stringifyExport

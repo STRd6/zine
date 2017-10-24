@@ -1,7 +1,5 @@
 AceEditor = require "../apps/text-editor"
 AchievementStatus = require "../apps/achievement-status"
-Contrasaurus = require "../apps/contrasaurus"
-PixiePaint = require "../apps/pixel"
 MyBriefcase = require "../apps/my-briefcase"
 
 HomeButtonTemplate = require "../templates/home-button"
@@ -61,7 +59,7 @@ module.exports = ->
         launch AchievementStatus
 
       contrasaurus: ->
-        launch Contrasaurus
+        system.launchAppByName("Contrasaurus")
 
       discoTech: ->
         system.launchIssue("2017-04")
@@ -76,7 +74,7 @@ module.exports = ->
         launch MyBriefcase
 
       pixiePaint: ->
-        launch PixiePaint
+        system.launchAppByName("Pixie Paint")
 
       shutDown: ->
         Achievement.unlock "Shut Down"

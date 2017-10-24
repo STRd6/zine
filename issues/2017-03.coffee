@@ -1,6 +1,4 @@
 Model = require "model"
-Contrasaurus = require "../apps/contrasaurus"
-PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
@@ -41,7 +39,7 @@ module.exports = ->
 
     contrasaurus: ->
       visit "csaur"
-      document.body.appendChild Contrasaurus().element
+      system.launchAppByName("Contrasaurus")
 
     achievementStatus: ->
       visit "cheevo"

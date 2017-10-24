@@ -1,8 +1,6 @@
 Model = require "model"
 
 AchievementStatus = require "../apps/achievement-status"
-Contrasaurus = require "../apps/contrasaurus"
-PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 
@@ -68,7 +66,7 @@ module.exports = ->
       launch MyBriefcase
 
     pixiePaint: ->
-      launch PixiePaint
+      system.launchAppByName("Pixie Paint")
 
     textEditor: ->
       launch TextEditor

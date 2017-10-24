@@ -1,7 +1,5 @@
 Model = require "model"
 Chateau = require "../apps/chateau"
-Contrasaurus = require "../apps/contrasaurus"
-PixiePaint = require "../apps/pixel"
 TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 

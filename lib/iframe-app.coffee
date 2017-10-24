@@ -25,6 +25,9 @@ module.exports = (opts={}) ->
 
   {achievement, height, menuBar, src, handlers, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
 
+  # TODO: Trigger achievement from inside iframe :|
+  # Or maybe from a watcher on system level app events...
+  # Decoupling the cheevos is gonna be a journey
   if achievement
     system.Achievement.unlock achievement
 

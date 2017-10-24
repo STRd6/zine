@@ -72,7 +72,6 @@ module.exports = (I, self) ->
       self.attachApplication app
 
     launchAppByName: (name, path) ->
-      debugger
       [datum] = appData.filter (datum) ->
         datum.name is name
 
@@ -126,9 +125,9 @@ module.exports = (I, self) ->
 
       datum.handler =
         name: name
-        filter: ({path}) ->
+        filter: ({type, path}) ->
           associations.some (association) ->
-            endsWith path, association
+            matchAssociation(association, type, path)
         fn: (file) ->
           self.launchAppByName name, file?.path
 
@@ -152,6 +151,28 @@ module.exports = (I, self) ->
         width: 960
         height: 540
         icon: "🍷"
+      }, {
+        name: "Contrasaurus"
+        category: "Games"
+        src: "https://contrasaur.us/"
+        width: 960
+        height: 540
+        achievement: "Rawr"
+      }, {
+        name: "Pixie Paint"
+        src: "https://danielx.net/pixel-editor/"
+        associations: ["mime:^image/"]
+        width: 640
+        height: 480
+        achievement: "Pixel perfect"
       }].forEach self.installApp
 
   return self
+
+matchAssociation = (association, type, path) ->
+  if association.indexOf("mime:") is 0
+    regex = new RegExp association.substr(5)
+
+    type.match(regex)
+  else
+    endsWith path, association

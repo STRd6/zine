@@ -1,4 +1,3 @@
-Notepad = require "../apps/notepad"
 CommentFormTemplate = require "../social/comment-form"
 CommentsTemplate = require "../social/comments"
 
@@ -70,8 +69,7 @@ module.exports = ->
     subscribe: ->
       require("../mailchimp").show()
     notepadexe: ->
-      app = Notepad()
-      document.body.appendChild app.element
+      system.launchAppByName "Notepad"
     mysterySmell: ->
       system.Achievement.unlock "Cover-2-cover"
 

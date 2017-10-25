@@ -1,7 +1,6 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
-Notepad = require "../apps/notepad"
 CodeEditor = require "../apps/text-editor"
 Explorer = require "../apps/explorer"
 MyBriefcase = require "../apps/my-briefcase"
@@ -120,12 +119,6 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/)
     fn: (file) ->
       self.execute(file.path)
-  }, {
-    name: "Notepad"
-    filter: (file) ->
-      file.type.match(/^text\//) or
-      file.type.match(/^application\/javascript/)
-    fn: openWith(Notepad)
   }, {
     name: "Image Viewer"
     filter: (file) ->

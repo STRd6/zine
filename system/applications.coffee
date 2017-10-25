@@ -88,26 +88,23 @@ module.exports = (I, self) ->
       .then (data) ->
         appData = data
 
+        # TODO: Make sure we register the handlers for the previously installed
+        # applications and don't double register the default app handlers
         self.installDefaultApplications()
-
-        data.forEach (datum) ->
-          self.installAppHandler(datum)
-
-          if datum.launchAtStartup
-            launchAppByAppData(datum)
 
     removeApp: (name, noPersist) ->
       appData = (appData or []).filter (datum) ->
-        if datum.name != name
-          true
-        else
+        if datum.name is name
           # Remove handler
+          console.log "removing handler", datum
           self.removeHandler(datum.handler)
           return false
+        else
+          true
 
       self.writeFile "System/apps.json", JSON.toBlob(appData) unless noPersist
 
-    installApp: (datum) ->
+    installApp: (datum, noPersist) ->
       console.log "install", datum
       # Only one app per name
       self.removeApp(datum.name, true)
@@ -116,7 +113,7 @@ module.exports = (I, self) ->
 
       self.installAppHandler(datum)
 
-      self.writeFile "System/apps.json", JSON.toBlob(appData)
+      self.writeFile "System/apps.json", JSON.toBlob(appData) unless noPersist
 
     installAppHandler: (datum) ->
       {name, associations} = datum
@@ -165,7 +162,15 @@ module.exports = (I, self) ->
         width: 640
         height: 480
         achievement: "Pixel perfect"
-      }].forEach self.installApp
+      }, {
+        name: "Notepad"
+        src: "https://danielx.whimsy.space/danielx.net/notepad/"
+        associations: ["mime:^text/", "mime:^application/javascript"]
+        achievement: "Notepad.exe"
+      }].forEach (datum) ->
+        self.installApp datum, true
+
+        self.writeFile "System/apps.json", JSON.toBlob(appData)
 
   return self
 

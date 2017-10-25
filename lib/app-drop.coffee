@@ -3,19 +3,9 @@ Drop = require "./drop"
 
 # General drop handling for apps
 module.exports = (app) ->
-  {element} = app
-
-  Drop element, (e) ->
-    {handlers} = app
-
+  Drop app.element, (e) ->
     fileFromDropEvent e
     .then (file) ->
       if file
-        path = file.path
-
-        app.send "loadFile", file, path
-        .then ->
-          if path
-            handlers.currentPath path
-          else
-            handlers.currentPath null
+        # Need to send file.path because annotated blobs don't keep their annotations through the structured clone
+        app.send "loadFile", file, file.path

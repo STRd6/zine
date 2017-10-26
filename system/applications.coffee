@@ -157,7 +157,8 @@ module.exports = (I, self) ->
         achievement: "Rawr"
       }, {
         name: "Pixie Paint"
-        src: "https://danielx.net/pixel-editor/"
+        src: "https://danielx.net/pixel-editor/zine2/"
+        icon: "🖌️"
         associations: ["mime:^image/"]
         width: 640
         height: 480
@@ -167,6 +168,11 @@ module.exports = (I, self) ->
         src: "https://danielx.whimsy.space/danielx.net/notepad/"
         associations: ["mime:^text/", "mime:^application/javascript"]
         achievement: "Notepad.exe"
+        icon: "📝"
+      }, {
+        name: "Sound Recorder"
+        src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+        icon: "🎙️"
       }].forEach (datum) ->
         self.installApp datum, true
 

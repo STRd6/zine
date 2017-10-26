@@ -24,7 +24,7 @@ module.exports = (I, self) ->
         else
           reject()
 
-  self.extend
+  Object.assign self,
     currentPath: currentPath
     saved: saved
     new: ->

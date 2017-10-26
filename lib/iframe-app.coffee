@@ -18,7 +18,7 @@ Postmaster = require "postmaster"
 {version} = require "../pixie"
 
 module.exports = (opts={}) ->
-  {Window} = system.UI
+  {Window, Modal} = system.UI
 
   {achievement, height, menuBar, src, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
 
@@ -30,6 +30,7 @@ module.exports = (opts={}) ->
 
   frame = document.createElement "iframe"
 
+  sandbox ?= "allow-forms allow-pointer-lock allow-popups allow-scripts"
   if sandbox
     frame.setAttribute("sandbox", sandbox)
 
@@ -67,6 +68,7 @@ module.exports = (opts={}) ->
 
   # TODO: Set menu bar from within app
 
+  # This receives and dispatches the messages from the iframe
   Object.assign postmaster,
     remoteTarget: ->
       frame.contentWindow
@@ -88,7 +90,7 @@ module.exports = (opts={}) ->
 
       # Add application method access to client iFrame
       application: (method, args...) ->
-        application[method](args...)
+        applicationProxy[method](args...)
 
       # Add system method access to client iFrame
       # TODO: Security :P
@@ -103,15 +105,43 @@ module.exports = (opts={}) ->
     height: height
     iconEmoji: iconEmoji
 
-  Object.assign application,
+  modules =
+    FileIO: require "../os/file-io"
+  
+  # TODO: This dr frankenstein's proxy is a bit too complicated
+  applicationProxy = new Proxy application,
+    get: (target, property, receiver) ->
+      target[property] or
+      ->
+        application.send property, arguments...
+
+  Object.assign applicationProxy,
     exit: ->
       # TODO: Prompt unsaved, etc.
       setTimeout ->
         application.element.remove()
       , 0
       return
-    send: (args...) ->
-      loadedPromise.then ->
-        postmaster.invokeRemote args...
 
-  return application
+    # Extend the system application interface by including modules
+    # So far only FileIO exists, but there may be more in the future
+    loadModule: (name) ->
+      module = modules[name]
+      if module
+        # TODO: Shoould applications support `.include(module)`?
+        module null, applicationProxy
+        return name
+      else
+        throw new Error "Module '#{name}' not found."
+
+    # Here we weirdly fuse together the local and remote interface
+    # If the method exists on our host object invoke that, otherwise send it to
+    # the client frame
+    send: (method, args...) ->
+      loadedPromise.then ->
+        if typeof application[method] is 'function'
+          application[method](args...)
+        else
+          postmaster.invokeRemote method, args...
+
+  return applicationProxy

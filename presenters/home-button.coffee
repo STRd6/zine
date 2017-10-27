@@ -24,6 +24,10 @@ module.exports = (system) ->
   """
 
   handlers = new Proxy {
+    appearance: ->
+      system.UI.Modal.alert "TODO :)"
+    cheevos: ->
+      launch AchievementStatus
     shutDown: ->
       Achievement.unlock "Shut Down"
       system.UI.Modal.alert "You'll never shut us down!"

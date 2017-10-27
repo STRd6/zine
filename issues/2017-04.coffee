@@ -1,5 +1,4 @@
 Model = require "model"
-Chateau = require "../apps/chateau"
 TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 
@@ -7,21 +6,21 @@ Social = require "../social/social"
 
 {parentElementOfType, emptyElement} = require "../util"
 
-writeIfNotPresent = (destination, sourceURL) ->
-  system.readFile destination
-  .then (file) ->
-    throw new Error "File not found" unless file
-    return file
-  .catch ->
-    ajax
-      url: sourceURL
-      responseType: "blob"
-    .then (blob) ->
-      system.writeFile destination, blob
-
 module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
+
+  writeIfNotPresent = (destination, sourceURL) ->
+    system.readFile destination
+    .then (file) ->
+      throw new Error "File not found" unless file
+      return file
+    .catch ->
+      ajax
+        url: sourceURL
+        responseType: "blob"
+      .then (blob) ->
+        system.writeFile destination, blob
 
   visitedAreas =
     bikes: false

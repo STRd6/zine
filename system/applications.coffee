@@ -1,10 +1,11 @@
 AppDrop = require "../lib/app-drop"
 {endsWith} = require "../util"
 
-module.exports = (I, self) ->
-  appData = null
+{Observable} = require "ui"
 
+module.exports = (I, self) ->
   self.extend
+    appData: Observable []
     iframeApp: require "../lib/iframe-app"
 
     openPath: (path) ->
@@ -72,28 +73,24 @@ module.exports = (I, self) ->
       self.attachApplication app
 
     launchAppByName: (name, path) ->
-      [datum] = appData.filter (datum) ->
+      [datum] = self.appData.filter (datum) ->
         datum.name is name
 
       if datum
-        self.launchAppByAppData(datum, path)
+        {script} = datum
+        if script
+          Function(script)()
+        else
+          self.launchAppByAppData(datum, path)
 
     initAppSettings: ->
-      self.readFile("System/apps.json")
-      .then (blob) ->
-        if blob
-          blob.readAsJSON()
-        else
-          []
-      .then (data) ->
-        appData = data
+      systemApps.forEach self.installAppHandler
+      # TODO: Install user apps
 
-        # TODO: Make sure we register the handlers for the previously installed
-        # applications and don't double register the default app handlers
-        self.installDefaultApplications()
+      self.appData systemApps
 
-    removeApp: (name, noPersist) ->
-      appData = (appData or []).filter (datum) ->
+    removeApp: (name) ->
+      self.appData self.appData.filter (datum) ->
         if datum.name is name
           # Remove handler
           console.log "removing handler", datum
@@ -102,21 +99,19 @@ module.exports = (I, self) ->
         else
           true
 
-      self.writeFile "System/apps.json", JSON.toBlob(appData) unless noPersist
-
-    installApp: (datum, noPersist) ->
-      console.log "install", datum
+    installApp: (datum) ->
       # Only one app per name
       self.removeApp(datum.name, true)
 
-      appData = appData.concat [datum]
+      self.appData self.appData.concat [datum]
 
       self.installAppHandler(datum)
 
-      self.writeFile "System/apps.json", JSON.toBlob(appData) unless noPersist
+    persistApps: ->
+      self.writeFile "System/apps.json", JSON.toBlob(systemApps)
 
     installAppHandler: (datum) ->
-      {name, associations} = datum
+      {name, associations, script} = datum
 
       associations = [].concat(associations or [])
 
@@ -130,53 +125,88 @@ module.exports = (I, self) ->
 
       self.registerHandler datum.handler
 
-    installDefaultApplications: ->
-      [{
-        name: "Dr Wiki"
-        associations: ["md", "html"]
-        src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
-      }, {
-        name: "Bionic Hotdog"
-        category: "Games"
-        src: "https://danielx.net/grappl3r/"
-        width: 960
-        height: 540
-        icon: "🌭"
-      }, {
-        name: "Chateau"
-        src: "https://danielx.net/chateau/"
-        width: 960
-        height: 540
-        icon: "🍷"
-      }, {
-        name: "Contrasaurus"
-        category: "Games"
-        src: "https://contrasaur.us/"
-        width: 960
-        height: 540
-        achievement: "Rawr"
-      }, {
-        name: "Pixie Paint"
-        src: "https://danielx.net/pixel-editor/zine2/"
-        icon: "🖌️"
-        associations: ["mime:^image/"]
-        width: 640
-        height: 480
-        achievement: "Pixel perfect"
-      }, {
-        name: "Notepad"
-        src: "https://danielx.whimsy.space/danielx.net/notepad/"
-        associations: ["mime:^text/", "mime:^application/javascript"]
-        achievement: "Notepad.exe"
-        icon: "📝"
-      }, {
-        name: "Sound Recorder"
-        src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
-        icon: "🎙️"
-      }].forEach (datum) ->
-        self.installApp datum, true
+  """
+     [I]ssues
+  """
 
-        self.writeFile "System/apps.json", JSON.toBlob(appData)
+  systemApps = [{
+    name: "Dr Wiki"
+    icon: "📖"
+    associations: ["md", "html"]
+    src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
+  }, {
+    name: "Chateau"
+    icon: "🍷"
+    src: "https://danielx.net/chateau/"
+    width: 960
+    height: 540
+  }, {
+    name: "Pixie Paint"
+    icon: "🖌️"
+    src: "https://danielx.net/pixel-editor/zine2/"
+    associations: ["mime:^image/"]
+    width: 640
+    height: 480
+    achievement: "Pixel perfect"
+  }, {
+    name: "Notepad"
+    icon: "📝"
+    src: "https://danielx.whimsy.space/danielx.net/notepad/"
+    associations: ["mime:^text/", "mime:^application/javascript"]
+    achievement: "Notepad.exe"
+  }, {
+    name: "Sound Recorder"
+    icon: "🎙️"
+    src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+  }, {
+    name: "First"
+    icon: " 1️⃣"
+    script: "system.launchIssue('2016-12')"
+    category: "Issues"
+  }, {
+    name: "Enter the Dungeon"
+    icon: "🏰"
+    script: "system.launchIssue('2017-02')"
+    category: "Issues"
+  }, {
+    name: "ATTN: K-Mart Shoppers"
+    icon: "🏬"
+    script: "system.launchIssue('2017-03')"
+    category: "Issues"
+  }, {
+    name: "Disco Tech"
+    icon: "💃"
+    script: "system.launchIssue('2017-04')"
+    category: "Issues"
+  }, {
+    name: "A May Zine"
+    icon: "🌻"
+    script: "system.launchIssue('2017-05')"
+    category: "Issues"
+  }, {
+    name: "Bionic Hotdog"
+    category: "Games"
+    src: "https://danielx.net/grappl3r/"
+    width: 960
+    height: 540
+    icon: "🌭"
+  }, {
+    name: "Dungeon of Sadness"
+    icon: "😭"
+    category: "Games"
+    src: "https://danielx.net/ld33/"
+    width: 648
+    height: 507
+    achievement: "The dungeon is in our heart"
+  }, {
+    name: "Contrasaurus"
+    icon: "🍖"
+    category: "Games"
+    src: "https://contrasaur.us/"
+    width: 960
+    height: 540
+    achievement: "Rawr"
+  }]
 
   return self
 

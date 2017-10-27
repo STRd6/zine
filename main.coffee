@@ -37,7 +37,7 @@ SiteURLTemplate = require "./templates/site-url"
 document.body.appendChild SiteURLTemplate()
 
 HomeButton = require "./presenters/home-button"
-document.body.appendChild HomeButton()
+document.body.appendChild HomeButton(system)
 
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"

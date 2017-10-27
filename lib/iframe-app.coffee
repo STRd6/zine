@@ -90,7 +90,7 @@ module.exports = (opts={}) ->
 
       # Add application method access to client iFrame
       application: (method, args...) ->
-        applicationProxy[method](args...)
+        application[method](args...)
 
       # Add system method access to client iFrame
       # TODO: Security :P
@@ -105,17 +105,7 @@ module.exports = (opts={}) ->
     height: height
     iconEmoji: iconEmoji
 
-  modules =
-    FileIO: require "../os/file-io"
-  
-  # TODO: This dr frankenstein's proxy is a bit too complicated
-  applicationProxy = new Proxy application,
-    get: (target, property, receiver) ->
-      target[property] or
-      ->
-        application.send property, arguments...
-
-  Object.assign applicationProxy,
+  Object.assign application,
     exit: ->
       # TODO: Prompt unsaved, etc.
       setTimeout ->
@@ -123,25 +113,8 @@ module.exports = (opts={}) ->
       , 0
       return
 
-    # Extend the system application interface by including modules
-    # So far only FileIO exists, but there may be more in the future
-    loadModule: (name) ->
-      module = modules[name]
-      if module
-        # TODO: Shoould applications support `.include(module)`?
-        module null, applicationProxy
-        return name
-      else
-        throw new Error "Module '#{name}' not found."
-
-    # Here we weirdly fuse together the local and remote interface
-    # If the method exists on our host object invoke that, otherwise send it to
-    # the client frame
     send: (method, args...) ->
       loadedPromise.then ->
-        if typeof application[method] is 'function'
-          application[method](args...)
-        else
-          postmaster.invokeRemote method, args...
+        postmaster.invokeRemote method, args...
 
-  return applicationProxy
+  return application

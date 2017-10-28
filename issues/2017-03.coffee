@@ -1,5 +1,4 @@
 Model = require "model"
-TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
 

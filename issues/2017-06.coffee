@@ -1,7 +1,6 @@
 Model = require "model"
 
 AchievementStatus = require "../apps/achievement-status"
-TextEditor = require "../apps/text-editor"
 MyBriefcase = require "../apps/my-briefcase"
 
 StoryReader = require "../apps/story-reader"
@@ -68,15 +67,15 @@ module.exports = ->
     pixiePaint: ->
       system.launchAppByName("Pixie Paint")
 
-    textEditor: ->
-      launch TextEditor
+    codeEditor: ->
+      system.launchAppByName("Code Editor")
 
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
         My [B]riefcase
         [P]ixie Paint
-        [T]ext Editor
+        [C]ode Editor
       [C]ontent
         [B]ee
         [T]ree

@@ -1,7 +1,6 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
-CodeEditor = require "../apps/text-editor"
 Explorer = require "../apps/explorer"
 MyBriefcase = require "../apps/my-briefcase"
 
@@ -66,18 +65,6 @@ module.exports = (I, self) ->
 
         document.body.appendChild windowView.element
   }, {
-    name: "Ace Editor"
-    filter: (file) ->
-      file.path.match(/\.coffee$/) or
-      file.path.match(/\.cson$/) or
-      file.path.match(/\.html$/) or
-      file.path.match(/\.jadelet$/) or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.json$/) or
-      file.path.match(/\.md$/) or
-      file.path.match(/\.styl$/)
-    fn: openWith(CodeEditor) # TODO: This can be a pointer to a system package
-  }, {
     name: "Run"
     filter: (file) ->
       file.path.match(/💾$/)
@@ -105,11 +92,6 @@ module.exports = (I, self) ->
     fn: (file) ->
       # TODO: Rename?
       system.execPathWithFile file.path, null
-  }, {
-    name: "Edit Link"
-    filter: (file) ->
-      file.path.match(/🔗$|\.link$/)
-    fn: openWith(CodeEditor)
   }, {
     name: "Sys Exec"
     filter: (file) ->

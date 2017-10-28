@@ -1,6 +1,5 @@
 Achievement = require "../lib/achievement"
 Model = require "model"
-TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
 
@@ -99,9 +98,8 @@ module.exports = ->
   handlers = Model().include(Social).extend
     area: ->
       "2017-01"
-    textEditor: ->
-      app = TextEditor(system)
-      document.body.appendChild app.element
+    codeEditor: ->
+      system.launchAppByName("Code Editor")
     pixiePaint: ->
       system.launchAppByName("Pixie Paint")
     chateau: ->
@@ -114,7 +112,7 @@ module.exports = ->
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
-        [T]ext Editor
+        [C]ode Editor
         [P]ixie Paint
       #{Social.menuText}
       H[e]lp

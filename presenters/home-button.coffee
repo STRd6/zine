@@ -1,4 +1,3 @@
-AceEditor = require "../apps/text-editor"
 AchievementStatus = require "../apps/achievement-status"
 MyBriefcase = require "../apps/my-briefcase"
 

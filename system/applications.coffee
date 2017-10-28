@@ -155,6 +155,21 @@ module.exports = (I, self) ->
     associations: ["mime:^text/", "mime:^application/javascript"]
     achievement: "Notepad.exe"
   }, {
+    name: "Code Editor"
+    icon: "☢️"
+    src: "https://danielx.whimsy.space/danielx.net/code/"
+    associations: [
+      "coffee"
+      "cson"
+      "html"
+      "jadelet"
+      "js"
+      "json"
+      "md"
+      "styl"
+    ]
+    achievement: "Notepad.exe"
+  }, {
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"

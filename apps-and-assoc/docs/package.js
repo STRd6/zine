@@ -391,7 +391,7 @@
     },
     "pixie.cson": {
       "path": "pixie.cson",
-      "content": "title: \"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\"\nversion: \"0.420.950a\"\ndescription: \"\"\"\n  When the bombs drop, and it's OS against OS, you're gonna wish you could view source\n\"\"\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.3\"\n  ui: \"STRd6/ui:master\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"\n  \"https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js\"\n]\n",
+      "content": "title: \"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\"\nversion: \"0.420.950a\"\ndescription: \"\"\"\n  When the bombs drop, and it's OS against OS, you're gonna wish you could view source\n\"\"\"\ndependencies:\n  ajax: \"distri/ajax:master\"\n  analytics: \"distri/google-analytics:master\"\n  bindable: \"distri/bindable:master\"\n  model: \"distri/model:master\"\n  postmaster: \"distri/postmaster:v0.5.3\"\n  ui: \"STRd6/ui:master\"\nremoteDependencies: [\n  \"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\"\n  \"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\"\n  \"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\"\n  \"https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js\"\n]\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -747,7 +747,7 @@
     },
     "pixie": {
       "path": "pixie",
-      "content": "module.exports = {\"title\":\"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\",\"version\":\"0.420.950a\",\"description\":\"When the bombs drop, and it's OS against OS, you're gonna wish you could view source\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.3\",\"ui\":\"STRd6/ui:master\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\",\"https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js\"]};",
+      "content": "module.exports = {\"title\":\"Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉\",\"version\":\"0.420.950a\",\"description\":\"When the bombs drop, and it's OS against OS, you're gonna wish you could view source\",\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"analytics\":\"distri/google-analytics:master\",\"bindable\":\"distri/bindable:master\",\"model\":\"distri/model:master\",\"postmaster\":\"distri/postmaster:v0.5.3\",\"ui\":\"STRd6/ui:master\"},\"remoteDependencies\":[\"https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js\",\"https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js\",\"https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js\"]};",
       "type": "blob"
     },
     "presenters/achievement-group-progress": {
@@ -939,7 +939,6 @@
     "remoteDependencies": [
       "https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js",
       "https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js",
-      "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js",
       "https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js",
       "https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
     ]
@@ -949,7 +948,6 @@
   "remoteDependencies": [
     "https://cdnjs.cloudflare.com/ajax/libs/dexie/2.0.0-beta.7/dexie.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js",
     "https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js",
     "https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
   ],

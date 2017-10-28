@@ -3,8 +3,6 @@ Model = require "model"
 Associations = require "../../system/associations"
 SystemModule = require "../../system/module"
 
-global.Hamlet = require "../../lib/hamlet"
-
 mocha.setup
   globals: ['amazon']
 

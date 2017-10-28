@@ -30,7 +30,8 @@ module.exports = (opts={}) ->
 
   frame = document.createElement "iframe"
 
-  sandbox ?= "allow-forms allow-pointer-lock allow-popups allow-scripts"
+  # Need to allow-modals so apps can show the print view (yes for paper printing!)
+  sandbox ?= "allow-modals allow-forms allow-pointer-lock allow-popups allow-scripts"
   if sandbox
     frame.setAttribute("sandbox", sandbox)
 

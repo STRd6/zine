@@ -8,7 +8,7 @@ StoryReader = require "../apps/story-reader"
 Social = require "../social/social"
 
 fetchContent = (targetFile, sourcePath=targetFile) ->
-  targetPath = "/issue-7/#{targetFile}"
+  targetPath = "/issue-10/#{targetFile}"
 
   system.readFile targetPath
   .then (file) ->
@@ -27,6 +27,9 @@ module.exports = ->
   system.Achievement.unlock "Issue 10"
 
   fetchContent "Todd Barranca.md"
+  fetchContent "pumpkin.png"
+  fetchContent "Spoopin' Right Now.md"
+  fetchContent "Well I Want to Get a Ride Today.md"
 
   launch = (App) ->
     system.attachApplication App()
@@ -35,13 +38,9 @@ module.exports = ->
     area: ->
       "2017-10"
 
-    bee: ->
-      system.Achievement.unlock "Bee afraid"
-      system.openPath "/issue-6/bee.md"
-
     toddBarranca: ->
-      system.Achievement.unlock "Tree story"
-      system.openPath "/issue-6/tree.md"
+      system.Achievement.unlock "Hard Rain"
+      system.openPath "/issue-10/Todd Barranca.md"
 
     achievementStatus: ->
       launch AchievementStatus
@@ -57,6 +56,14 @@ module.exports = ->
 
     qfm: ->
       system.launchAppByName("Quest for Meaning")
+    
+    spoopinRightNow: ->
+      system.Achievement.unlock("3spoopy5me")
+      system.openPath("/issue-10/Spoopin' Right Now.md")
+
+    ride: ->
+      system.Achievement.unlock("Not a real JT song")
+      system.openPath("/issue-10/Well I Want to Get a Ride Today.md")
 
   menuBar = MenuBar
     items: parseMenu """
@@ -68,6 +75,9 @@ module.exports = ->
         [Q]uest for Meaning -> qfm
       [S]tories
         [T]odd Barranca
+        [S]ong Lyrics
+          [S]poopin Right Now
+          [W]ell I Want to Get a Ride Today -> ride
       #{Social.menuText}
       [H]elp
         [A]chievement Status

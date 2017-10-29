@@ -130,11 +130,6 @@ module.exports = (I, self) ->
   """
 
   systemApps = [{
-    name: "Dr Wiki"
-    icon: "📖"
-    associations: ["md", "html"]
-    src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
-  }, {
     name: "Chateau"
     icon: "🍷"
     src: "https://danielx.net/chateau/"
@@ -173,6 +168,11 @@ module.exports = (I, self) ->
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+  }, {
+    name: "Dr Wiki"
+    icon: "📖"
+    associations: ["md", "html"]
+    src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
   }, {
     name: "First"
     icon: " 1️⃣"

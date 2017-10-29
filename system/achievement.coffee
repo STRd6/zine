@@ -194,6 +194,11 @@ achievementData = [{
   group: "Social"
   description: "Have fine taste"
 }, {
+  text: "A little bird told me"
+  icon: "🐦"
+  group: "Social"
+  description: "Social media marketing 101"
+}, {
   text: "We value your input"
   icon: "📩"
   group: "Social"

@@ -38,6 +38,9 @@ module.exports = (I, self) ->
     like: ->
       system.Achievement.unlock "Do you 'like' like me?"
       window.open "https://www.facebook.com/whimsyspace/"
+    tweet: ->
+      system.Achievement.unlock "A little bird told me"
+      window.open "https://twitter.com/?status=Remember when Windows 95 would autoplay videos when you opened a folder? Yeah.. me neither. https://whimsy.space"
     subscribe: ->
       require("../mailchimp").show()
 
@@ -46,5 +49,6 @@ S[o]cial Media
   [V]iew Comments
   [C]omment
   [L]ike
+  🐦 [T]weet -> tweet
   [S]ubscribe
 """

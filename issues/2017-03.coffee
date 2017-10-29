@@ -1,9 +1,4 @@
 Model = require "model"
-Chateau = require "../apps/chateau"
-Contrasaurus = require "../apps/contrasaurus"
-PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
-TextEditor = require "../apps/text-editor"
 
 Social = require "../social/social"
 
@@ -37,18 +32,13 @@ module.exports = ->
     area: ->
       "2017-03"
 
-    mSAccess97: ->
-      app = Spreadsheet(system)
-      document.body.appendChild app.element
-
     chateau: ->
       visit "chateau"
-      app = Chateau(system)
-      document.body.appendChild app.element
+      system.launchAppByName("Chateau")
 
     contrasaurus: ->
       visit "csaur"
-      document.body.appendChild Contrasaurus().element
+      system.launchAppByName("Contrasaurus")
 
     achievementStatus: ->
       visit "cheevo"

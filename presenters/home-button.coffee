@@ -1,15 +1,11 @@
-AceEditor = require "../apps/text-editor"
 AchievementStatus = require "../apps/achievement-status"
-Chateau = require "../apps/chateau"
-Contrasaurus = require "../apps/contrasaurus"
-DungeonOfSadness = require "../apps/dungeon-of-sadness"
-PixiePaint = require "../apps/pixel"
-Spreadsheet = require "../apps/spreadsheet"
 MyBriefcase = require "../apps/my-briefcase"
 
 HomeButtonTemplate = require "../templates/home-button"
 
-module.exports = ->
+{Observable} = require "ui"
+
+module.exports = (system) ->
   {Achievement} = system
   {ContextMenu, Util:{parseMenu}} = system.UI
 
@@ -17,84 +13,56 @@ module.exports = ->
     app = App()
     system.attachApplication app
 
-  # TODO: Generate menu from list of installed apps!
+  extraItems = parseMenu """
+    ⚙️ [S]ettings
+      📱 [A]ppearance
+      💯 [C]heevos
+    💼 [M]y Briefcase
+    -
+    🔌 S[h]ut Down
+  """
+
+  handlers = new Proxy {
+    appearance: ->
+      system.UI.Modal.alert "TODO :)"
+    cheevos: ->
+      launch AchievementStatus
+    shutDown: ->
+      Achievement.unlock "Shut Down"
+      system.UI.Modal.alert "You'll never shut us down!"
+  },
+    get: (target, property, receiver) ->
+      target[property] ?= ->
+        system.launchAppByName property
+
+  decorations =
+    Applications: "🔨"
+    Games: "🎮"
+    Issues: "📰"
+
+  decorate = (category) ->
+    "#{decorations[category] or ""} #{category}"
+
+  appDataToItems = (data) ->
+    categories = {}
+
+    data.forEach (datum) ->
+      {category} = datum
+
+      category ?= "Applications"
+      (categories[category] ?= []).push "#{datum.icon or ""} #{datum.name} -> #{datum.name}"
+
+    Object.keys(categories).sort().map (category) ->
+      [decorate(category), categories[category]]
+    .concat extraItems
+
+  items = Observable []
+  system.appData.observe (data) ->
+    items appDataToItems data
 
   contextMenu = ContextMenu
-    items: parseMenu """
-      🔨 [A]pplications
-        📝 [A]ce Editor
-        🍷 [C]hateau
-        🎨 [P]ixie Paint
-      🎮 [G]ames
-        🌭 [B]ionic Hotdog
-        🍖 [C]ontrasaurus
-        😭 [D]ungeon Of Sadness
-      📰 [I]ssues
-        1️⃣ [F]irst
-        🏰 [E]nter The Dungeon
-        🏬 [A]TTN: K-Mart Shoppers
-        💃 [D]isco Tech
-        🌻 [A] May Zine
-      ⚙️ [S]ettings
-        📱 [A]ppearance
-        💯 [C]heevos
-      💼 [M]y Briefcase
-      -
-      🔌 S[h]ut Down
-    """
-    handlers:
-      aceEditor: ->
-        launch AceEditor
-
-      aMayZine: ->
-        system.launchIssue("2017-05")
-
-      appearance: ->
-        system.UI.Modal.alert "TODO :)"
-
-      aTTNKMartShoppers: ->
-        system.launchIssue("2017-03")
-
-      bionicHotdog: ->
-        Promise.resolve
-          src: "https://danielx.net/grappl3r/"
-          width: 960
-          height: 540
-          iconEmoji: "🌭"
-          title: "Bionic Hotdog"
-        .then system.iframeApp
-        .then system.attachApplication
-
-      chateau: ->
-        launch Chateau
-
-      cheevos: ->
-        launch AchievementStatus
-
-      contrasaurus: ->
-        launch Contrasaurus
-
-      discoTech: ->
-        system.launchIssue("2017-04")
-
-      dungeonOfSadness: ->
-        launch DungeonOfSadness
-
-      enterTheDungeon: ->
-        system.launchIssue("2017-02")
-
-      "1First": ->
-        system.launchIssue("2016-12")
-
-      myBriefcase: ->
-        launch MyBriefcase
-
-      pixiePaint: ->
-        launch PixiePaint
-
-      shutDown: ->
-        Achievement.unlock "Shut Down"
-        system.UI.Modal.alert "You'll never shut us down! ZineOS 5ever!"
+    items: items
+    handlers: handlers
 
   updateStyle = (contextMenu) ->
     height = element.getBoundingClientRect().height

@@ -13,20 +13,25 @@ state that can respond to messages from the OS.
 
 ###
 
-Model = require "model"
 Postmaster = require "postmaster"
-Drop = require "./drop"
-FileIO = require "../os/file-io"
 
 {version} = require "../pixie"
 
 module.exports = (opts={}) ->
-  {Window} = system.UI
+  {Window, Modal} = system.UI
 
-  {height, menuBar, src, handlers, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
+  {achievement, height, menuBar, src, title, width, sandbox, pkg, packageOptions, icon:iconEmoji} = opts
+
+  # TODO: Trigger achievement from inside iframe :|
+  # Or maybe from a watcher on system level app events...
+  # Decoupling the cheevos is gonna be a journey
+  if achievement
+    system.Achievement.unlock achievement
 
   frame = document.createElement "iframe"
 
+  # Need to allow-modals so apps can show the print view (yes for paper printing!)
+  sandbox ?= "allow-modals allow-forms allow-pointer-lock allow-popups allow-scripts"
   if sandbox
     frame.setAttribute("sandbox", sandbox)
 
@@ -62,40 +67,36 @@ module.exports = (opts={}) ->
       env: {} # TODO: Can pass env vars here
       args: {} # TODO: Can pass args here, args can be an object
 
-  # TODO: use postmaster.delegate
   # TODO: Set menu bar from within app
 
+  # This receives and dispatches the messages from the iframe
   Object.assign postmaster,
     remoteTarget: ->
       frame.contentWindow
+    delegate:
+      ready: (clientData) ->
+        console.info clientData
+        acceptClient()
 
-    ready: (clientData) ->
-      console.info clientData
-      acceptClient()
+      # Deprecated: should be moved to 'ready'
+      childLoaded: ->
+        console.warn "'childLoaded' is deprecated call 'ready' instead"
+        acceptClient()
 
-    childLoaded: ->
-      console.log "child loaded"
-      acceptClient()
+      # Send events from the iframe app to the application
+      event: ->
+        application.trigger "event", arguments...
 
-    # Send events from the iframe app to the application
-    event: ->
-      application.trigger "event", arguments...
+        return
 
-      return
+      # Add application method access to client iFrame
+      application: (method, args...) ->
+        application[method](args...)
 
-    # Add application method access to client iFrame
-    application: (method, args...) ->
-      application[method](args...)
-
-    # Add system method access to client iFrame
-    # TODO: Security :P
-    system: (method, args...) ->
-      system[method](args...)
-
-  handlers ?= Model().include(FileIO).extend
-    loadFile: (blob, path) ->
-      loadedPromise.then ->
-        postmaster.invokeRemote "loadFile", blob, path
+      # Add system method access to client iFrame
+      # TODO: Security :P
+      system: (method, args...) ->
+        system[method](args...)
 
   application = Window
     title: title
@@ -112,10 +113,9 @@ module.exports = (opts={}) ->
         application.element.remove()
       , 0
       return
-    handlers: handlers
-    loadFile: handlers.loadFile
-    send: (args...) ->
+
+    send: (method, args...) ->
       loadedPromise.then ->
-        postmaster.invokeRemote args...
+        postmaster.invokeRemote method, args...
 
   return application

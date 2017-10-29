@@ -9,7 +9,7 @@ The girl found her favorite deer trail through the forest, almost invisible to a
 
 Despite the chill of the evening, the girl removed her boots and garments and folded them neatly, placing them on a flat rock several feet from the edge of the river. She stood expectantly, letting the water lap at her toes.
 
-She looked up as a swirling cloud emerged from a hollow tree and collected above her head. She whistled a haunting little tune and the cloud parted, wrapping itself around her body as she stepped into the water. She waded waist-deep into the water as the nanoswarm enveloped her in scaly, flexible skin from her torso all the way down her legs, ending in a tail with long fins. Opening her mouth, she inhaled some of the nanoswarm to allow her to breathe underwater, before her body slipped entirely under the rippling surface. 
+She looked up as a swirling cloud emerged from a hollow tree and collected above her head. She whistled a haunting little tune and the cloud parted, wrapping itself around her body as she stepped into the water. She waded waist-deep into the water as the nanoswarm enveloped her in scaly, flexible skin from her torso all the way down her legs, ending in a tail with long fins. Opening her mouth, she inhaled some of the nanoswarm to allow her to breathe underwater, before her body slipped entirely under the rippling surface.
 
 The girl splashed her tail and a peal of light, uninhibited laughter echoed off the rocks as she resurfaced. She swam off into the night.
 

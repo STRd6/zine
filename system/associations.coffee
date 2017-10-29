@@ -1,12 +1,7 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Filter = require "../apps/filter"
-Notepad = require "../apps/notepad"
-CodeEditor = require "../apps/text-editor"
 Explorer = require "../apps/explorer"
-PixelEditor = require "../apps/pixel"
-Markdown = require "../apps/markdown"
-DSad = require "../apps/dungeon-of-sadness"
 MyBriefcase = require "../apps/my-briefcase"
 
 PkgFS = require "../lib/pkg-fs"
@@ -19,7 +14,7 @@ openWith = (App) ->
       {path} = file
       system.readFile path
       .then (blob) ->
-        app.loadFile(blob, path)
+        app.send "loadFile", blob, path
 
     system.attachApplication(app)
 
@@ -28,12 +23,6 @@ module.exports = (I, self) ->
   # The first handler that matches is the default handler, the rest are available
   # from context menu
   handlers = [{
-    name: "Markdown" # TODO: This renders html now too, so may need a broader name
-    filter: (file) ->
-      file.path.match(/\.md$/) or
-      file.path.match(/\.html$/)
-    fn: openWith(Markdown) # TODO: This can be a pointer to a system package
-  }, {
     name: "Run"
     filter: (file) ->
       file.type is "application/javascript" or
@@ -76,18 +65,6 @@ module.exports = (I, self) ->
 
         document.body.appendChild windowView.element
   }, {
-    name: "Ace Editor"
-    filter: (file) ->
-      file.path.match(/\.coffee$/) or
-      file.path.match(/\.cson$/) or
-      file.path.match(/\.html$/) or
-      file.path.match(/\.jadelet$/) or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.json$/) or
-      file.path.match(/\.md$/) or
-      file.path.match(/\.styl$/)
-    fn: openWith(CodeEditor) # TODO: This can be a pointer to a system package
-  }, {
     name: "Run"
     filter: (file) ->
       file.path.match(/💾$/)
@@ -116,11 +93,6 @@ module.exports = (I, self) ->
       # TODO: Rename?
       system.execPathWithFile file.path, null
   }, {
-    name: "Edit Link"
-    filter: (file) ->
-      file.path.match(/🔗$|\.link$/)
-    fn: openWith(CodeEditor)
-  }, {
     name: "Sys Exec"
     filter: (file) ->
       return false # TODO: Enable with super mode :P
@@ -130,21 +102,10 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.execute(file.path)
   }, {
-    name: "Notepad"
-    filter: (file) ->
-      file.type.match(/^text\//) or
-      file.type.match(/^application\/javascript/)
-    fn: openWith(Notepad)
-  }, {
     name: "Image Viewer"
     filter: (file) ->
       file.type.match /^image\//
     fn: openWith(Filter)
-  }, {
-    name: "Pixel Editor"
-    filter: (file) ->
-      file.type.match /^image\//
-    fn: openWith(PixelEditor)
   }, {
     name: "PDF Viewer"
     filter: (file) ->
@@ -161,13 +122,6 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type.match /^audio\//
     fn: openWith(AudioBro)
-  }, {
-    name: "dsad.exe"
-    filter: (file) ->
-      file.path.match /dsad\.exe$/
-    fn: ->
-      app = DSad()
-      system.attachApplication app
   }, {
     name: "zine1.exe"
     filter: (file) ->
@@ -205,6 +159,13 @@ module.exports = (I, self) ->
     fn: ->
       app = MyBriefcase()
       system.attachApplication app
+  }, {
+    name: "Run Application"
+    filter: (file) ->
+      file.type is "application/json" and
+      file.path.match(/\.exe$/)
+    fn: (file) ->
+      system.execPathWithFile file.path, null
   }]
 
   handle = (file) ->
@@ -217,17 +178,11 @@ module.exports = (I, self) ->
       throw new Error "No handler for files of type #{file.type}"
 
   Object.assign self,
-    iframeApp: require "../lib/iframe-app"
-
     # Open a file
     # TODO: Pass arguments
     # TODO: Drop files on an app to open them in that app
     open: (file) ->
       handle(file)
-
-    openPath: (path) ->
-      self.readFile path
-      .then self.open
 
     # Return a list of all handlers that can be used for this file
     openersFor: (file) ->
@@ -249,34 +204,5 @@ module.exports = (I, self) ->
 
     handlers: ->
       handlers.slice()
-
-    pathAsApp: (path) ->
-      if path.match(/💾$/)
-        system.readFile path
-        .then (blob) ->
-          blob.readAsJSON()
-        .then (pkg) ->
-          return ->
-            self.executePackageInIFrame(pkg)
-      else if path.match(/🔗$|\.link$/)
-        system.readFile path
-        .then (blob) ->
-          blob.readAsText()
-        .then system.evalCSON
-        .then (data) ->
-          return ->
-            system.iframeApp data
-      else if path.match(/\.js$|\.coffee$/)
-        self.packageProgram(path)
-        .then (pkg) ->
-          return ->
-            self.executePackageInIFrame pkg
-      else
-        Promise.reject new Error "Could not launch #{path}"
-
-    execPathWithFile: (path, file) ->
-      self.pathAsApp(path)
-      .then (App) ->
-        openWith(App)(file)
 
   return self

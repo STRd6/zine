@@ -1,3 +1,5 @@
+# TODO: Kick out of core
+
 module.exports = (opts) ->
   {title, width, height, text} = opts
   width ?= 380

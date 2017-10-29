@@ -103,6 +103,26 @@ achievementData = [{
   icon: "🐝"
   group: "Issue 6"
   description: "Read Tree"
+}, {
+  text: "Issue 10"
+  icon: "🎃"
+  group: "Issue 10"
+  description: "Special Halloween Editon"
+}, {
+  text: "Hard Rain"
+  icon: "☔"
+  group: "Issue 10"
+  description: "Culvert Livin'"
+}, {
+  text: "3spoopy5me"
+  icon: "😨"
+  group: "Issue 10"
+  description: "Don't spoop your pants!"
+}, {
+  text: "Not a real JT song"
+  icon: "👻"
+  group: "Issue 10"
+  description: "Maybe he hired a ghost writer"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"
@@ -173,6 +193,11 @@ achievementData = [{
   icon: "💕"
   group: "Social"
   description: "Have fine taste"
+}, {
+  text: "A little bird told me"
+  icon: "🐦"
+  group: "Social"
+  description: "Social media marketing 101"
 }, {
   text: "We value your input"
   icon: "📩"

@@ -1,4 +1,5 @@
 # View and Manipulate Images
+# TODO: Kick out of core
 
 FileIO = require "../os/file-io"
 Model = require "model"
@@ -62,6 +63,7 @@ module.exports = ->
     width: 640
     height: 480
 
-  windowView.loadFile = handlers.loadFile
+  windowView.send = (method, args...) ->
+    handlers[method](args...)
 
   return windowView

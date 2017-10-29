@@ -63,7 +63,7 @@ Poli caught up with Jib and together they loaded dry beans and rice into the car
 
 Aisle 12A displayed an alarming variety of cookies, snack cakes, and other treats, and Poli and Jib were, for the first time, ill at ease in the Kmart. A small girl with braids and cutoff jeans approached them.
 
-“Here you go,” she smiled shyly, handing up a box. 
+“Here you go,” she smiled shyly, handing up a box.
 
 “Thank you,” Jib smiled back. He tore into the box and passed a handful of the Tedwich cookies to Poli. They sampled the miniature bear-shaped cinnamon cookies sandwiching a vanilla cream filling. They were, indeed, exactly what Elo would love.
 

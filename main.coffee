@@ -37,7 +37,7 @@ SiteURLTemplate = require "./templates/site-url"
 document.body.appendChild SiteURLTemplate()
 
 HomeButton = require "./presenters/home-button"
-document.body.appendChild HomeButton()
+document.body.appendChild HomeButton(system)
 
 system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
@@ -61,4 +61,4 @@ system.initAppSettings()
       type: []
       extension: ["test"]
 
-require("./issues/2017-06")()
+require("./issues/2017-10")()

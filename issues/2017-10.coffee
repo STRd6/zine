@@ -15,7 +15,7 @@ fetchContent = (targetFile, sourcePath=targetFile) ->
     throw new Error "File not found" unless file
   .catch ->
     system.ajax
-      url: "https://fs.whimsy.space/us-east-1:90fe8dfb-e9d2-45c7-a347-cf840a3e757f/public/#{sourcePath}"
+      url: "https://danielx.whimsy.space/whimsy.space/V1E10/#{sourcePath}"
       responseType: "blob"
     .then (blob) ->
       system.writeFile targetPath, blob
@@ -25,6 +25,8 @@ module.exports = ->
   {Achievement, ajax} = system
 
   system.Achievement.unlock "Issue 10"
+
+  fetchContent "Todd Barranca.md"
 
   launch = (App) ->
     system.attachApplication App()
@@ -53,12 +55,17 @@ module.exports = ->
     codeEditor: ->
       system.launchAppByName("Code Editor")
 
+    qfm: ->
+      system.launchAppByName("Quest for Meaning")
+
   menuBar = MenuBar
     items: parseMenu """
       [A]pps
         My [B]riefcase
         [P]ixie Paint
         [C]ode Editor
+      [G]ames
+        [Q]uest for Meaning -> qfm
       [S]tories
         [T]odd Barranca
       #{Social.menuText}

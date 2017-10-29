@@ -56,7 +56,7 @@ module.exports = ->
 
     qfm: ->
       system.launchAppByName("Quest for Meaning")
-    
+
     spoopinRightNow: ->
       system.Achievement.unlock("3spoopy5me")
       system.openPath("/issue-10/Spoopin' Right Now.md")

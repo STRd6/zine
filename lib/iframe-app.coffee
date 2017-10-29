@@ -20,7 +20,7 @@ Postmaster = require "postmaster"
 module.exports = (opts={}) ->
   {Window, Modal} = system.UI
 
-  {achievement, height, menuBar, src, title, width, sandbox, pkg, packageOptions, iconEmoji} = opts
+  {achievement, height, menuBar, src, title, width, sandbox, pkg, packageOptions, icon:iconEmoji} = opts
 
   # TODO: Trigger achievement from inside iframe :|
   # Or maybe from a watcher on system level app events...

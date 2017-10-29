@@ -60,7 +60,7 @@ module.exports = (I, self) ->
 
       app = self.iframeApp
         title: name
-        emojiIcon: icon
+        icon: icon
         width: width
         height: height
         src: src
@@ -199,6 +199,16 @@ module.exports = (I, self) ->
     script: "system.launchIssue('2017-05')"
     category: "Issues"
   }, {
+    name: "Summertime Radness"
+    icon: "🐝"
+    script: "system.launchIssue('2017-06')"
+    category: "Issues"
+  }, {
+    name: "Spoopin Right Now"
+    icon: "🎃"
+    script: "system.launchIssue('2017-10')"
+    category: "Issues"
+  }, {
     name: "Bionic Hotdog"
     category: "Games"
     src: "https://danielx.net/grappl3r/"
@@ -221,6 +231,18 @@ module.exports = (I, self) ->
     width: 960
     height: 540
     achievement: "Rawr"
+  }, {
+    name: "Dangerous"
+    icon: "🐱"
+    category: "Games"
+    src: "https://projects.pixieengine.com/106/"
+  }, {
+    name: "Quest for Meaning"
+    icon: "❔"
+    category: "Games"
+    src: "https://danielx.whimsy.space/apps/qfm/"
+    width: 648
+    height: 510
   }]
 
   return self

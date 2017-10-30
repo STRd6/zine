@@ -27,6 +27,7 @@ module.exports = ->
   system.Achievement.unlock "Issue 10"
 
   fetchContent "Todd Barranca.md"
+  fetchContent "haunted.png"
   fetchContent "pumpkin.png"
   fetchContent "Spoopin' Right Now.md"
   fetchContent "Well I Want to Get a Ride Today.md"
@@ -64,6 +65,9 @@ module.exports = ->
     ride: ->
       system.Achievement.unlock("Not a real JT song")
       system.openPath("/issue-10/Well I Want to Get a Ride Today.md")
+    
+    haunted: ->
+      system.openPath("/issue-10/haunted.png")
 
   menuBar = MenuBar
     items: parseMenu """
@@ -78,6 +82,7 @@ module.exports = ->
         [S]ong Lyrics
           [S]poopin Right Now
           [W]ell I Want to Get a Ride Today -> ride
+        [H]aunted
       #{Social.menuText}
       [H]elp
         [A]chievement Status

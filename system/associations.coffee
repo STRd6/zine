@@ -1,6 +1,5 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
-Filter = require "../apps/filter"
 Explorer = require "../apps/explorer"
 MyBriefcase = require "../apps/my-briefcase"
 
@@ -101,11 +100,6 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/)
     fn: (file) ->
       self.execute(file.path)
-  }, {
-    name: "Image Viewer"
-    filter: (file) ->
-      file.type.match /^image\//
-    fn: openWith(Filter)
   }, {
     name: "PDF Viewer"
     filter: (file) ->

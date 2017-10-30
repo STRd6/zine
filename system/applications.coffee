@@ -4,6 +4,9 @@ AppDrop = require "../lib/app-drop"
 {Observable} = require "ui"
 
 module.exports = (I, self) ->
+  specialApps =
+    "Image Viewer": require "../apps/filter"
+
   self.extend
     appData: Observable []
     iframeApp: require "../lib/iframe-app"
@@ -58,12 +61,15 @@ module.exports = (I, self) ->
     launchAppByAppData: (datum, path) ->
       {name, icon, width, height, src} = datum
 
-      app = self.iframeApp
-        title: name
-        icon: icon
-        width: width
-        height: height
-        src: src
+      if specialApps[name]
+        app = specialApps[name]()
+      else
+        app = self.iframeApp
+          title: name
+          icon: icon
+          width: width
+          height: height
+          src: src
 
       if path
         self.readFile path
@@ -168,6 +174,10 @@ module.exports = (I, self) ->
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+  }, {
+    name: "Image Viewer"
+    icon: "👓"
+    associations: ["mime:^image/"]
   }, {
     name: "Dr Wiki"
     icon: "📖"

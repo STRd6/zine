@@ -109,6 +109,7 @@ module.exports = (I, self) ->
       .then (url) ->
         app = system.iframeApp
           src: url
+          sandbox: false # Need Chrome's pdf plugin to view pdfs
           title: file.path
         system.attachApplication app
   }, {

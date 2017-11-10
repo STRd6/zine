@@ -171,6 +171,13 @@ module.exports = (I, self) ->
     ]
     achievement: "Notepad.exe"
   }, {
+    name: "Progenitor"
+    icon: "🌿"
+    src: "https://danielx.whimsy.space/danielx.net/editor/zine2/"
+    associations: [
+      "mime:^application/zineos-package"
+    ]
+  }, {
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"

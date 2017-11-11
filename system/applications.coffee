@@ -1,5 +1,5 @@
 AppDrop = require "../lib/app-drop"
-{endsWith} = require "../util"
+{endsWith, execute} = require "../util"
 
 {Observable} = require "ui"
 
@@ -87,7 +87,7 @@ module.exports = (I, self) ->
       if datum
         {script} = datum
         if script
-          Function(script)()
+          execute script, {}, system: system
         else
           self.launchAppByAppData(datum, path)
 

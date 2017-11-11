@@ -98,6 +98,13 @@ module.exports = Util =
   normalizePath: normalizePath
   absolutizePath: absolutizePath
 
+  # Execute a program with the given environment and context
+  execute: (program, context, environment) ->
+    args = Object.keys(environment)
+    values = args.map (name) -> environment[name]
+
+    Function(args..., program).apply(context, values)
+
   isAbsolutePath: (path) ->
     path.match /^\//
 

@@ -59,16 +59,18 @@ module.exports = (I, self) ->
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src} = datum
+      {name, icon, width, height, src, sandbox, allow} = datum
 
       if specialApps[name]
         app = specialApps[name]()
       else
         app = self.iframeApp
+          allow: allow
           title: name
           icon: icon
           width: width
           height: height
+          sandbox: sandbox
           src: src
 
       if path
@@ -181,6 +183,8 @@ module.exports = (I, self) ->
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+    allow: "microphone"
+    sandbox: false
   }, {
     name: "Image Viewer"
     icon: "👓"

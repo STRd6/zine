@@ -167,7 +167,7 @@ module.exports = (I, self) ->
         self.vivifyPrograms(bootablePaths)
 
     # A simpler, dumber, packager that reads a pixie.cson, then
-    # just packages every file recursively down in the directories
+    # packages every file recursively down in the directories
     createPackageFromPixie: (pixiePath) ->
       basePath = pixiePath.match(/^.*\//)?[0] or ""
       pkg =

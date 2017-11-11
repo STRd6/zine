@@ -1,3 +1,5 @@
+MyBriefcase = require "../apps/my-briefcase"
+
 AppDrop = require "../lib/app-drop"
 {endsWith, execute} = require "../util"
 
@@ -10,6 +12,10 @@ module.exports = (I, self) ->
   self.extend
     appData: Observable []
     iframeApp: require "../lib/iframe-app"
+
+    openBriefcase: ->
+      app = MyBriefcase()
+      system.attachApplication app
 
     openPath: (path) ->
       self.readFile path
@@ -132,10 +138,6 @@ module.exports = (I, self) ->
           self.launchAppByName name, file?.path
 
       self.registerHandler datum.handler
-
-  """
-     [I]ssues
-  """
 
   systemApps = [{
     name: "Chateau"

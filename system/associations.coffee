@@ -1,7 +1,6 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Explorer = require "../apps/explorer"
-MyBriefcase = require "../apps/my-briefcase"
 
 PkgFS = require "../lib/pkg-fs"
 
@@ -122,9 +121,8 @@ module.exports = (I, self) ->
     filter: ({path}) ->
       path.match /My Briefcase$/
     fn: ->
-      app = MyBriefcase()
-      system.attachApplication app
-  }, {
+      system.openBriefcase()
+  },{
     name: "Run Application"
     filter: (file) ->
       file.type is "application/json" and

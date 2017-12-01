@@ -63,8 +63,10 @@ module.exports = ->
             else
               # Instantiate aws sdk service objects now that the credentials have been updated.
 
-              s3 = new AWS.S3()
-              console.log('Successfully logged!');
-              resolve s3
+              console.log('Successfully logged!')
+
+              # TODO: AWS is global :(
+              # Probably doesn't matter because ZineOS is single user 
+              resolve AWS
 
         onFailure: reject

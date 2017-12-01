@@ -61,4 +61,4 @@ system.initAppSettings()
       type: []
       extension: ["test"]
 
-require("./issues/2017-10")()
+window.Cog = require("./lib/cognito")()

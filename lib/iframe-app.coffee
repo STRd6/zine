@@ -13,7 +13,10 @@ state that can respond to messages from the OS.
 
 ###
 
+{Observable} = require "ui"
 Postmaster = require "postmaster"
+
+ObservableObject = require "./observable-object"
 
 {version} = require "../pixie"
 
@@ -69,7 +72,10 @@ module.exports = (opts={}) ->
 
   # TODO: Set menu bar from within app
 
-  # This receives and dispatches the messages from the iframe
+  # This receives messages from the iframe and dispatches messages to the iframe
+  # Apps within ZineOS can communicate to each other via the application object,
+  # while within the iframe they communicate through this postmaster degegate to
+  # their specific application or the system.
   Object.assign postmaster,
     remoteTarget: ->
       frame.contentWindow
@@ -106,7 +112,13 @@ module.exports = (opts={}) ->
     height: height
     iconEmoji: iconEmoji
 
+  signals = ObservableObject()
+
   Object.assign application,
+    # Observable fn that returns an array of [key, Observable(value)] items
+    signals: signals
+    # Expose an observable property that can be updated from within the iframe
+    setSignal: signals.set
     exit: ->
       # TODO: Prompt unsaved, etc.
       setTimeout ->

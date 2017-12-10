@@ -193,6 +193,11 @@ module.exports = (I, self) ->
     associations: ["md", "html"]
     src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
   }, {
+    name: "FXZ Edit"
+    icon: "📈"
+    associations: ["fxx", "fxz"]
+    src: "https://danielx.whimsy.space/danielx.net/fxz-edit/"
+  }, {
     name: "First"
     icon: " 1️⃣"
     script: "system.launchIssue('2016-12')"

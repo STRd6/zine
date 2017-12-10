@@ -9,6 +9,7 @@ module.exports = (I, self) ->
 
   self.extend
     appData: Observable []
+    runningApplications: Observable []
     iframeApp: require "../lib/iframe-app"
 
     openPath: (path) ->
@@ -54,7 +55,15 @@ module.exports = (I, self) ->
 
       # TODO: Bind to app event streams
 
-      # TODO: Add to list of apps
+      # Add to list of apps
+      self.runningApplications.push app
+
+      # Override the default close behavior to trigger exit events
+      if app.exit?
+        app.close = app.exit
+
+      app.on "exit", ->
+        self.runningApplications.remove app
 
       document.body.appendChild app.element
 
@@ -144,7 +153,7 @@ module.exports = (I, self) ->
   }, {
     name: "Pixie Paint"
     icon: "🖌️"
-    src: "https://danielx.net/pixel-editor/zine2/"
+    src: "https://danielx.net/pixel-editor/"
     associations: ["mime:^image/"]
     width: 640
     height: 480

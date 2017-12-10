@@ -111,6 +111,7 @@ module.exports = (opts={}) ->
       # TODO: Prompt unsaved, etc.
       setTimeout ->
         application.element.remove()
+        application.trigger "exit"
       , 0
       return
 

@@ -96,8 +96,20 @@ module.exports = (opts={}) ->
         return
 
       # Add application method access to client iFrame
+      # This is where we receive messages from the client. By default we pass
+      # them on to the application object representing the application in the
+      # system. Some things we set up specially, like observing signals.
       application: (method, args...) ->
-        application[method](args...)
+        # Bind to a signal, returning its current value and triggering a call to
+        # updateSignal when its value changes.
+        if method is "observeSignal"
+          name = args[0]
+          signals.get(name).observe (newValue) ->
+            postmaster.invokeRemote("updateSignal", name, newValue)
+
+          return signals.get(name)()
+        else
+          application[method](args...)
 
       # Add system method access to client iFrame
       # TODO: Security :P

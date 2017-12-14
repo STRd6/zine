@@ -78,3 +78,6 @@ window.auth = (username, password) ->
     fs = S3FS(id, bucket)
 
     system.fs.mount "/S3/", fs
+
+window.fbAuth = ->
+  Cog.fbAuth()

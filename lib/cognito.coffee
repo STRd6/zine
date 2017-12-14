@@ -1,6 +1,16 @@
+###
+Cognito info:
+
+JS SDK: https://github.com/aws/amazon-cognito-identity-js
+Pricing: https://aws.amazon.com/cognito/pricing/
+Adding Social Identity Providers: http://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-social.html
+
+https://whimsy.auth.us-east-1.amazoncognito.com/oauth2/idpresponse
+###
+
 module.exports = ->
   identityPoolId = 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
-  
+
   poolData =
     UserPoolId : 'us-east-1_XaxTbSC2i'
     ClientId : '6ooliggq05mdim27mkcsp649iu'
@@ -22,12 +32,12 @@ module.exports = ->
 
     new Promise (resolve, reject) ->
       userPool.signUp username, password, attributeList, null, (err, result) ->
-        if err 
+        if err
           return reject(err)
-  
+
         cognitoUser = result.user
         console.log('user name is ' + cognitoUser.getUsername())
-  
+
         resolve(cognitoUser)
 
   authenticate: (username, password) ->
@@ -55,7 +65,7 @@ module.exports = ->
             IdentityPoolId: identityPoolId
             Logins:
               'cognito-idp.us-east-1.amazonaws.com/us-east-1_XaxTbSC2i': result.getIdToken().getJwtToken()
-          
+
           # refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
           AWS.config.credentials.refresh (error) ->
             if error
@@ -66,7 +76,17 @@ module.exports = ->
               console.log('Successfully logged!')
 
               # TODO: AWS is global :(
-              # Probably doesn't matter because ZineOS is single user 
+              # Probably doesn't matter because ZineOS is single user
               resolve AWS
 
         onFailure: reject
+
+  # Redirect to FB Login URL
+  fbAuth: ->
+    fbAppId = "1259742007505134"
+    # redirectURI = "https://whimsy.auth.us-east-1.amazoncognito.com/oauth2/idpresponse"
+    redirectURI = "https://whimsy.space"
+    scope = "public_profile,email"
+    window.location = "https://www.facebook.com/v2.11/dialog/oauth?client_id=#{fbAppId}&redirect_uri=#{redirectURI}&scope=#{scope}"
+
+    # This gets me back to the page with a code, but how do I use the code to get the Cognito User Pool user with it??????

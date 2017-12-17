@@ -43,7 +43,6 @@ system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()
-# system.dumpModules()
 system.initAppSettings()
 
 ->

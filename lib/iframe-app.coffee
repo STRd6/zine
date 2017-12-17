@@ -23,7 +23,7 @@ ObservableObject = require "./observable-object"
 module.exports = (opts={}) ->
   {Window, Modal} = system.UI
 
-  {achievement, height, menuBar, src, title, width, sandbox, pkg, packageOptions, icon:iconEmoji} = opts
+  {achievement, allow, height, menuBar, src, title, width, sandbox, pkg, packageOptions, icon:iconEmoji} = opts
 
   # TODO: Trigger achievement from inside iframe :|
   # Or maybe from a watcher on system level app events...
@@ -37,6 +37,9 @@ module.exports = (opts={}) ->
   sandbox ?= "allow-modals allow-forms allow-pointer-lock allow-popups allow-scripts"
   if sandbox
     frame.setAttribute("sandbox", sandbox)
+
+  if allow
+    frame.setAttribute("allow", allow)
 
   if src
     frame.src = src

@@ -1,5 +1,7 @@
+MyBriefcase = require "../apps/my-briefcase"
+
 AppDrop = require "../lib/app-drop"
-{endsWith} = require "../util"
+{endsWith, execute} = require "../util"
 
 {Observable} = require "ui"
 
@@ -11,6 +13,10 @@ module.exports = (I, self) ->
     appData: Observable []
     runningApplications: Observable []
     iframeApp: require "../lib/iframe-app"
+
+    openBriefcase: ->
+      app = MyBriefcase()
+      system.attachApplication app
 
     openPath: (path) ->
       self.readFile path
@@ -68,16 +74,18 @@ module.exports = (I, self) ->
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src} = datum
+      {name, icon, width, height, src, sandbox, allow} = datum
 
       if specialApps[name]
         app = specialApps[name]()
       else
         app = self.iframeApp
+          allow: allow
           title: name
           icon: icon
           width: width
           height: height
+          sandbox: sandbox
           src: src
 
       if path
@@ -94,7 +102,7 @@ module.exports = (I, self) ->
       if datum
         {script} = datum
         if script
-          Function(script)()
+          execute script, {}, system: system
         else
           self.launchAppByAppData(datum, path)
 
@@ -140,10 +148,6 @@ module.exports = (I, self) ->
 
       self.registerHandler datum.handler
 
-  """
-     [I]ssues
-  """
-
   systemApps = [{
     name: "Chateau"
     icon: "🍷"
@@ -180,9 +184,18 @@ module.exports = (I, self) ->
     ]
     achievement: "Notepad.exe"
   }, {
+    name: "Progenitor"
+    icon: "🌿"
+    src: "https://danielx.whimsy.space/danielx.net/editor/zine2/"
+    associations: [
+      "mime:^application/zineos-package"
+    ]
+  }, {
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+    allow: "microphone"
+    sandbox: false
   }, {
     name: "Image Viewer"
     icon: "👓"

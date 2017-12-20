@@ -133,6 +133,11 @@ achievementData = [{
   icon: "💰"
   group: "Issue 11"
   description: "What if this is only the beginning?"
+}, {
+  text: "Value Investing"
+  icon: "📈"
+  group: "Issue 11"
+  description: "Value investing has proven to be a successful investment strategy."
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

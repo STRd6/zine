@@ -43,6 +43,15 @@ module.exports = ->
     myBriefcase: ->
       launch MyBriefcase
 
+    investorProspectus: ->
+      system.Achievement.unlock "Value Investing"
+
+      system.attachApplication system.iframeApp
+        title: "ZineOS: Beyond Time and Space"
+        src: "https://docs.google.com/presentation/d/e/2PACX-1vQx21NKZad19VHx3FrMoX4Tm-RtiDWXRdf48a_um-JX8y2iQeVJRzRhyWuPjt7x3XQsyFGjih6ZrMKS/embed?start=false&loop=false&delayms=10000"
+        width: 1250
+        height: 739
+
     aLineDress: ->
       product "a-line-dress"
 
@@ -75,7 +84,9 @@ module.exports = ->
 
   menuBar = MenuBar
     items: parseMenu """
-      [G]ames
+      [I]nfo
+        [A]chievement Status
+        [I]nvestor Prospectus
       [S]tore
         [A] Line Dress
         [C]ontrastTank
@@ -88,8 +99,6 @@ module.exports = ->
         [T]-Shirt -> shirt
         Th[r]ow Pillow
       #{Social.menuText}
-      [H]elp
-        [A]chievement Status
     """
     handlers: handlers
 

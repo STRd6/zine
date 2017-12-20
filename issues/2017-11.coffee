@@ -28,7 +28,7 @@ module.exports = ->
 
   launch = (App) ->
     system.attachApplication App()
-  
+
   product = (type) ->
     system.Achievement.unlock "Late stage capitalism"
     window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?p=#{type}"
@@ -69,16 +69,16 @@ module.exports = ->
 
     mug: ->
       product "mug"
-    
+
     pouch: ->
       product "pouch"
 
     shirt: ->
       product "t-shirt"
-    
+
     sticker: ->
       product "sticker"
-    
+
     throwPillow: ->
       product "throw-pillow"
 

@@ -31,7 +31,7 @@ module.exports = ->
 
   product = (type) ->
     system.Achievement.unlock "Late stage capitalism"
-    window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?p=#{type}"
+    window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?asc=u&p=#{type}"
 
   handlers = Model().include(Social).extend
     area: ->

@@ -123,6 +123,16 @@ achievementData = [{
   icon: "👻"
   group: "Issue 10"
   description: "Maybe he hired a ghost writer"
+}, {
+  text: "Issue 11"
+  icon: "💃"
+  group: "Issue 11"
+  description: "You can dab if you wanna"
+}, {
+  text: "Late stage capitalism"
+  icon: "💰"
+  group: "Issue 11"
+  description: "What if this is only the beginning?"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

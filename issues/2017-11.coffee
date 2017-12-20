@@ -15,7 +15,7 @@ fetchContent = (targetFile, sourcePath=targetFile) ->
     throw new Error "File not found" unless file
   .catch ->
     system.ajax
-      url: "https://danielx.whimsy.space/whimsy.space/V1E10/#{sourcePath}"
+      url: "https://danielx.whimsy.space/whimsy.space/V1E11/#{sourcePath}"
       responseType: "blob"
     .then (blob) ->
       system.writeFile targetPath, blob
@@ -28,6 +28,10 @@ module.exports = ->
 
   launch = (App) ->
     system.attachApplication App()
+  
+  product = (type) ->
+    system.Achievement.unlock "Late stage capitalism"
+    window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?p=#{type}"
 
   handlers = Model().include(Social).extend
     area: ->
@@ -39,10 +43,50 @@ module.exports = ->
     myBriefcase: ->
       launch MyBriefcase
 
+    aLineDress: ->
+      product "a-line-dress"
+
+    contrastTank: ->
+      product "contrast-tank"
+
+    journal: ->
+      product "hardcover-journal"
+
+    laptopSkin: ->
+      product "laptop-skin"
+
+    leggings: ->
+      product "leggings"
+
+    mug: ->
+      product "mug"
+    
+    pouch: ->
+      product "pouch"
+
+    shirt: ->
+      product "t-shirt"
+    
+    sticker: ->
+      product "sticker"
+    
+    throwPillow: ->
+      product "throw-pillow"
+
   menuBar = MenuBar
     items: parseMenu """
       [G]ames
-      [S]tories
+      [S]tore
+        [A] Line Dress
+        [C]ontrastTank
+        [J]ournal
+        [L]eggings
+        La[p]top Skin
+        [M]ug
+        [P]ouch
+        [S]ticker
+        [T]-Shirt -> shirt
+        Th[r]ow Pillow
       #{Social.menuText}
       [H]elp
         [A]chievement Status

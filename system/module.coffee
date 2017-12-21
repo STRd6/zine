@@ -378,7 +378,7 @@ module.exports = (I, self) ->
           """
         sandbox: "allow-scripts allow-forms"
 
-      document.body.appendChild app.element
+      self.attachApplication app
 
       return app
 

@@ -117,7 +117,11 @@ module.exports = (opts={}) ->
       # Add system method access to client iFrame
       # TODO: Security :P
       system: (method, args...) ->
-        system[method](args...)
+        fn = system[method]
+        if typeof fn is "function"
+          fn.apply(system, args)
+        else
+          throw new Error "system has no method '#{method}'"
 
   application = Window
     title: title
@@ -142,6 +146,7 @@ module.exports = (opts={}) ->
       , 0
       return
 
+    # Send a message into the iframe, received by the client's postmaster.delegate
     send: (method, args...) ->
       loadedPromise.then ->
         postmaster.invokeRemote method, args...

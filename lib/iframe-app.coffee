@@ -117,9 +117,17 @@ module.exports = (opts={}) ->
       # Add system method access to client iFrame
       # TODO: Security :P
       system: (method, args...) ->
+        # TODO: embalm objects for passing into the afterlife (into iframes)
+        embalm = (x) -> x
+        # TODO: revitalize embalmed objects that are received
+        # these can be used to link observables, or to have proxy objects
+        # that remotely invoke their methods and return promises
+        revitalize = (x) -> x
+
         fn = system[method]
         if typeof fn is "function"
-          fn.apply(system, args)
+          Promise.resolve(fn.apply(system, revitalize(args)))
+          .then embalm
         else
           throw new Error "system has no method '#{method}'"
 

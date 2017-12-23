@@ -25,8 +25,11 @@ module.exports = ->
   {Achievement, ajax} = system
 
   system.Achievement.unlock "Issue 12"
-  
-  fetchContent ""
+
+  fetchContent "Mrs Cervino.mp3"
+  fetchContent "paranormal xmas.png"
+  .then ->
+    system.openPath "issue-12/Mrs Cervino.mp3"
 
   launch = (App) ->
     system.attachApplication App()
@@ -82,7 +85,7 @@ module.exports = ->
       product "sticker"
 
     mrsCervino: ->
-      
+      system.openPath "issue-12/Mrs Cervino.mp3"
 
   menuBar = MenuBar
     items: parseMenu """
@@ -103,13 +106,8 @@ module.exports = ->
     """
     handlers: handlers
 
-  iframe = document.createElement "iframe"
-  iframe.src = "https://www.youtube.com/embed/Mxstehc-YTk?autoplay=1&loop=1&controls=0&showinfo=0&playlist=Mxstehc-YTk&iv_load_policy=3"
-  iframe.style = "width: 100%; height: 100%"
-
   windowView = Window
     title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal Christmas | December 2017"
-    content: iframe
     iconEmoji: "💃"
     menuBar: menuBar.element
     width: 452

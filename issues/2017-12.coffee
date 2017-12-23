@@ -8,14 +8,14 @@ StoryReader = require "../apps/story-reader"
 Social = require "../social/social"
 
 fetchContent = (targetFile, sourcePath=targetFile) ->
-  targetPath = "/issue-11/#{targetFile}"
+  targetPath = "/issue-12/#{targetFile}"
 
   system.readFile targetPath
   .then (file) ->
     throw new Error "File not found" unless file
   .catch ->
     system.ajax
-      url: "https://danielx.whimsy.space/whimsy.space/V1E11/#{sourcePath}"
+      url: "https://danielx.whimsy.space/whimsy.space/V1E12/#{sourcePath}"
       responseType: "blob"
     .then (blob) ->
       system.writeFile targetPath, blob
@@ -24,7 +24,9 @@ module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
 
-  system.Achievement.unlock "Issue 11"
+  system.Achievement.unlock "Issue 12"
+  
+  fetchContent ""
 
   launch = (App) ->
     system.attachApplication App()
@@ -35,7 +37,7 @@ module.exports = ->
 
   handlers = Model().include(Social).extend
     area: ->
-      "2017-11"
+      "2017-12"
 
     achievementStatus: ->
       launch AchievementStatus
@@ -79,14 +81,13 @@ module.exports = ->
     sticker: ->
       product "sticker"
 
-    throwPillow: ->
-      product "throw-pillow"
+    mrsCervino: ->
+      
 
   menuBar = MenuBar
     items: parseMenu """
-      [I]nfo
-        [A]chievement Status
-        [I]nvestor Prospectus
+      [R]ecordings
+        [M]rs Cervino
       [S]tore
         [A] Line Dress
         [C]ontrastTank
@@ -107,7 +108,7 @@ module.exports = ->
   iframe.style = "width: 100%; height: 100%"
 
   windowView = Window
-    title: "Whimsy.Space Volume 1 | Episode 11 | Do you dab? | November 2017"
+    title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal Christmas | December 2017"
     content: iframe
     iconEmoji: "💃"
     menuBar: menuBar.element

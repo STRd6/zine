@@ -38,7 +38,7 @@ module.exports = ->
 
   product = (type) ->
     system.Achievement.unlock "Late stage capitalism"
-    window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?asc=u&p=#{type}"
+    window.open "https://www.redbubble.com/people/whimsyspace/works/29661304-california-fire-palm-tree?asc=u&p=#{type}"
 
   handlers = Model().include(Social).extend
     area: ->
@@ -59,8 +59,8 @@ module.exports = ->
         width: 1250
         height: 739
 
-    aLineDress: ->
-      product "a-line-dress"
+    throwPillow: ->
+      product "throw-pillow"
 
     contrastTank: ->
       product "contrast-tank"

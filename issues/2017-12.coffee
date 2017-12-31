@@ -26,8 +26,10 @@ module.exports = ->
 
   system.Achievement.unlock "Issue 12"
 
-  fetchContent "Mrs Cervino.mp3"
   fetchContent "paranormal xmas.png"
+  fetchContent "transmission.mp3"
+
+  fetchContent "Mrs Cervino.mp3"
   .then ->
     system.openPath "issue-12/Mrs Cervino.mp3"
 
@@ -87,10 +89,14 @@ module.exports = ->
     mrsCervino: ->
       system.openPath "issue-12/Mrs Cervino.mp3"
 
+    transmission: ->
+      system.openPath "issue-12/transmission.mp3"
+
   menuBar = MenuBar
     items: parseMenu """
       [R]ecordings
         [M]rs Cervino
+        [T]ransmission
       [S]tore
         [A] Line Dress
         [C]ontrastTank
@@ -107,7 +113,7 @@ module.exports = ->
     handlers: handlers
 
   windowView = Window
-    title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal Christmas | December 2017"
+    title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal X-Mas | December 2017"
     iconEmoji: "👽"
     menuBar: menuBar.element
     width: 452

@@ -108,7 +108,7 @@ module.exports = ->
 
   windowView = Window
     title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal Christmas | December 2017"
-    iconEmoji: "💃"
+    iconEmoji: "👽"
     menuBar: menuBar.element
     width: 452
     height: 297

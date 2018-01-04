@@ -15,7 +15,7 @@ module.exports = (I, self) ->
       tokenDataPromise
       .then (tokenData) ->
         tokenData[key] = value
-        blob = new Blob [JSON.stringify(tokenData)], 
+        blob = new Blob [JSON.stringify(tokenData)],
           type: "application/json"
         self.writeFile(tokensFilePath, blob)
 

@@ -98,15 +98,12 @@ module.exports = ->
         [M]rs Cervino
         [T]ransmission
       [S]tore
-        [A] Line Dress
         [C]ontrastTank
         [J]ournal
-        [L]eggings
         La[p]top Skin
         [M]ug
         [P]ouch
         [S]ticker
-        [T]-Shirt -> shirt
         Th[r]ow Pillow
       #{Social.menuText}
     """

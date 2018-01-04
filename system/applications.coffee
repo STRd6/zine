@@ -74,14 +74,14 @@ module.exports = (I, self) ->
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src, sandbox, allow} = datum
+      {name, icon, width, height, src, sandbox, title, allow} = datum
 
       if specialApps[name]
         app = specialApps[name]()
       else
         app = self.iframeApp
           allow: allow
-          title: name
+          title: name or title
           icon: icon
           width: width
           height: height

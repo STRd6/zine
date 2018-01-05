@@ -29,6 +29,7 @@ module.exports = ->
   fetchContent "paranormal xmas.png"
   fetchContent "transmission.mp3"
   fetchContent "vortex.webm"
+  fetchContent "Betsy B.pdf"
 
   fetchContent "Mrs Cervino.mp3"
   .then ->
@@ -47,6 +48,9 @@ module.exports = ->
 
     achievementStatus: ->
       launch AchievementStatus
+
+    betsyB: ->
+      system.openPath "issue-12/Betsy B.pdf"
 
     myBriefcase: ->
       launch MyBriefcase
@@ -95,9 +99,12 @@ module.exports = ->
 
   menuBar = MenuBar
     items: parseMenu """
+      [F]iction
+        [B]etsy B
       [R]ecordings
         [M]rs Cervino
         [T]ransmission
+        [V]ortex
       [S]tore
         [C]ontrastTank
         [J]ournal

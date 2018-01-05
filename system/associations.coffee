@@ -74,7 +74,7 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.path.match /\.pdf$/
     fn: (file) ->
-      file.blob.getURL()
+      file.getURL()
       .then (url) ->
         app = system.iframeApp
           src: url

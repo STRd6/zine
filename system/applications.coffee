@@ -8,6 +8,7 @@ AppDrop = require "../lib/app-drop"
 module.exports = (I, self) ->
   specialApps =
     "Image Viewer": require "../apps/filter"
+    "Videomaster": require "../apps/video"
 
   self.extend
     appData: Observable []
@@ -200,6 +201,10 @@ module.exports = (I, self) ->
     name: "Image Viewer"
     icon: "👓"
     associations: ["mime:^image/"]
+  }, {
+    name: "Videomaster"
+    icon: "📹"
+    associations: ["mime:^video/"]
   }, {
     name: "Dr Wiki"
     icon: "📖"

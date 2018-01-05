@@ -28,6 +28,7 @@ module.exports = ->
 
   fetchContent "paranormal xmas.png"
   fetchContent "transmission.mp3"
+  fetchContent "vortex.webm"
 
   fetchContent "Mrs Cervino.mp3"
   .then ->

@@ -60,4 +60,4 @@ system.initAppSettings()
       type: []
       extension: ["test"]
 
-require("./issues/2017-11")()
+require("./issues/2017-12")()

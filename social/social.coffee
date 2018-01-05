@@ -43,12 +43,18 @@ module.exports = (I, self) ->
       window.open "https://twitter.com/?status=Remember when Windows 95 would autoplay videos when you opened a folder? Yeah.. me neither. https://whimsy.space"
     subscribe: ->
       require("../mailchimp").show()
+    discord: ->
+      system.launchAppByAppData
+        src: "https://discordapp.com/widget?id=191384972786008065&theme=dark"
+        title: "Discord"
+        icon: "☎️"
 
 module.exports.menuText = """
 S[o]cial Media
-  [V]iew Comments
-  [C]omment
-  [L]ike
+  ☎️ [D]iscord
+  📰 [V]iew Comments
+  🗨️ [C]omment
+  💝 [L]ike
   🐦 [T]weet -> tweet
-  [S]ubscribe
+  🔔 [S]ubscribe
 """

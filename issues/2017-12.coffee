@@ -8,14 +8,14 @@ StoryReader = require "../apps/story-reader"
 Social = require "../social/social"
 
 fetchContent = (targetFile, sourcePath=targetFile) ->
-  targetPath = "/issue-11/#{targetFile}"
+  targetPath = "/issue-12/#{targetFile}"
 
   system.readFile targetPath
   .then (file) ->
     throw new Error "File not found" unless file
   .catch ->
     system.ajax
-      url: "https://danielx.whimsy.space/whimsy.space/V1E11/#{sourcePath}"
+      url: "https://danielx.whimsy.space/whimsy.space/V1E12/#{sourcePath}"
       responseType: "blob"
     .then (blob) ->
       system.writeFile targetPath, blob
@@ -24,21 +24,35 @@ module.exports = ->
   {ContextMenu, MenuBar, Modal, Progress, Util:{parseMenu}, Window} = system.UI
   {Achievement, ajax} = system
 
-  system.Achievement.unlock "Issue 11"
+  system.Achievement.unlock "Issue 12"
+
+  fetchContent "paranormal xmas.png"
+  fetchContent "transmission.mp3"
+  fetchContent "vortex.webm"
+  fetchContent "Betsy B.pdf"
+
+  fetchContent "Mrs Cervino.mp3"
+  .then ->
+    system.openPath "issue-12/Mrs Cervino.mp3"
+
+  fetchContent "hella.gif"
 
   launch = (App) ->
     system.attachApplication App()
 
   product = (type) ->
     system.Achievement.unlock "Late stage capitalism"
-    window.open "https://www.redbubble.com/people/whimsyspace/works/29495735-international-no-dabbing-symbol?asc=u&p=#{type}"
+    window.open "https://www.redbubble.com/people/whimsyspace/works/29661304-california-fire-palm-tree?asc=u&p=#{type}"
 
   handlers = Model().include(Social).extend
     area: ->
-      "2017-11"
+      "2017-12"
 
     achievementStatus: ->
       launch AchievementStatus
+
+    betsyB: ->
+      system.openPath "issue-12/Betsy B.pdf"
 
     myBriefcase: ->
       launch MyBriefcase
@@ -52,8 +66,8 @@ module.exports = ->
         width: 1250
         height: 739
 
-    aLineDress: ->
-      product "a-line-dress"
+    throwPillow: ->
+      product "throw-pillow"
 
     contrastTank: ->
       product "contrast-tank"
@@ -79,40 +93,46 @@ module.exports = ->
     sticker: ->
       product "sticker"
 
-    throwPillow: ->
-      product "throw-pillow"
+    mrsCervino: ->
+      system.openPath "issue-12/Mrs Cervino.mp3"
+
+    transmission: ->
+      system.openPath "issue-12/transmission.mp3"
+
+    vortex: ->
+      system.openPath "issue-12/vortex.webm"
 
   menuBar = MenuBar
     items: parseMenu """
-      [I]nfo
-        [A]chievement Status
-        [I]nvestor Prospectus
+      [F]iction
+        [B]etsy B
+      [R]ecordings
+        [M]rs Cervino
+        [T]ransmission
+        [V]ortex
       [S]tore
-        [A] Line Dress
         [C]ontrastTank
         [J]ournal
-        [L]eggings
         La[p]top Skin
         [M]ug
         [P]ouch
         [S]ticker
-        [T]-Shirt -> shirt
         Th[r]ow Pillow
       #{Social.menuText}
     """
     handlers: handlers
 
-  iframe = document.createElement "iframe"
-  iframe.src = "https://www.youtube.com/embed/Mxstehc-YTk?autoplay=1&loop=1&controls=0&showinfo=0&playlist=Mxstehc-YTk&iv_load_policy=3"
-  iframe.style = "width: 100%; height: 100%"
+  img = document.createElement "img"
+  img.src = "https://danielx.whimsy.space/whimsy.space/V1E12/hella.gif"
+  img.style = "width: 100%; height: 100%"
 
   windowView = Window
-    title: "Whimsy.Space Volume 1 | Episode 11 | Do you dab? | November 2017"
-    content: iframe
-    iconEmoji: "💃"
+    title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal X-Mas | December 2017"
+    iconEmoji: "👽"
     menuBar: menuBar.element
-    width: 452
-    height: 297
+    content: img
+    width: 500 + 8
+    height: 500 + 46
     x: 96
     y: 64
 

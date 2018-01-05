@@ -8,6 +8,7 @@ AppDrop = require "../lib/app-drop"
 module.exports = (I, self) ->
   specialApps =
     "Image Viewer": require "../apps/filter"
+    "Videomaster": require "../apps/video"
 
   self.extend
     appData: Observable []
@@ -74,14 +75,14 @@ module.exports = (I, self) ->
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src, sandbox, allow} = datum
+      {name, icon, width, height, src, sandbox, title, allow} = datum
 
       if specialApps[name]
         app = specialApps[name]()
       else
         app = self.iframeApp
           allow: allow
-          title: name
+          title: name or title
           icon: icon
           width: width
           height: height
@@ -200,6 +201,10 @@ module.exports = (I, self) ->
     name: "Image Viewer"
     icon: "👓"
     associations: ["mime:^image/"]
+  }, {
+    name: "Videomaster"
+    icon: "📹"
+    associations: ["mime:^video/"]
   }, {
     name: "Dr Wiki"
     icon: "📖"

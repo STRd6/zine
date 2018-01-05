@@ -35,6 +35,8 @@ module.exports = ->
   .then ->
     system.openPath "issue-12/Mrs Cervino.mp3"
 
+  fetchContent "hella.gif"
+
   launch = (App) ->
     system.attachApplication App()
 
@@ -120,12 +122,17 @@ module.exports = ->
     """
     handlers: handlers
 
+  img = document.createElement "img"
+  img.src = "https://danielx.whimsy.space/whimsy.space/V1E12/hella.gif"
+  img.style = "width: 100%; height: 100%"
+
   windowView = Window
     title: "Whimsy.Space Volume 1 | Episode 12 | A Very Paranormal X-Mas | December 2017"
     iconEmoji: "👽"
     menuBar: menuBar.element
-    width: 452
-    height: 297
+    content: img
+    width: 500 + 8
+    height: 500 + 46
     x: 96
     y: 64
 

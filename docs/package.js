@@ -1010,7 +1010,7 @@
     }
   },
   "progenitor": {
-    "url": "https://danielx.net/editor/?code=3862bc429bbb036d9651"
+    "url": "https://danielx.net/editor/"
   },
   "config": {
     "title": "Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉",

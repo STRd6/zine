@@ -97,6 +97,9 @@ module.exports = ->
     transmission: ->
       system.openPath "issue-12/transmission.mp3"
 
+    vortex: ->
+      system.openPath "issue-12/vortex.webm"
+
   menuBar = MenuBar
     items: parseMenu """
       [F]iction

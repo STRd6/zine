@@ -17,6 +17,29 @@ module.exports = ->
 
   userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData)
 
+  # Region needs to be set if not already set previously elsewhere.
+  AWS.config.region = 'us-east-1'
+
+  configureAWSFor = (session, resolve, reject) ->
+    token = session.getIdToken().getJwtToken()
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials
+      IdentityPoolId: identityPoolId
+      Logins:
+        'cognito-idp.us-east-1.amazonaws.com/us-east-1_XaxTbSC2i': token
+
+    # refreshes credentials
+    AWS.config.credentials.refresh (error) ->
+      if error
+        reject error
+      else
+        # TODO: AWS is global :(
+        # Probably doesn't matter because ZineOS is single user
+        resolve AWS
+
+      return
+    return
+
   mapAttributes = (attributes) ->
     return unless attributes
 
@@ -55,31 +78,23 @@ module.exports = ->
 
     new Promise (resolve, reject) ->
       cognitoUser.authenticateUser authenticationDetails,
-        onSuccess: (result) ->
-          console.log('access token + ' + result.getAccessToken().getJwtToken())
-
-          # Region needs to be set if not already set previously elsewhere.
-          AWS.config.region = 'us-east-1'
-
-          AWS.config.credentials = new AWS.CognitoIdentityCredentials
-            IdentityPoolId: identityPoolId
-            Logins:
-              'cognito-idp.us-east-1.amazonaws.com/us-east-1_XaxTbSC2i': result.getIdToken().getJwtToken()
-
-          # refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
-          AWS.config.credentials.refresh (error) ->
-            if error
-              return reject error
-            else
-              # Instantiate aws sdk service objects now that the credentials have been updated.
-
-              console.log('Successfully logged!')
-
-              # TODO: AWS is global :(
-              # Probably doesn't matter because ZineOS is single user
-              resolve AWS
-
+        onSuccess: (session) ->
+          configureAWSFor session, resolve, reject
         onFailure: reject
+
+  cachedUser: ->
+    new Promise (resolve, reject) ->
+      cognitoUser = userPool.getCurrentUser()
+
+      if cognitoUser
+        cognitoUser.getSession (err, session) ->
+          if err
+            reject err
+            return
+
+          configureAWSFor(session, resolve, reject)
+      else
+        reject new Error "No cached user"
 
   # Redirect to FB Login URL
   fbAuth: ->

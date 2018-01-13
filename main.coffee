@@ -79,5 +79,10 @@ window.auth = (username, password) ->
 
     system.fs.mount "/S3/", fs
 
+window.cachedAuth = ->
+  Cog.cachedUser()
+  .then console.log
+  .catch console.error
+
 window.fbAuth = ->
   Cog.fbAuth()

@@ -96,6 +96,12 @@ module.exports = ->
       else
         reject new Error "No cached user"
 
+  logout: ->
+    Object.keys(localStorage).filter (key) ->
+      key.match /^CognitoIdentityServiceProvider/
+    .forEach (key) ->
+      delete localStorage[key]
+
   # Redirect to FB Login URL
   fbAuth: ->
     fbAppId = "1259742007505134"

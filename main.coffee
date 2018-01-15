@@ -60,29 +60,3 @@ system.initAppSettings()
     associations:
       type: []
       extension: ["test"]
-
-window.Cog = require("./lib/cognito")()
-
-# Test Cognito Auth method and mounting the S3FS
-window.auth = (username, password) ->
-  Cog.authenticate(username, password)
-  .then (AWS) ->
-    console.log AWS.config.credentials
-    id = AWS.config.credentials.identityId
-
-    bucket = new AWS.S3
-      params:
-        Bucket: "whimsy-fs"
-
-    S3FS = require "./lib/s3-fs"
-    fs = S3FS(id, bucket)
-
-    system.fs.mount "/S3/", fs
-
-window.cachedAuth = ->
-  Cog.cachedUser()
-  .then console.log
-  .catch console.error
-
-window.fbAuth = ->
-  Cog.fbAuth()

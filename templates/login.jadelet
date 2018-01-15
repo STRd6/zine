@@ -1,0 +1,9 @@
+form(@submit)
+  h1= @title
+  label
+    h2 Login
+    input(value=@login)
+  label
+    h2 Password
+    input(type="password" value=@password)
+  button.full Sign In

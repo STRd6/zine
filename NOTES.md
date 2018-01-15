@@ -19,3 +19,8 @@ updates periodically.
 
 We need a way to persist the list of apps locally, maybe just a file in the
 `/System/` folder. Perhaps `/System/apps.json`
+
+JavaScript Stuff
+----------------
+
+Symbols cannot be cloned through postMessage.

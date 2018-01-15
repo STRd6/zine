@@ -65,7 +65,7 @@ module.exports = ->
     ride: ->
       system.Achievement.unlock("Not a real JT song")
       system.openPath("/issue-10/Well I Want to Get a Ride Today.md")
-    
+
     haunted: ->
       system.openPath("/issue-10/haunted.png")
 

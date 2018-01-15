@@ -1,5 +1,4 @@
 AchievementStatus = require "../apps/achievement-status"
-MyBriefcase = require "../apps/my-briefcase"
 
 HomeButtonTemplate = require "../templates/home-button"
 
@@ -17,7 +16,7 @@ module.exports = (system) ->
     ⚙️ [S]ettings
       📱 [A]ppearance
       💯 [C]heevos
-    💼 [M]y Briefcase
+    💼 [M]y Briefcase -> briefcase
     -
     🔌 S[h]ut Down
   """
@@ -25,6 +24,8 @@ module.exports = (system) ->
   handlers = new Proxy {
     appearance: ->
       system.UI.Modal.alert "TODO :)"
+    briefcase: ->
+      system.openBriefcase()
     cheevos: ->
       launch AchievementStatus
     shutDown: ->

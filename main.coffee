@@ -43,7 +43,6 @@ system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()
-# system.dumpModules()
 system.initAppSettings()
 
 ->
@@ -60,3 +59,5 @@ system.initAppSettings()
     associations:
       type: []
       extension: ["test"]
+
+require("./issues/2017-12")()

@@ -167,7 +167,7 @@ module.exports = (I, self) ->
         self.vivifyPrograms(bootablePaths)
 
     # A simpler, dumber, packager that reads a pixie.cson, then
-    # just packages every file recursively down in the directories
+    # packages every file recursively down in the directories
     createPackageFromPixie: (pixiePath) ->
       basePath = pixiePath.match(/^.*\//)?[0] or ""
       pkg =
@@ -378,7 +378,7 @@ module.exports = (I, self) ->
           """
         sandbox: "allow-scripts allow-forms"
 
-      document.body.appendChild app.element
+      self.attachApplication app
 
       return app
 

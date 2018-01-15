@@ -1,7 +1,6 @@
 # TODO: Move handlers out
 AudioBro = require "../apps/audio-bro"
 Explorer = require "../apps/explorer"
-MyBriefcase = require "../apps/my-briefcase"
 
 PkgFS = require "../lib/pkg-fs"
 
@@ -63,28 +62,7 @@ module.exports = (I, self) ->
           iconEmoji: "📂"
 
         document.body.appendChild windowView.element
-  }, {
-    name: "Run"
-    filter: (file) ->
-      file.path.match(/💾$/)
-    fn: (file) ->
-      # TODO: Rename?
-      system.execPathWithFile file.path, null
-  }, {
-    name: "Publish"
-    filter: (file) ->
-      file.path.match(/💾$/)
-    fn: (file) ->
-      system.readFile file.path
-      .then (blob) ->
-        blob.readAsJSON()
-      .then (pkg) ->
-        system.UI.Modal.prompt "Path", "/My Briefcase/public/somefolder"
-        .then (path) ->
-          blob = new Blob [system.htmlForPackage(pkg)],
-            type: "text/html; charset=utf-8"
-          system.writeFile(path + "/index.html", blob)
-  }, {
+  },{
     name: "Run Link"
     filter: (file) ->
       file.path.match(/🔗$|\.link$/)
@@ -92,20 +70,11 @@ module.exports = (I, self) ->
       # TODO: Rename?
       system.execPathWithFile file.path, null
   }, {
-    name: "Sys Exec"
-    filter: (file) ->
-      return false # TODO: Enable with super mode :P
-      file.type is "application/javascript" or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.coffee$/)
-    fn: (file) ->
-      self.execute(file.path)
-  }, {
     name: "PDF Viewer"
     filter: (file) ->
       file.path.match /\.pdf$/
     fn: (file) ->
-      file.blob.getURL()
+      file.getURL()
       .then (url) ->
         app = system.iframeApp
           src: url
@@ -152,9 +121,8 @@ module.exports = (I, self) ->
     filter: ({path}) ->
       path.match /My Briefcase$/
     fn: ->
-      app = MyBriefcase()
-      system.attachApplication app
-  }, {
+      system.openBriefcase()
+  },{
     name: "Run Application"
     filter: (file) ->
       file.type is "application/json" and

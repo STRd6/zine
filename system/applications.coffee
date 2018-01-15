@@ -1,15 +1,23 @@
+MyBriefcase = require "../apps/my-briefcase"
+
 AppDrop = require "../lib/app-drop"
-{endsWith} = require "../util"
+{endsWith, execute} = require "../util"
 
 {Observable} = require "ui"
 
 module.exports = (I, self) ->
   specialApps =
     "Image Viewer": require "../apps/filter"
+    "Videomaster": require "../apps/video"
 
   self.extend
     appData: Observable []
+    runningApplications: Observable []
     iframeApp: require "../lib/iframe-app"
+
+    openBriefcase: ->
+      app = MyBriefcase()
+      system.attachApplication app
 
     openPath: (path) ->
       self.readFile path
@@ -54,21 +62,31 @@ module.exports = (I, self) ->
 
       # TODO: Bind to app event streams
 
-      # TODO: Add to list of apps
+      # Add to list of apps
+      self.runningApplications.push app
+
+      # Override the default close behavior to trigger exit events
+      if app.exit?
+        app.close = app.exit
+
+      app.on "exit", ->
+        self.runningApplications.remove app
 
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src} = datum
+      {name, icon, width, height, src, sandbox, title, allow} = datum
 
       if specialApps[name]
         app = specialApps[name]()
       else
         app = self.iframeApp
-          title: name
+          allow: allow
+          title: name or title
           icon: icon
           width: width
           height: height
+          sandbox: sandbox
           src: src
 
       if path
@@ -85,7 +103,7 @@ module.exports = (I, self) ->
       if datum
         {script} = datum
         if script
-          Function(script)()
+          execute script, {}, system: system
         else
           self.launchAppByAppData(datum, path)
 
@@ -131,10 +149,6 @@ module.exports = (I, self) ->
 
       self.registerHandler datum.handler
 
-  """
-     [I]ssues
-  """
-
   systemApps = [{
     name: "Chateau"
     icon: "🍷"
@@ -144,7 +158,7 @@ module.exports = (I, self) ->
   }, {
     name: "Pixie Paint"
     icon: "🖌️"
-    src: "https://danielx.net/pixel-editor/zine2/"
+    src: "https://danielx.net/pixel-editor/"
     associations: ["mime:^image/"]
     width: 640
     height: 480
@@ -171,18 +185,36 @@ module.exports = (I, self) ->
     ]
     achievement: "Notepad.exe"
   }, {
+    name: "Progenitor"
+    icon: "🌿"
+    src: "https://danielx.whimsy.space/danielx.net/editor/zine2/"
+    associations: [
+      "mime:^application/zineos-package"
+    ]
+  }, {
     name: "Sound Recorder"
     icon: "🎙️"
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
+    allow: "microphone"
+    sandbox: false
   }, {
     name: "Image Viewer"
     icon: "👓"
     associations: ["mime:^image/"]
   }, {
+    name: "Videomaster"
+    icon: "📹"
+    associations: ["mime:^video/"]
+  }, {
     name: "Dr Wiki"
     icon: "📖"
     associations: ["md", "html"]
     src: "https://danielx.whimsy.space/danielx.net/dr-wiki/"
+  }, {
+    name: "FXZ Edit"
+    icon: "📈"
+    associations: ["fxx", "fxz"]
+    src: "https://danielx.whimsy.space/danielx.net/fxz-edit/"
   }, {
     name: "First"
     icon: " 1️⃣"

@@ -98,7 +98,10 @@ module.exports = ->
 
         if @password() is @confirmPassword()
           Cognito.signUp(@email(), @password())
-          .then receivedCredentials
+          .then =>
+            @loading false
+            @errorMessage ""
+            @state "confirm"
           .catch (e) =>
             @loading false
             @errorMessage "Error: " + e.message

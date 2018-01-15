@@ -63,7 +63,7 @@ module.exports = ->
           console.log('user name is ' + cognitoUser.getUsername())
 
           # User will need to confirm email address
-          return cognitoUser
+          resolve cognitoUser
 
     authenticate: (username, password) ->
       authenticationData =

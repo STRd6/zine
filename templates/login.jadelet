@@ -35,6 +35,9 @@ form(@submit)
         input(type="password" name="confirm" value=@confirmPassword)
   
       button.full Register
+    - else if @state() is "confirm"
+      p A confirmation email has been sent to your address, please follow the confirmation link!
+      button.full(click=goToLogin) Next
     - else
       button.top-left(click=goBack) Back
       label

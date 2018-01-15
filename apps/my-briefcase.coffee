@@ -86,7 +86,7 @@ module.exports = ->
     content Explorer
       path: "/My Briefcase/"
 
-  content LoginTemplate
+  loginTemplate = LoginTemplate
     submit: (e) ->
       e.preventDefault()
 
@@ -94,8 +94,18 @@ module.exports = ->
       .then receivedCredentials
 
     title: "💼 My Briefcase"
+    description: """		
+      Maintain access to your files across different machines. Publish		
+      effortlessly to the internet. Your briefcase holds all of your hopes		
+      and dreams in a magical cloud that is available anywhere there is an		
+      internet connection.
+    """
     login: Observable ""
     password: Observable ""
+
+  loginTemplate.style.maxWidth = "400px"
+
+  content loginTemplate
 
   Cognito.cachedUser()
   .then receivedCredentials

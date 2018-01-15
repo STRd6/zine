@@ -1,5 +1,6 @@
 form(@submit)
   h1= @title
+  p= @description
   label
     h2 Login
     input(value=@login)

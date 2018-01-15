@@ -86,8 +86,8 @@ module.exports = ->
     content Explorer
       path: "/My Briefcase/"
 
-  loginTemplate = LoginTemplate
-    loading: Observable false
+  loginModel =
+    loading: Observable true
     state: Observable "start"
     submit: (e) ->
       e.preventDefault()
@@ -129,15 +129,16 @@ module.exports = ->
     password: Observable ""
     confirmPassword: Observable ""
     errorMessage: Observable ""
+  loginTemplate = LoginTemplate loginModel
 
   loginTemplate.style.width = "400px"
 
   content loginTemplate
 
-  Cognito.logout()
-
   Cognito.cachedUser()
   .then receivedCredentials
+  .catch ->
+    loginModel.loading false
 
   windowView = Window
     title: "My Briefcase"

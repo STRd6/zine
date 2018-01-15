@@ -87,25 +87,51 @@ module.exports = ->
       path: "/My Briefcase/"
 
   loginTemplate = LoginTemplate
+    loading: Observable false
+    state: Observable "start"
     submit: (e) ->
       e.preventDefault()
+      @errorMessage ""
 
-      Cognito.authenticate(@login(), @password())
-      .then receivedCredentials
+      if @state() is "register"
+        @loading true
+
+        if @password() is @confirmPassword()
+          Cognito.signUp(@email(), @password())
+          .then receivedCredentials
+          .catch (e) =>
+            @loading false
+            @errorMessage "Error: " + e.message
+        else
+          @errorMessage "Error: Password does not match password confirmation"
+          @loading false
+      else
+        @loading true
+
+        Cognito.authenticate(@email(), @password())
+        .then receivedCredentials
+        .catch (e) =>
+          @loading false
+
+          @errorMessage "Error: " + e.message
 
     title: "💼 My Briefcase"
-    description: """		
-      Maintain access to your files across different machines. Publish		
-      effortlessly to the internet. Your briefcase holds all of your hopes		
-      and dreams in a magical cloud that is available anywhere there is an		
+    description: """
+      Maintain access to your files across different machines. Publish
+      effortlessly to the internet. Your briefcase holds all of your hopes
+      and dreams in a magical cloud that is available anywhere there is an
       internet connection.
     """
-    login: Observable ""
+    email: Observable ""
     password: Observable ""
+    confirmPassword: Observable ""
+    errorMessage: Observable ""
 
-  loginTemplate.style.maxWidth = "400px"
+  loginTemplate.style.width = "400px"
 
   content loginTemplate
+
+  Cognito.logout()
 
   Cognito.cachedUser()
   .then receivedCredentials

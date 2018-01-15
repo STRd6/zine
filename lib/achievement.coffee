@@ -3,7 +3,7 @@ AchievementTemplate = require "../templates/achievement"
 pending = []
 displaying = false
 
-audioPath = "https://cdn.gomix.com/294e834f-223f-4792-9323-5b1fa8d0402b/unlock2.mp3"
+audioPath = "https://cdn.glitch.com/294e834f-223f-4792-9323-5b1fa8d0402b/unlock2.mp3"
 
 playSound = ->
   audio = new Audio(audioPath)

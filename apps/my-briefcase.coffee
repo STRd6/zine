@@ -1,8 +1,9 @@
 ###
 Use the madness that is Amazon Cognito to support a 'My Briefcase' functionality.
 
-This depends on having the AWS library available:
-- https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
+This depends on having the AWS libraries available:
+  https://danielx.whimsy.space/cdn/cognito/sdk.min.js
+  https://danielx.whimsy.space/cdn/cognito/identity.min.js
 
 This is where you can put the files that you want to access from the cloud.
 
@@ -19,41 +20,20 @@ them in applications, save files there, and drag 'n' drop between them.
 
 ###
 
+Cognito = require("../lib/cognito")()
 Explorer = require "./explorer"
 FileTemplate = require "../templates/file"
 FolderTemplate = require "../templates/folder"
+LoginTemplate = require "../templates/login"
 
 S3FS = require "../lib/s3-fs"
 
 {emptyElement, extensionFor, generalType, pinvoke, readTree} = require "../util"
 
-window.onAmazonLoginReady = ->
-  amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
-
-do (d=document) ->
-  r = d.createElement 'div'
-  r.id = "amazon-root"
-  d.body.appendChild r
-  a = d.createElement('script')
-  a.type = 'text/javascript'
-  a.async = true
-  a.id = 'amazon-login-sdk'
-  a.src = 'https://api-cdn.amazon.com/sdk/login1.js'
-  r.appendChild(a)
-
-
 module.exports = ->
   {Observable, Window} = system.UI
 
   system.Achievement.unlock "Oh no, my files!"
-
-  LoginTemplate = system.compileTemplate """
-    span(style="text-align: center; padding: 0 2em;")
-      h1 My Briefcase
-      p= @description
-      a#LoginWithAmazon(@click)
-        img(border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32")
-  """
 
   LoadedTemplate = system.compileTemplate """
     section
@@ -64,7 +44,7 @@ module.exports = ->
   # Observable holding content element
   content = Observable null
 
-  receivedCredentials = ->
+  receivedCredentials = (AWS) ->
     console.log AWS.config.credentials
     id = AWS.config.credentials.identityId
 
@@ -106,51 +86,19 @@ module.exports = ->
     content Explorer
       path: "/My Briefcase/"
 
-  AWS.config.update
-    region: 'us-east-1'
-
-  try
-    logins = JSON.parse localStorage.WHIMSY_FS_AWS_LOGIN
-
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials
-    IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
-    Logins: logins
-
-  if logins
-    pinvoke AWS.config.credentials, "get"
-    .then receivedCredentials
-    .catch (e) ->
-      unless e.message is "Invalid login token."
-        console.warn e, e.message
-
   content LoginTemplate
-    description: ->
-      """
-        Maintain access to your files across different machines. Publish
-        effortlessly to the internet. Your briefcase holds all of your hopes
-        and dreams in a magical cloud that is available anywhere there is an
-        internet connection. 💼
-      """
-    click: ->
-      options = { scope : 'profile' }
-      amazon.Login.authorize options, (resp) ->
-        if !resp.error
-          console.log resp
-          token = resp.access_token
-          creds = AWS.config.credentials
+    submit: (e) ->
+      e.preventDefault()
 
-          logins =
-            'www.amazon.com': token
-          localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
+      Cognito.authenticate(@login(), @password())
+      .then receivedCredentials
 
-          creds.params.Logins = logins
+    title: "💼 My Briefcase"
+    login: Observable ""
+    password: Observable ""
 
-          creds.expired = true
-
-          queryUserInfo(token)
-
-          pinvoke AWS.config.credentials, "get"
-          .then receivedCredentials
+  Cognito.cachedUser()
+  .then receivedCredentials
 
   windowView = Window
     title: "My Briefcase"
@@ -160,18 +108,6 @@ module.exports = ->
     iconEmoji: "💼"
 
   return windowView
-
-queryUserInfo = (token) ->
-  fetch "https://api.amazon.com/user/profile",
-    headers:
-      Authorization: "bearer #{token}"
-      Accept: "application/json"
-  .then (response) ->
-    response.json()
-  .then (json) ->
-    console.log json
-  .catch (e) ->
-    console.error e
 
 bindAlgoliaIndex = (id, fs) ->
   {ALGOLIA_SECRET} = localStorage

@@ -54,7 +54,14 @@ module.exports = ->
       params:
         Bucket: "whimsy-fs"
 
-    fs = S3FS(id, bucket)
+    refreshCredentials = ->
+      # This has the side effect of updating the global AWS object's credentials
+      Cognito.cachedUser()
+      .then (AWS) ->
+        # Copy the updated credentials to the bucket
+        bucket.config.credentials = AWS.config.credentials
+
+    fs = S3FS(id, bucket, refreshCredentials)
 
     bindAlgoliaIndex(id, fs)
 

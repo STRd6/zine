@@ -16,7 +16,6 @@ blob = (response) ->
   response.blob()
 
 module.exports = (id, bucket, refreshCredentials) ->
-  global.bucket = bucket
   {pinvoke, startsWith, endsWith} = require "../util"
 
   refreshCredentials ?= -> Promise.reject new Error "No method given to refresh credentials automatically"

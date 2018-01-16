@@ -54,7 +54,14 @@ module.exports = ->
       params:
         Bucket: "whimsy-fs"
 
-    fs = S3FS(id, bucket)
+    refreshCredentials = ->
+      # This has the side effect of updating the global AWS object's credentials
+      Cognito.cachedUser()
+      .then (AWS) ->
+        # Copy the updated credentials to the bucket
+        bucket.config.credentials = AWS.config.credentials
+
+    fs = S3FS(id, bucket, refreshCredentials)
 
     bindAlgoliaIndex(id, fs)
 
@@ -86,29 +93,59 @@ module.exports = ->
     content Explorer
       path: "/My Briefcase/"
 
-  loginTemplate = LoginTemplate
+  loginModel =
+    loading: Observable true
+    state: Observable "start"
     submit: (e) ->
       e.preventDefault()
+      @errorMessage ""
 
-      Cognito.authenticate(@login(), @password())
-      .then receivedCredentials
+      if @state() is "register"
+        @loading true
+
+        if @password() is @confirmPassword()
+          Cognito.signUp(@email(), @password())
+          .then =>
+            @loading false
+            @errorMessage ""
+            @state "confirm"
+          .catch (e) =>
+            @loading false
+            @errorMessage "Error: " + e.message
+        else
+          @errorMessage "Error: Password does not match password confirmation"
+          @loading false
+      else
+        @loading true
+
+        Cognito.authenticate(@email(), @password())
+        .then receivedCredentials
+        .catch (e) =>
+          @loading false
+
+          @errorMessage "Error: " + e.message
 
     title: "💼 My Briefcase"
-    description: """		
-      Maintain access to your files across different machines. Publish		
-      effortlessly to the internet. Your briefcase holds all of your hopes		
-      and dreams in a magical cloud that is available anywhere there is an		
+    description: """
+      Maintain access to your files across different machines. Publish
+      effortlessly to the internet. Your briefcase holds all of your hopes
+      and dreams in a magical cloud that is available anywhere there is an
       internet connection.
     """
-    login: Observable ""
+    email: Observable ""
     password: Observable ""
+    confirmPassword: Observable ""
+    errorMessage: Observable ""
+  loginTemplate = LoginTemplate loginModel
 
-  loginTemplate.style.maxWidth = "400px"
+  loginTemplate.style.width = "400px"
 
   content loginTemplate
 
   Cognito.cachedUser()
   .then receivedCredentials
+  .catch ->
+    loginModel.loading false
 
   windowView = Window
     title: "My Briefcase"

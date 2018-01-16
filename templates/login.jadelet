@@ -1,10 +1,50 @@
 form(@submit)
+  - state = @state
+  - errorMessage = @errorMessage
+  - goBack = (e) ->
+    - e.preventDefault()
+    - errorMessage ""
+    - state "start"
+  - goToRegister = (e) ->
+    - e.preventDefault()
+    - state "register"
+  - goToLogin = (e) ->
+    - e.preventDefault()
+    - state "login"
+
   h1= @title
-  p= @description
-  label
-    h2 Login
-    input(value=@login)
-  label
-    h2 Password
-    input(type="password" value=@password)
-  button.full Sign In
+  - if @loading()
+    progress
+  - else
+    p.error= @errorMessage
+
+    - if @state() is "start"
+      p= @description
+      button.full(click=goToLogin) Login
+      button.full(click=goToRegister) Register
+    - else if @state() is "register"
+      button.top-left(click=goBack) Back
+      label
+        h2 Email
+        input(name="email" value=@email)
+      label
+        h2 Password
+        input(type="password" name="password" value=@password)
+      label
+        h2 Confirm Password
+        input(type="password" name="confirm" value=@confirmPassword)
+  
+      button.full Register
+    - else if @state() is "confirm"
+      p A confirmation email has been sent to your address, please follow the confirmation link!
+      button.full(click=goToLogin) Next
+    - else
+      button.top-left(click=goBack) Back
+      label
+        h2 Email or Username
+        input(name="email" value=@email)
+      label
+        h2 Password
+        input(type="password" name="password" value=@password)
+  
+      button.full Sign In

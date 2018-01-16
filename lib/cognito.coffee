@@ -53,12 +53,12 @@ module.exports = ->
   self =
     signUp: (username, password, attributes) ->
       attributeList = mapAttributes(attributes)
-  
+
       new Promise (resolve, reject) ->
         userPool.signUp username, password, attributeList, null, (err, result) ->
           if err
             return reject(err)
-  
+
           cognitoUser = result.user
           console.log('user name is ' + cognitoUser.getUsername())
 
@@ -69,41 +69,41 @@ module.exports = ->
       authenticationData =
         Username : username
         Password : password
-  
+
       authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData)
-  
+
       userData =
         Username : username
         Pool : userPool
-  
+
       cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData)
-  
+
       new Promise (resolve, reject) ->
         cognitoUser.authenticateUser authenticationDetails,
           onSuccess: (session) ->
             configureAWSFor session, resolve, reject
           onFailure: reject
-  
+
     cachedUser: ->
       new Promise (resolve, reject) ->
         cognitoUser = userPool.getCurrentUser()
-  
+
         if cognitoUser
           cognitoUser.getSession (err, session) ->
             if err
               reject err
               return
-  
+
             configureAWSFor(session, resolve, reject)
         else
           reject new Error "No cached user"
-  
+
     logout: ->
       Object.keys(localStorage).filter (key) ->
         key.match /^CognitoIdentityServiceProvider/
       .forEach (key) ->
         delete localStorage[key]
-  
+
     # Redirect to FB Login URL
     fbAuth: ->
       fbAppId = "1259742007505134"
@@ -111,5 +111,5 @@ module.exports = ->
       redirectURI = "https://whimsy.space"
       scope = "public_profile,email"
       window.location = "https://www.facebook.com/v2.11/dialog/oauth?client_id=#{fbAppId}&redirect_uri=#{redirectURI}&scope=#{scope}"
-  
+
       # This gets me back to the page with a code, but how do I use the code to get the Cognito User Pool user with it??????

@@ -41,32 +41,32 @@ module.exports = (id, bucket, refreshCredentials) ->
 
   uploadToS3 = (bucket, key, file, options={}) ->
     {cacheControl} = options
-  
+
     cacheControl ?= 0
-  
+
     # Optimistically Cache
     localCache[key] = file
-  
+
     pinvoke bucket, "putObject",
       Key: key
       ContentType: file.type
       Body: file
       CacheControl: "max-age=#{cacheControl}"
-  
+
   getRemote = (bucket, key) ->
     cachedItem = localCache[key]
-  
+
     if cachedItem
       if cachedItem instanceof Blob
         return Promise.resolve(cachedItem)
       else
         return Promise.reject(cachedItem)
-  
+
     pinvoke bucket, "getObject",
       Key: key
     .then (data) ->
       {Body, ContentType} = data
-  
+
       new Blob [Body],
         type: ContentType
     .then (data) ->
@@ -75,17 +75,17 @@ module.exports = (id, bucket, refreshCredentials) ->
       # Cache Not Founds too, since that's often what is slow
       localCache[key] = e
       throw e
-  
+
   deleteFromS3 = (bucket, key) ->
     localCache[key] = new Error "Not Found"
-  
+
     pinvoke bucket, "deleteObject",
       Key: key
-  
+
   list = (bucket, id, dir) ->
     unless startsWith dir, delimiter
       dir = "#{delimiter}#{dir}"
-  
+
     unless endsWith dir, delimiter
       dir = "#{dir}#{delimiter}"
 
@@ -109,14 +109,14 @@ module.exports = (id, bucket, refreshCredentials) ->
       Key: fileEntry.remotePath
     .then (result) ->
       fileEntry.type = result.ContentType
-  
+
       fileEntry
-  
+
   fetchMeta = (entry, bucket) ->
     Promise.resolve()
     .then ->
       return entry if entry.folder
-  
+
       fetchFileMeta entry, bucket
 
   notify = (eventType, path) ->
@@ -129,18 +129,18 @@ module.exports = (id, bucket, refreshCredentials) ->
     path: path.replace(id, "")
     relativePath: path.replace(prefix, "")
     remotePath: path
-  
+
   FileEntry = (object, id, prefix, bucket) ->
     path = object.Key
-  
+
     entry =
       path: path.replace(id, "")
       relativePath: path.replace(prefix, "")
       remotePath: path
       size: object.Size
-  
+
     entry.blob = BlobSham(entry, bucket)
-  
+
     return entry
 
   BlobSham = (entry, bucket) ->

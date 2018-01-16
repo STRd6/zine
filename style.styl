@@ -38,6 +38,49 @@ comment
 menu
   font-size: 1rem
 
+button.top-left
+  left: 1em
+  position: absolute
+  top: 1em
+
+button.full
+  display: block
+  font-size: 2em
+  margin-bottom: 0.5em
+  width: 100%
+
+form
+  > h1
+    margin-bottom: 0.5em
+
+  > p
+    text-align: justify
+
+    &.error
+      color: #E00
+      background-color: #EEE
+      border: 1px solid
+      font-weight: bold
+      font-size: 1.25em
+      padding: 1.25em
+      text-align: initial
+
+      &:empty
+        display: none
+
+  > progress
+    width: 100%
+
+  > label
+    display: block
+    margin-bottom: 1em
+
+    > h2
+      margin: 0
+
+    > input
+      width: 100%
+
 body.drag-active iframe
   pointer-events: none
 

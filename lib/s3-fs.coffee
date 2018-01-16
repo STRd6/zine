@@ -1,12 +1,7 @@
 Bindable = require "bindable"
 Model = require "model"
 
-{pinvoke, startsWith, endsWith} = require "../util"
-
 delimiter = "/"
-
-# NOTE: Not scoped for multi-bucket yet
-localCache = {}
 
 status = (response) ->
   if response.status >= 200 && response.status < 300
@@ -20,77 +15,144 @@ json = (response) ->
 blob = (response) ->
   response.blob()
 
-uploadToS3 = (bucket, key, file, options={}) ->
-  {cacheControl} = options
+module.exports = (id, bucket, refreshCredentials) ->
+  {pinvoke, startsWith, endsWith} = require "../util"
 
-  cacheControl ?= 0
+  refreshCredentials ?= -> Promise.reject new Error "No method given to refresh credentials automatically"
+  refreshCredentialsPromise = Promise.resolve()
 
-  # Optimistically Cache
-  localCache[key] = file
+  do (oldPromiseInvoke=pinvoke) ->
+    pinvoke = (args...) ->
+      # Guard for expired credentials
+      refreshCredentialsPromise.then ->
+        oldPromiseInvoke.apply(null, args)
+      .catch (e) ->
+        if e.code is "CredentialsError"
+          console.info "Refreshing credentials after CredentialsError", e
+          refreshCredentialsPromise = refreshCredentials()
 
-  pinvoke bucket, "putObject",
-    Key: key
-    ContentType: file.type
-    Body: file
-    CacheControl: "max-age=#{cacheControl}"
+          refreshCredentialsPromise.then ->
+            # Retry calls after refreshing expired credentials
+            oldPromiseInvoke.apply(null, args)
+        else
+          throw e
 
-getRemote = (bucket, key) ->
-  cachedItem = localCache[key]
+  localCache = {}
 
-  if cachedItem
-    if cachedItem instanceof Blob
-      return Promise.resolve(cachedItem)
-    else
-      return Promise.reject(cachedItem)
+  uploadToS3 = (bucket, key, file, options={}) ->
+    {cacheControl} = options
 
-  pinvoke bucket, "getObject",
-    Key: key
-  .then (data) ->
-    {Body, ContentType} = data
+    cacheControl ?= 0
 
-    new Blob [Body],
-      type: ContentType
-  .then (data) ->
-    localCache[key] = data
-  .catch (e) ->
-    # Cache Not Founds too, since that's often what is slow
-    localCache[key] = e
-    throw e
+    # Optimistically Cache
+    localCache[key] = file
 
-deleteFromS3 = (bucket, key) ->
-  localCache[key] = new Error "Not Found"
+    pinvoke bucket, "putObject",
+      Key: key
+      ContentType: file.type
+      Body: file
+      CacheControl: "max-age=#{cacheControl}"
 
-  pinvoke bucket, "deleteObject",
-    Key: key
+  getRemote = (bucket, key) ->
+    cachedItem = localCache[key]
 
-list = (bucket, id, dir) ->
-  unless startsWith dir, delimiter
-    dir = "#{delimiter}#{dir}"
+    if cachedItem
+      if cachedItem instanceof Blob
+        return Promise.resolve(cachedItem)
+      else
+        return Promise.reject(cachedItem)
 
-  unless endsWith dir, delimiter
-    dir = "#{dir}#{delimiter}"
+    pinvoke bucket, "getObject",
+      Key: key
+    .then (data) ->
+      {Body, ContentType} = data
 
-  prefix = "#{id}#{dir}"
+      new Blob [Body],
+        type: ContentType
+    .then (data) ->
+      localCache[key] = data
+    .catch (e) ->
+      # Cache Not Founds too, since that's often what is slow
+      localCache[key] = e
+      throw e
 
-  pinvoke bucket, "listObjects",
-    Prefix: prefix
-    Delimiter: delimiter
-  .then (result) ->
-    results = result.CommonPrefixes.map (p) ->
-      FolderEntry p.Prefix, id, prefix
-    .concat result.Contents.map (o) ->
-      FileEntry o, id, prefix, bucket
-    .map (entry) ->
-      fetchMeta(entry, bucket)
+  deleteFromS3 = (bucket, key) ->
+    localCache[key] = new Error "Not Found"
 
-    Promise.all results
+    pinvoke bucket, "deleteObject",
+      Key: key
 
-module.exports = (id, bucket) ->
+  list = (bucket, id, dir) ->
+    unless startsWith dir, delimiter
+      dir = "#{delimiter}#{dir}"
+
+    unless endsWith dir, delimiter
+      dir = "#{dir}#{delimiter}"
+
+    prefix = "#{id}#{dir}"
+
+    pinvoke bucket, "listObjects",
+      Prefix: prefix
+      Delimiter: delimiter
+    .then (result) ->
+      results = result.CommonPrefixes.map (p) ->
+        FolderEntry p.Prefix, id, prefix
+      .concat result.Contents.map (o) ->
+        FileEntry o, id, prefix, bucket
+      .map (entry) ->
+        fetchMeta(entry, bucket)
+
+      Promise.all results
+
+  fetchFileMeta = (fileEntry, bucket) ->
+    pinvoke bucket, "headObject",
+      Key: fileEntry.remotePath
+    .then (result) ->
+      fileEntry.type = result.ContentType
+
+      fileEntry
+
+  fetchMeta = (entry, bucket) ->
+    Promise.resolve()
+    .then ->
+      return entry if entry.folder
+
+      fetchFileMeta entry, bucket
 
   notify = (eventType, path) ->
     (result) ->
       self.trigger eventType, path
       return result
+
+  FolderEntry = (path, id, prefix) ->
+    folder: true
+    path: path.replace(id, "")
+    relativePath: path.replace(prefix, "")
+    remotePath: path
+
+  FileEntry = (object, id, prefix, bucket) ->
+    path = object.Key
+
+    entry =
+      path: path.replace(id, "")
+      relativePath: path.replace(prefix, "")
+      remotePath: path
+      size: object.Size
+
+    entry.blob = BlobSham(entry, bucket)
+
+    return entry
+
+  BlobSham = (entry, bucket) ->
+    remotePath = entry.remotePath
+
+    getURL: ->
+      getRemote(bucket, remotePath)
+      .then URL.createObjectURL
+    readAsText: ->
+      getRemote(bucket, remotePath)
+      .then (blob) ->
+        blob.readAsText()
 
   self = Model()
   .include Bindable
@@ -124,48 +186,3 @@ module.exports = (id, bucket) ->
 
     list: (folderPath="/") ->
       list bucket, id, folderPath
-
-fetchFileMeta = (fileEntry, bucket) ->
-  pinvoke bucket, "headObject",
-    Key: fileEntry.remotePath
-  .then (result) ->
-    fileEntry.type = result.ContentType
-
-    fileEntry
-
-fetchMeta = (entry, bucket) ->
-  Promise.resolve()
-  .then ->
-    return entry if entry.folder
-
-    fetchFileMeta entry, bucket
-
-FolderEntry = (path, id, prefix) ->
-  folder: true
-  path: path.replace(id, "")
-  relativePath: path.replace(prefix, "")
-  remotePath: path
-
-FileEntry = (object, id, prefix, bucket) ->
-  path = object.Key
-
-  entry =
-    path: path.replace(id, "")
-    relativePath: path.replace(prefix, "")
-    remotePath: path
-    size: object.Size
-
-  entry.blob = BlobSham(entry, bucket)
-
-  return entry
-
-BlobSham = (entry, bucket) ->
-  remotePath = entry.remotePath
-
-  getURL: ->
-    getRemote(bucket, remotePath)
-    .then URL.createObjectURL
-  readAsText: ->
-    getRemote(bucket, remotePath)
-    .then (blob) ->
-      blob.readAsText()

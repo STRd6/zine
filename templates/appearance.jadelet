@@ -1,0 +1,4 @@
+form
+  label
+    h2 Background
+    textarea(@value style="width: 640px; height: 480px;")

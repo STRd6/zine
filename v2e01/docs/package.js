@@ -655,7 +655,7 @@
     },
     "templates/appearance.jadelet": {
       "path": "templates/appearance.jadelet",
-      "content": "form\n  label\n    h2 Background\n    textarea(@value style=\"width: 640px; height: 480px;\")\n",
+      "content": "form\n  label\n    h2 Appearance\n    textarea(@value style=\"width: 640px; height: 480px;\")\n",
       "mode": "100644"
     }
   },
@@ -1032,7 +1032,7 @@
     },
     "templates/appearance": {
       "path": "templates/appearance",
-      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/jadelet-runtime\")(this);\n    __root.buffer(__root.element(\"form\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"label\", this, {}, function(__root) {\n        __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n          __root.buffer(\"Background\\n\");\n        }));\n        __root.buffer(__root.element(\"textarea\", this, {\n          style: [\"width: 640px; height: 480px;\"],\n          \"value\": this.value\n        }, function(__root) {}));\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
+      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var __root;\n    __root = require(\"/lib/jadelet-runtime\")(this);\n    __root.buffer(__root.element(\"form\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"label\", this, {}, function(__root) {\n        __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n          __root.buffer(\"Appearance\\n\");\n        }));\n        __root.buffer(__root.element(\"textarea\", this, {\n          style: [\"width: 640px; height: 480px;\"],\n          \"value\": this.value\n        }, function(__root) {}));\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
       "type": "blob"
     },
     "lib/jadelet-runtime": {

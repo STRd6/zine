@@ -138,6 +138,11 @@ achievementData = [{
   icon: "📈"
   group: "Issue 11"
   description: "Value investing has proven to be a successful investment strategy."
+}, {
+  text: "Getting Hairy"
+  icon: "👣"
+  group: "Issue 12"
+  description: "Individuals claim to have seen Bigfoot."
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

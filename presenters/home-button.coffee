@@ -17,6 +17,8 @@ module.exports = (system) ->
       📱 [A]ppearance
       💯 [C]heevos
     💼 [M]y Briefcase -> briefcase
+    🖳 danielx.net -> danielxNet
+    ❔ [A]bout
     -
     🔌 S[h]ut Down
   """
@@ -38,12 +40,19 @@ module.exports = (system) ->
   document.head.appendChild customStyle
 
   handlers = new Proxy {
+    about: ->
+      system.UI.Modal.alert "Ha! You think the secrets of the universe will reveal themselves so easily?"
     appearance: ->
       system.UI.Modal.show AppearanceTemplate appearanceModel
     briefcase: ->
       system.openBriefcase()
     cheevos: ->
       launch AchievementStatus
+    danielxNet: ->
+      system.launchAppByAppData
+        title: "danielx.net"
+        icon: "🖳"
+        src: "https://danielx.net"
     shutDown: ->
       Achievement.unlock "Shut Down"
       system.UI.Modal.alert "You'll never shut us down!"

@@ -251,6 +251,16 @@ module.exports = (I, self) ->
     script: "system.launchIssue('2017-10')"
     category: "Issues"
   }, {
+    name: "Do you dab"
+    icon: "💃"
+    script: "system.launchIssue('2017-11')"
+    category: "Issues"
+  }, {
+    name: "A Very Paranormal X-Mas"
+    icon: "👽"
+    script: "system.launchIssue('2017-12')"
+    category: "Issues"
+  }, {
     name: "Bionic Hotdog"
     category: "Games"
     src: "https://danielx.net/grappl3r/"

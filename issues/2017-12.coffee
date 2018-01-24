@@ -52,6 +52,7 @@ module.exports = ->
       launch AchievementStatus
 
     betsyB: ->
+      system.Achievement.unlock "Getting Hairy"
       system.openPath "issue-12/Betsy B.pdf"
 
     myBriefcase: ->

@@ -87,30 +87,6 @@ module.exports = (I, self) ->
       file.type.match /^audio\//
     fn: openWith(AudioBro)
   }, {
-    name: "zine1.exe"
-    filter: (file) ->
-      file.path.match /zine1\.exe$/
-    fn: ->
-      require("../issues/2016-12")()
-  }, {
-    name: "zine2.exe"
-    filter: (file) ->
-      file.path.match /zine2\.exe$/
-    fn: ->
-      require("../issues/2017-02")()
-  }, {
-    name: "zine3.exe"
-    filter: (file) ->
-      file.path.match /zine3\.exe$/
-    fn: ->
-      require("../issues/2017-03")()
-  }, {
-    name: "zine4.exe"
-    filter: (file) ->
-      file.path.match /zine4\.exe$/
-    fn: ->
-      require("../issues/2017-04")()
-  }, {
     name: "feedback.exe"
     filter: (file) ->
       file.path.match /feedback\.exe$/

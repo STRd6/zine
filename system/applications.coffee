@@ -75,7 +75,12 @@ module.exports = (I, self) ->
       document.body.appendChild app.element
 
     launchAppByAppData: (datum, path) ->
-      {name, icon, width, height, src, sandbox, title, allow} = datum
+      {name, icon, width, height, src, sandbox, script, title, allow} = datum
+
+      if script
+        execute script, {},
+          system: system
+        return
 
       if specialApps[name]
         app = specialApps[name]()
@@ -101,11 +106,7 @@ module.exports = (I, self) ->
         datum.name is name
 
       if datum
-        {script} = datum
-        if script
-          execute script, {}, system: system
-        else
-          self.launchAppByAppData(datum, path)
+        self.launchAppByAppData(datum, path)
 
     initAppSettings: ->
       systemApps.forEach self.installAppHandler

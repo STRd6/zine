@@ -1,6 +1,7 @@
 MyBriefcase = require "../apps/my-briefcase"
 
 AppDrop = require "../lib/app-drop"
+IFrameApp = require "../lib/iframe-app"
 {endsWith, execute} = require "../util"
 
 {Observable} = require "ui"
@@ -14,7 +15,6 @@ module.exports = (I, self) ->
   self.extend
     appData: Observable []
     runningApplications: Observable []
-    iframeApp: require "../lib/iframe-app"
 
     openBriefcase: ->
       app = MyBriefcase()
@@ -78,7 +78,7 @@ module.exports = (I, self) ->
       if specialApps[name]
         app = specialApps[name]()
       else
-        app = self.iframeApp
+        app = IFrameApp
           allow: allow
           title: name or title
           icon: icon

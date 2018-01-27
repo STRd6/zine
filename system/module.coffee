@@ -2,8 +2,6 @@
 #
 # Depends on having self.readFile defined
 
-IFrameApp = require "../lib/iframe-app"
-
 {
   absolutizePath
   evalCSON
@@ -379,14 +377,10 @@ module.exports = (I, self) ->
         type: "text/html; charset=utf-8"
       src = URL.createObjectURL blob
 
-      app = IFrameApp
+      self.launchAppByAppData
         src: src
         title: pkg.config?.title
         sandbox: "allow-scripts allow-forms"
-
-      self.attachApplication app
-
-      return app
 
     # Handle requiring with or without explicit extension
     #     require "a"

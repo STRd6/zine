@@ -42,12 +42,6 @@ module.exports = (I, self) ->
           sandbox: false # Need Chrome's pdf plugin to view pdfs
           title: file.path
   }, {
-    name: "feedback.exe" # TODO: Don't hardcode feedback.exe handler, have the exe itself "do the right thing"
-    filter: (file) ->
-      file.path.match /feedback\.exe$/
-    fn: ->
-      require("../feedback")()
-  }, {
     name: "My Briefcase"
     filter: ({path}) ->
       path.match /My Briefcase$/

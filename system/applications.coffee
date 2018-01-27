@@ -177,6 +177,7 @@ module.exports = (I, self) ->
       "json"
       "md"
       "styl"
+      "exe"
     ]
     achievement: "Notepad.exe"
   }, {

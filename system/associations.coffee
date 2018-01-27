@@ -12,9 +12,16 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.type is "application/javascript" or
       file.path.match(/\.js$/) or
-      file.path.match(/\.coffee$/)
+      file.path.match(/\.coffee$/) or
+      file.path.match(/\.exe$/)
     fn: (file) ->
-      self.executeInIFrame(file.path)
+      if file.path.match(/\.exe$/)
+        system.readFile(file.path)
+        .then (blob) ->
+          blob.readAsJSON()
+        .then self.launchAppByAppData
+      else
+        self.executeInIFrame(file.path)
   }, {
     name: "Exec"
     filter: (file) ->
@@ -28,13 +35,12 @@ module.exports = (I, self) ->
     filter: (file) ->
       file.path.match /\.pdf$/
     fn: (file) ->
-      file.getURL()
+      file.blob.getURL()
       .then (url) ->
-        app = system.iframeApp
+        self.launchAppByAppData
           src: url
           sandbox: false # Need Chrome's pdf plugin to view pdfs
           title: file.path
-        system.attachApplication app
   }, {
     name: "feedback.exe" # TODO: Don't hardcode feedback.exe handler, have the exe itself "do the right thing"
     filter: (file) ->

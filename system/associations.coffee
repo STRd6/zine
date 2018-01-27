@@ -17,14 +17,6 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.pathAsApp file.path
   }, {
-    name: "Exec"
-    filter: (file) ->
-      file.type is "application/javascript" or
-      file.path.match(/\.js$/) or
-      file.path.match(/\.coffee$/)
-    fn: (file) ->
-      self.execute(file.path)
-  }, {
     name: "PDF Viewer"
     filter: (file) ->
       file.path.match /\.pdf$/

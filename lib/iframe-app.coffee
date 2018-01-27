@@ -4,8 +4,6 @@ use to interact with it.
 
 The apps can be sandboxed by passing in the sandbox option.
 
-Apps can be loaded from a json package or from a source url.
-
 Apps are communicated with via `postMessage`
 
 The iframed app is responsible for sending the `ready` message when it is in a
@@ -23,7 +21,7 @@ ObservableObject = require "./observable-object"
 module.exports = (opts={}) ->
   {Window, Modal} = system.UI
 
-  {achievement, allow, height, menuBar, src, title, width, sandbox, pkg, packageOptions, icon:iconEmoji} = opts
+  {achievement, allow, height, menuBar, src, title, width, sandbox, packageOptions, icon:iconEmoji} = opts
 
   # TODO: Trigger achievement from inside iframe :|
   # Or maybe from a watcher on system level app events...
@@ -43,11 +41,6 @@ module.exports = (opts={}) ->
 
   if src
     frame.src = src
-  else if pkg
-    html = system.htmlForPackage(pkg, packageOptions)
-    blob = new Blob [html],
-      type: "text/html; charset=utf-8"
-    frame.src = URL.createObjectURL blob
 
   # Keep track of waiting for child window to load, all remote invocations are
   # queued behind a promise until the child has loaded

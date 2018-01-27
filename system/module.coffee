@@ -367,15 +367,21 @@ module.exports = (I, self) ->
         self.executePackageInIFrame pkg
 
     # Execute a package in the context of an iframe
+    # The package is converted into a blob url containing an html source that
+    # will execute the package.
     executePackageInIFrame: (pkg) ->
+      html = system.htmlForPackage pkg,
+        script: """
+          var ZINEOS = #{JSON.stringify system.version()};
+          #{PACKAGE.distribution["lib/system-client"].content};
+        """
+      blob = new Blob [html],
+        type: "text/html; charset=utf-8"
+      src = URL.createObjectURL blob
+
       app = IFrameApp
-        pkg: pkg
+        src: src
         title: pkg.config?.title
-        packageOptions:
-          script: """
-            var ZINEOS = #{JSON.stringify system.version()};
-            #{PACKAGE.distribution["lib/system-client"].content};
-          """
         sandbox: "allow-scripts allow-forms"
 
       self.attachApplication app

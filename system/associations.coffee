@@ -1,20 +1,7 @@
 # TODO: Move handlers out
-AudioBro = require "../apps/audio-bro"
 Explorer = require "../apps/explorer"
 
 PkgFS = require "../lib/pkg-fs"
-
-openWith = (App) ->
-  (file) ->
-    app = App()
-
-    if file
-      {path} = file
-      system.readFile path
-      .then (blob) ->
-        app.send "loadFile", blob, path
-
-    system.attachApplication(app)
 
 module.exports = (I, self) ->
   # Handlers use type and contents path info to do the right thing
@@ -37,39 +24,6 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.execute(file.path)
   }, {
-    name: "Explore"
-    filter: (file) ->
-      file.path.match(/💾$/) or
-      file.path.match(/\.json$/)
-    fn: (file) ->
-      system.readFile(file.path)
-      .then (blob) ->
-        blob.readAsJSON()
-      .then (pkg) ->
-        mountPath = file.path + "/"
-        fs = PkgFS(pkg, file.path)
-        system.fs.mount mountPath, fs
-
-        # TODO: Can we make the explorer less specialized here?
-        element = Explorer
-          path: mountPath
-        windowView = system.UI.Window
-          title: mountPath
-          content: element
-          menuBar: null
-          width: 640
-          height: 480
-          iconEmoji: "📂"
-
-        document.body.appendChild windowView.element
-  },{
-    name: "Run Link"
-    filter: (file) ->
-      file.path.match(/🔗$|\.link$/)
-    fn: (file) ->
-      # TODO: Rename?
-      system.execPathWithFile file.path, null
-  }, {
     name: "PDF Viewer"
     filter: (file) ->
       file.path.match /\.pdf$/
@@ -82,12 +36,7 @@ module.exports = (I, self) ->
           title: file.path
         system.attachApplication app
   }, {
-    name: "Audio Bro"
-    filter: (file) ->
-      file.type.match /^audio\//
-    fn: openWith(AudioBro)
-  }, {
-    name: "feedback.exe"
+    name: "feedback.exe" # TODO: Don't hardcode feedback.exe handler, have the exe itself "do the right thing"
     filter: (file) ->
       file.path.match /feedback\.exe$/
     fn: ->
@@ -98,13 +47,6 @@ module.exports = (I, self) ->
       path.match /My Briefcase$/
     fn: ->
       system.openBriefcase()
-  },{
-    name: "Run Application"
-    filter: (file) ->
-      file.type is "application/json" and
-      file.path.match(/\.exe$/)
-    fn: (file) ->
-      system.execPathWithFile file.path, null
   }]
 
   handle = (file) ->

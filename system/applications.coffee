@@ -7,6 +7,7 @@ AppDrop = require "../lib/app-drop"
 
 module.exports = (I, self) ->
   specialApps =
+    "Audio Bro": require "../apps/audio-bro"
     "Image Viewer": require "../apps/filter"
     "Videomaster": require "../apps/video"
 
@@ -24,20 +25,7 @@ module.exports = (I, self) ->
       .then self.open
 
     pathAsApp: (path) ->
-      if path.match(/\.exe$/)
-        self.readFile path
-        .then (blob) ->
-          blob.readAsJSON()
-        .then (data) ->
-          self.iframeApp data
-      else if path.match(/🔗$|\.link$/)
-        self.readFile path
-        .then (blob) ->
-          blob.readAsText()
-        .then self.evalCSON
-        .then (data) ->
-          self.iframeApp data
-      else if path.match(/\.js$|\.coffee$/)
+      if path.match(/\.js$|\.coffee$/)
         self.executeInIFrame(path)
       else
         Promise.reject new Error "Could not launch #{path}"
@@ -74,6 +62,11 @@ module.exports = (I, self) ->
 
       document.body.appendChild app.element
 
+    ###
+    Apps can come in many types based on what attributes are present.
+      script: script that executes inline
+      src: iframe apps
+    ###
     launchAppByAppData: (datum, path) ->
       {name, icon, width, height, src, sandbox, script, title, allow} = datum
 
@@ -154,6 +147,7 @@ module.exports = (I, self) ->
     name: "Chateau"
     icon: "🍷"
     src: "https://danielx.net/chateau/"
+    sandbox: false
     width: 960
     height: 540
   }, {
@@ -198,6 +192,10 @@ module.exports = (I, self) ->
     src: "https://danielx.whimsy.space/danielx.net/sound-recorder/"
     allow: "microphone"
     sandbox: false
+  }, {
+    name: "Audio Bro"
+    icon: "🎶"
+    associations: ["mime:^audio/"]
   }, {
     name: "Image Viewer"
     icon: "👓"

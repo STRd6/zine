@@ -25,7 +25,12 @@ module.exports = (I, self) ->
       .then self.open
 
     pathAsApp: (path) ->
-      if path.match(/\.js$|\.coffee$/)
+      if path.match(/\.exe$/)
+        self.readFile(path)
+        .then (blob) ->
+          blob.readAsJSON()
+        .then self.launchAppByAppData
+      else if path.match(/\.js$|\.coffee$/)
         self.executeInIFrame(path)
       else
         Promise.reject new Error "Could not launch #{path}"

@@ -15,13 +15,7 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/) or
       file.path.match(/\.exe$/)
     fn: (file) ->
-      if file.path.match(/\.exe$/)
-        system.readFile(file.path)
-        .then (blob) ->
-          blob.readAsJSON()
-        .then self.launchAppByAppData
-      else
-        self.executeInIFrame(file.path)
+      self.pathAsApp file.path
   }, {
     name: "Exec"
     filter: (file) ->

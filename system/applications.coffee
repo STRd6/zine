@@ -100,6 +100,8 @@ module.exports = (I, self) ->
 
       if datum
         self.launchAppByAppData(datum, path)
+      else
+        throw new Error "No app found named '#{name}'"
 
     initAppSettings: ->
       systemApps.forEach self.installAppHandler

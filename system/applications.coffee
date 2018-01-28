@@ -7,6 +7,46 @@ IFrameApp = require "../lib/iframe-app"
 {Observable} = require "ui"
 
 module.exports = (I, self) ->
+  # Handlers use type and contents path info to do the right thing
+  # The first handler that matches is the default handler, the rest are available
+  # from context menu
+  handlers = [{
+    name: "Run"
+    filter: (file) ->
+      file.type is "application/javascript" or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.coffee$/) or
+      file.path.match(/\.exe$/)
+    fn: (file) ->
+      self.pathAsApp file.path
+  }, {
+    name: "PDF Viewer"
+    filter: (file) ->
+      file.path.match /\.pdf$/
+    fn: (file) ->
+      file.blob.getURL()
+      .then (url) ->
+        self.launchAppByAppData
+          src: url
+          sandbox: false # Need Chrome's pdf plugin to view pdfs
+          title: file.path
+  }, {
+    name: "My Briefcase"
+    filter: ({path}) ->
+      path.match /My Briefcase$/
+    fn: ->
+      system.openBriefcase()
+  }]
+
+  handle = (file) ->
+    handler = handlers.find ({filter}) ->
+      filter(file)
+
+    if handler
+      handler.fn(file)
+    else
+      throw new Error "No handler for files of type #{file.type}"
+  
   specialApps =
     "Audio Bro": require "../apps/audio-bro"
     "Image Viewer": require "../apps/filter"
@@ -15,6 +55,32 @@ module.exports = (I, self) ->
   self.extend
     appData: Observable []
     runningApplications: Observable []
+    
+    # Open a file
+    open: (file) ->
+      handle(file)
+
+    # Return a list of all handlers that can be used for this file
+    openersFor: (file) ->
+      handlers.filter (handler) ->
+        handler.filter(file)
+
+    # Add a handler to the list of handlers, position zero is highest priority
+    # Default is lowest priority
+    registerHandler: (handler, position) ->
+      position ?= handlers.length
+      handlers.splice(position, 0, handler)
+
+    removeHandler: (handler) ->
+      position = handlers.indexOf(handler)
+      if position >= 0
+        handlers.splice(position, 1)
+        return handler
+
+      return
+
+    handlers: ->
+      handlers.slice()
 
     openBriefcase: ->
       app = MyBriefcase()
@@ -166,16 +232,12 @@ module.exports = (I, self) ->
     height: 480
     achievement: "Pixel perfect"
   }, {
-    name: "Notepad"
-    icon: "📝"
-    src: "https://danielx.whimsy.space/danielx.net/notepad/"
-    associations: ["mime:^text/", "mime:^application/javascript"]
-    achievement: "Notepad.exe"
-  }, {
     name: "Code Editor"
     icon: "☢️"
     src: "https://danielx.whimsy.space/danielx.net/code/"
     associations: [
+      "mime:^application/javascript"
+      "mime:json$"
       "coffee"
       "cson"
       "html"
@@ -186,6 +248,12 @@ module.exports = (I, self) ->
       "styl"
       "exe"
     ]
+    achievement: "Notepad.exe"
+  }, {
+    name: "Notepad"
+    icon: "📝"
+    src: "https://danielx.whimsy.space/danielx.net/notepad/"
+    associations: ["mime:^text/", "mime:^application/javascript"]
     achievement: "Notepad.exe"
   }, {
     name: "Progenitor"

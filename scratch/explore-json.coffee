@@ -1,3 +1,6 @@
+Explorer = require "../apps/explorer"
+PkgFS = require "../lib/pkg-fs"
+
 {
   name: "Explore"
   filter: (file) ->

@@ -2,7 +2,6 @@ Ajax = require "ajax"
 Model = require "model"
 Achievement = require "./system/achievement"
 Applications = require "./system/applications"
-Associations = require "./system/associations"
 FS = require "./system/fs"
 Mimes = require "./system/mimes"
 SystemModule = require "./system/module"
@@ -16,7 +15,6 @@ module.exports = (I={}, self=Model(I)) ->
   self.include FS, # Include FS first
     Achievement,
     Applications,
-    Associations,
     Mimes,
     SystemModule,
     Template,

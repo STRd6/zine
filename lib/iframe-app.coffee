@@ -18,10 +18,15 @@ ObservableObject = require "./observable-object"
 
 {version} = require "../pixie"
 
+{absolutizePath, isAbsolutePath} = require "../util"
+
 module.exports = (opts={}) ->
   {Window, Modal} = system.UI
 
-  {achievement, allow, height, menuBar, src, title, width, sandbox, icon:iconEmoji} = opts
+  {achievement, allow, height, menuBar, src, title, width, sandbox, icon:iconEmoji, env} = opts
+
+  env ?=
+    pwd: "/yolo/"
 
   # TODO: Trigger achievement from inside iframe :|
   # Or maybe from a watcher on system level app events...
@@ -63,10 +68,41 @@ module.exports = (opts={}) ->
 
     ZineOS:
       version: version
-      env: {} # TODO: Can pass env vars here
+      env: env
       args: {} # TODO: Can pass args here, args can be an object
 
   # TODO: Set menu bar from within app
+  
+  # TODO: embalm objects for passing into the afterlife (into iframes)
+  embalm = (x) -> x
+  # TODO: revitalize embalmed objects that are received
+  # these can be used to link observables, or to have proxy objects
+  # that remotely invoke their methods and return promises
+  revitalize = (x) -> x
+
+  resolvePath = (path) ->
+    if isAbsolutePath(path)
+      absolutizePath "/", path
+    else
+      absolutizePath env.pwd, path
+
+  systemProxy = new Proxy
+    readFile: (path) ->
+      system.readFile(resolvePath(path))
+    writeFile: (path, blob) ->
+      system.writeFile(resolvePath(path), blob)
+    deleteFile: (path) ->
+      system.deleteFile(resolvePath(path))
+  ,
+    get: (target, method, receiver) ->
+      target[method] or
+      (args...) ->
+        fn = system[method]
+        if typeof fn is "function"
+          Promise.resolve(fn.apply(system, revitalize(args)))
+          .then embalm
+        else
+          throw new Error "system has no method '#{method}'"
 
   # This receives messages from the iframe and dispatches messages to the iframe
   # Apps within ZineOS can communicate to each other via the application object,
@@ -110,19 +146,7 @@ module.exports = (opts={}) ->
       # Add system method access to client iFrame
       # TODO: Security :P
       system: (method, args...) ->
-        # TODO: embalm objects for passing into the afterlife (into iframes)
-        embalm = (x) -> x
-        # TODO: revitalize embalmed objects that are received
-        # these can be used to link observables, or to have proxy objects
-        # that remotely invoke their methods and return promises
-        revitalize = (x) -> x
-
-        fn = system[method]
-        if typeof fn is "function"
-          Promise.resolve(fn.apply(system, revitalize(args)))
-          .then embalm
-        else
-          throw new Error "system has no method '#{method}'"
+        systemProxy[method](args...)
 
   application = Window
     title: title

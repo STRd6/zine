@@ -137,6 +137,7 @@ module.exports = (I, self) ->
     Apps can come in many types based on what attributes are present.
       script: script that executes inline
       src: iframe apps
+      name: a named system application
     ###
     launchAppByAppData: (datum, path) ->
       {name, icon, width, height, src, sandbox, script, title, allow} = datum

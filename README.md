@@ -63,3 +63,19 @@ unsaved work. (TODO)
 
 TODO: Add methods for binding/connecting observables.
 TODO: Add methods for connecting streams.
+
+System Interface
+----------------
+
+Apps should be able to read and write to the file system in a simple manner.
+
+    readFile: (path) ->
+
+    writeFile: (path, blob) ->
+
+    deleteFile: (path) ->
+
+The system provides easy ways to launch applications:
+
+    # TODO: Better name and arguments
+    launchAppByAppData: (data) ->

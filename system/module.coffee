@@ -4,6 +4,7 @@
 
 {
   absolutizePath
+  baseDirectory
   evalCSON
   fileSeparator
   normalizePath
@@ -359,15 +360,15 @@ module.exports = (I, self) ->
           if result.element
             document.body.appendChild result.element
 
-    executeInIFrame: (absolutePath) ->
+    executeInIFrame: (absolutePath, inputFile) ->
       self.packageProgram(absolutePath)
       .then (pkg) ->
-        self.executePackageInIFrame pkg
+        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputFile
 
     # Execute a package in the context of an iframe
     # The package is converted into a blob url containing an html source that
     # will execute the package.
-    executePackageInIFrame: (pkg) ->
+    executePackageInIFrame: (pkg, pwd="/", inputFile) ->
       html = system.htmlForPackage pkg,
         script: """
           var ZINEOS = #{JSON.stringify system.version()};
@@ -377,10 +378,14 @@ module.exports = (I, self) ->
         type: "text/html; charset=utf-8"
       src = URL.createObjectURL blob
 
-      self.launchAppByAppData
+      data =
         src: src
         title: pkg.config?.title
-        sandbox: "allow-scripts allow-forms"
+
+      self.launchAppByAppData data,
+        env:
+          pwd: pwd
+        inputFile: inputFile
 
     # Handle requiring with or without explicit extension
     #     require "a"

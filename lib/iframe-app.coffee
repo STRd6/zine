@@ -26,7 +26,7 @@ module.exports = (opts={}) ->
   {achievement, allow, height, menuBar, src, title, width, sandbox, icon:iconEmoji, env} = opts
 
   env ?=
-    pwd: "/yolo/"
+    pwd: "/"
 
   # TODO: Trigger achievement from inside iframe :|
   # Or maybe from a watcher on system level app events...
@@ -80,6 +80,8 @@ module.exports = (opts={}) ->
   # that remotely invoke their methods and return promises
   revitalize = (x) -> x
 
+  # We use the pwd as the base path for relative paths in the read/write/delete
+  # calls for file manipulation. Absolute paths are unchanged.
   resolvePath = (path) ->
     if isAbsolutePath(path)
       absolutizePath "/", path

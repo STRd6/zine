@@ -2,7 +2,11 @@ MyBriefcase = require "../apps/my-briefcase"
 
 AppDrop = require "../lib/app-drop"
 IFrameApp = require "../lib/iframe-app"
-{endsWith, execute} = require "../util"
+{
+  baseDirectory
+  endsWith
+  execute
+} = require "../util"
 
 {Observable} = require "ui"
 
@@ -90,27 +94,20 @@ module.exports = (I, self) ->
       self.readFile path
       .then self.open
 
-    pathAsApp: (path) ->
+    pathAsApp: (path, inputFile) ->
       if path.match(/\.exe$/)
         self.readFile(path)
         .then (blob) ->
           blob.readAsJSON()
-        .then self.launchAppByAppData
+        .then (data) ->
+          self.launchAppByAppData data,
+            inputFile: inputFile
+            env:
+              pwd: baseDirectory path
       else if path.match(/\.js$|\.coffee$/)
-        self.executeInIFrame(path)
+        self.executeInIFrame path, inputFile
       else
         Promise.reject new Error "Could not launch #{path}"
-
-    execPathWithFile: (path, file) ->
-      self.pathAsApp(path)
-      .then (app) ->
-        if file
-          {path} = file
-          self.readFile path
-          .then (blob) ->
-            app.send "loadFile", blob, path
-
-        self.attachApplication(app)
 
     # The final step in launching an application in the OS
     # This wires up event streams, drop events, adds the app to the list
@@ -139,8 +136,9 @@ module.exports = (I, self) ->
       src: iframe apps
       name: a named system application
     ###
-    launchAppByAppData: (datum, path) ->
+    launchAppByAppData: (datum, options={}) ->
       {name, icon, width, height, src, sandbox, script, title, allow} = datum
+      {inputPath, env} = options
 
       if script
         execute script, {},
@@ -152,6 +150,7 @@ module.exports = (I, self) ->
       else
         app = IFrameApp
           allow: allow
+          env: env
           title: name or title
           icon: icon
           width: width
@@ -159,10 +158,10 @@ module.exports = (I, self) ->
           sandbox: sandbox
           src: src
 
-      if path
-        self.readFile path
+      if inputPath
+        self.readFile inputPath
         .then (blob) ->
-          app.send "loadFile", blob, path
+          app.send "loadFile", blob, inputPath
 
       self.attachApplication app
 
@@ -171,7 +170,10 @@ module.exports = (I, self) ->
         datum.name is name
 
       if datum
-        self.launchAppByAppData(datum, path)
+        self.launchAppByAppData datum,
+          env:
+            pwd: baseDirectory path
+          inputPath: path
       else
         throw new Error "No app found named '#{name}'"
 

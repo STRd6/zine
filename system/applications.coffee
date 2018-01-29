@@ -373,6 +373,14 @@ module.exports = (I, self) ->
     src: "https://danielx.whimsy.space/apps/qfm/"
     width: 648
     height: 510
+  }, {
+    name: "Space Dolphin IV"
+    icon: "🐬"
+    category: "Games"
+    src: "https://projects.pixieengine.com/1439/"
+    width: 960 + 8
+    height: 640 + 27
+    achievement: "In space, nobody can hear you in space"
   }]
 
   return self

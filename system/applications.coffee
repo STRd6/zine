@@ -46,7 +46,7 @@ module.exports = (I, self) ->
       handler.fn(file)
     else
       throw new Error "No handler for files of type #{file.type}"
-  
+
   specialApps =
     "Audio Bro": require "../apps/audio-bro"
     "Image Viewer": require "../apps/filter"
@@ -55,7 +55,7 @@ module.exports = (I, self) ->
   self.extend
     appData: Observable []
     runningApplications: Observable []
-    
+
     # Open a file
     open: (file) ->
       handle(file)

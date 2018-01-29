@@ -2,10 +2,9 @@
 #
 # Depends on having self.readFile defined
 
-IFrameApp = require "../lib/iframe-app"
-
 {
   absolutizePath
+  baseDirectory
   evalCSON
   fileSeparator
   normalizePath
@@ -361,26 +360,32 @@ module.exports = (I, self) ->
           if result.element
             document.body.appendChild result.element
 
-    executeInIFrame: (absolutePath) ->
+    executeInIFrame: (absolutePath, inputFile) ->
       self.packageProgram(absolutePath)
       .then (pkg) ->
-        self.executePackageInIFrame pkg
+        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputFile
 
     # Execute a package in the context of an iframe
-    executePackageInIFrame: (pkg) ->
-      app = IFrameApp
-        pkg: pkg
+    # The package is converted into a blob url containing an html source that
+    # will execute the package.
+    executePackageInIFrame: (pkg, pwd="/", inputFile) ->
+      html = system.htmlForPackage pkg,
+        script: """
+          var ZINEOS = #{JSON.stringify system.version()};
+          #{PACKAGE.distribution["lib/system-client"].content};
+        """
+      blob = new Blob [html],
+        type: "text/html; charset=utf-8"
+      src = URL.createObjectURL blob
+
+      data =
+        src: src
         title: pkg.config?.title
-        packageOptions:
-          script: """
-            var ZINEOS = #{JSON.stringify system.version()};
-            #{PACKAGE.distribution["lib/system-client"].content};
-          """
-        sandbox: "allow-scripts allow-forms"
 
-      self.attachApplication app
-
-      return app
+      self.launchAppByAppData data,
+        env:
+          pwd: pwd
+        inputFile: inputFile
 
     # Handle requiring with or without explicit extension
     #     require "a"

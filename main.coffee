@@ -38,7 +38,15 @@ document.body.appendChild SiteURLTemplate()
 HomeButton = require "./presenters/home-button"
 document.body.appendChild HomeButton(system)
 
-system.writeFile "feedback.exe", new Blob [""], type: "application/exe"
+system.writeFile "feedback.exe", new Blob [
+  JSON.stringify
+    achievement: "We value your input"
+    title: "Whimsy Space Feedback"
+    src: "https://docs.google.com/forms/d/e/1FAIpQLSfAK8ZYmMd4-XsDqyTK4soYGWApGD9R33nReuqwG-TxjXaGFg/viewform?embedded=true"
+    width: 600
+    height: 600
+    sandbox: false
+], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.autoboot()

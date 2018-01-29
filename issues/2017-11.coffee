@@ -46,7 +46,7 @@ module.exports = ->
     investorProspectus: ->
       system.Achievement.unlock "Value Investing"
 
-      system.attachApplication system.iframeApp
+      system.launchAppByAppData
         title: "ZineOS: Beyond Time and Space"
         src: "https://docs.google.com/presentation/d/e/2PACX-1vQx21NKZad19VHx3FrMoX4Tm-RtiDWXRdf48a_um-JX8y2iQeVJRzRhyWuPjt7x3XQsyFGjih6ZrMKS/embed?start=false&loop=false&delayms=10000"
         width: 1250

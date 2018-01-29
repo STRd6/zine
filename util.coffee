@@ -99,6 +99,11 @@ module.exports = Util =
   absolutizePath: absolutizePath
 
   # Execute a program with the given environment and context
+  #
+  # `program` is a string containing JavaScript code.
+  # `context` is what is bound to `this` when executing the program.
+  # `environment` is an object that binds its values to variables named by its
+  # keys.
   execute: (program, context, environment) ->
     args = Object.keys(environment)
     values = args.map (name) -> environment[name]
@@ -110,6 +115,9 @@ module.exports = Util =
 
   isRelativePath: (path) ->
     path.match /^.?.\//
+
+  baseDirectory: (absolutePath) ->
+    absolutePath.match(/^.*\//)?[0] or "/"
 
   parentElementOfType: (tagname, element) ->
     tagname = tagname.toLowerCase()

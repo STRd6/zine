@@ -171,10 +171,38 @@ passed to that method.</p>
 unsaved work. (TODO)</p>
 <p>TODO: Add methods for binding/connecting observables.
 TODO: Add methods for connecting streams.</p>
+<h2 id="system-interface">System Interface</h2>
 
   </div>
   <div class="content"><pre><code>
 </code></pre>
+</div>
+</li>
+<li id="section-14">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-14">&#182;</a>
+    </div>
+    <p>Apps should be able to read and write to the file system in a simple manner.</p>
+
+  </div>
+  <div class="content"><pre><code>readFile: (path) -&gt;
+
+writeFile: (path, blob) -&gt;
+
+deleteFile: (path) -&gt;</code></pre>
+</div>
+</li>
+<li id="section-15">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-15">&#182;</a>
+    </div>
+    <p>The system provides easy ways to launch applications:</p>
+
+  </div>
+  <div class="content"><pre><code># TODO: Better name and arguments
+launchAppByAppData: (data) -&gt;</code></pre>
 </div>
 </li>
     </ul>

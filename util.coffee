@@ -116,7 +116,7 @@ module.exports = Util =
   isRelativePath: (path) ->
     path.match /^.?.\//
 
-  baseDirectory: (absolutePath) ->
+  baseDirectory: (absolutePath="/") ->
     absolutePath.match(/^.*\//)?[0] or "/"
 
   parentElementOfType: (tagname, element) ->

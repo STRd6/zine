@@ -64,7 +64,7 @@ module.exports = ->
     iconEmoji: "👽"
     menuBar: menuBar.element
     content: img
-    width: 500 + 8
+    width: 1000
     height: 500 + 46
     x: 96
     y: 64

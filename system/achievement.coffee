@@ -143,6 +143,16 @@ achievementData = [{
   icon: "👣"
   group: "Issue 12"
   description: "Individuals claim to have seen Bigfoot."
+}, {
+  text: "As fortold in the Dead Sea Scrolls"
+  icon: "📜"
+  group: "V2E01"
+  description: "Beyond revelations"
+}, {
+  text: "Inner or outer space?"
+  icon: "🐬"
+  group: "V2E01"
+  description: "Out of this world"
 }, { # Apps
   text: "Notepad.exe"
   icon: "📝"

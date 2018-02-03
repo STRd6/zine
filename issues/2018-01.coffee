@@ -8,7 +8,7 @@ StoryReader = require "../apps/story-reader"
 Social = require "../social/social"
 
 fetchContent = (targetFile, sourcePath=targetFile) ->
-  targetPath = "/V2/issue-01/#{targetFile}"
+  targetPath = "/V2/E01/#{targetFile}"
 
   system.readFile targetPath
   .then (file) ->
@@ -29,7 +29,7 @@ module.exports = ->
   # fetchContent "paranormal xmas.png"
   # fetchContent "transmission.mp3"
   fetchContent "flyer.png"
-  # fetchContent "Betsy B.pdf"
+  fetchContent "canon.md"
 
   launch = (App) ->
     system.attachApplication App()
@@ -45,54 +45,19 @@ module.exports = ->
     achievementStatus: ->
       launch AchievementStatus
 
-
-    myBriefcase: ->
-      launch MyBriefcase
-
-    throwPillow: ->
-      product "throw-pillow"
-
-    contrastTank: ->
-      product "contrast-tank"
-
-    journal: ->
-      product "hardcover-journal"
-
-    laptopSkin: ->
-      product "laptop-skin"
-
-    leggings: ->
-      product "leggings"
-
-    mug: ->
-      product "mug"
-
-    pouch: ->
-      product "pouch"
-
-    shirt: ->
-      product "t-shirt"
-
-    sticker: ->
-      product "sticker"
+    canon: ->
+      system.Achievement.unlock "As fortold in the Dead Sea Scrolls"
+      system.openPath "/V2/E01/canon.md"
 
     spaceDolphinIV: ->
+      system.Achievement.unlock "Inner or outer space?"
       system.launchAppByName "Space Dolphin IV"
 
   menuBar = MenuBar
     items: parseMenu """
-      [F]iction
-        [B]etsy B
-      [G]ames
+      [S]tuff
+        [C]anon
         [S]pace Dolphin IV
-      [S]tore
-        [C]ontrastTank
-        [J]ournal
-        La[p]top Skin
-        [M]ug
-        [P]ouch
-        [S]ticker
-        Th[r]ow Pillow
       #{Social.menuText}
     """
     handlers: handlers

@@ -144,6 +144,11 @@ achievementData = [{
   group: "Issue 12"
   description: "Individuals claim to have seen Bigfoot."
 }, {
+  text: "Volume 2: Episode 1"
+  icon: "📰"
+  group: "V2E01"
+  description: "New year, same old you"
+}, {
   text: "As fortold in the Dead Sea Scrolls"
   icon: "📜"
   group: "V2E01"

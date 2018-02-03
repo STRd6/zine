@@ -26,17 +26,11 @@ module.exports = ->
 
   system.Achievement.unlock "Volume 2: Episode 1"
 
-  # fetchContent "paranormal xmas.png"
-  # fetchContent "transmission.mp3"
   fetchContent "flyer.png"
   fetchContent "canon.md"
 
   launch = (App) ->
     system.attachApplication App()
-
-  product = (type) ->
-    system.Achievement.unlock "Late stage capitalism"
-    window.open "https://www.redbubble.com/people/whimsyspace/works/29661304-california-fire-palm-tree?asc=u&p=#{type}"
 
   handlers = Model().include(Social).extend
     area: ->
@@ -66,7 +60,7 @@ module.exports = ->
   img.src = "https://danielx.whimsy.space/whimsy.space/V2E01/flyer.png"
 
   windowView = Window
-    title: "Whimsy.Space Volume 2 | Episode 1 | Computer Computer Revolution | January 2018"
+    title: "Whimsy.Space Volume 2 | Episode 1 | New Year Same Old You | January 2018"
     iconEmoji: "👽"
     menuBar: menuBar.element
     content: img

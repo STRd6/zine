@@ -261,7 +261,7 @@ module.exports = (I, self) ->
   }, {
     name: "Progenitor"
     icon: "🌿"
-    src: "https://danielx.whimsy.space/danielx.net/editor/zine2/"
+    src: "https://danielx.whimsy.space/danielx.net/editor/"
     associations: [
       "mime:^application/zineos-package"
     ]

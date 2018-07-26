@@ -72,7 +72,7 @@ module.exports = (opts={}) ->
       args: {} # TODO: Can pass args here, args can be an object
 
   # TODO: Set menu bar from within app
-  
+
   # TODO: embalm objects for passing into the afterlife (into iframes)
   embalm = (x) -> x
   # TODO: revitalize embalmed objects that are received
@@ -95,6 +95,8 @@ module.exports = (opts={}) ->
       system.writeFile(resolvePath(path), blob)
     deleteFile: (path) ->
       system.deleteFile(resolvePath(path))
+    readTree: (path) ->
+      system.readTree(resolvePath(path))
   ,
     get: (target, method, receiver) ->
       target[method] or

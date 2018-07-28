@@ -38,6 +38,7 @@ module.exports = (id, bucket, refreshCredentials) ->
           throw e
 
   localCache = {}
+  metaCache = {}
 
   uploadToS3 = (bucket, key, file, options={}) ->
     {cacheControl} = options
@@ -46,6 +47,9 @@ module.exports = (id, bucket, refreshCredentials) ->
 
     # Optimistically Cache
     localCache[key] = file
+    metaCache[key] =
+      ContentType: file.type
+      UpdatedAt: new Date
 
     pinvoke bucket, "putObject",
       Key: key
@@ -78,6 +82,7 @@ module.exports = (id, bucket, refreshCredentials) ->
 
   deleteFromS3 = (bucket, key) ->
     localCache[key] = new Error "Not Found"
+    delete metaCache[key]
 
     pinvoke bucket, "deleteObject",
       Key: key
@@ -104,20 +109,30 @@ module.exports = (id, bucket, refreshCredentials) ->
 
       Promise.all results
 
-  fetchFileMeta = (fileEntry, bucket) ->
-    pinvoke bucket, "headObject",
-      Key: fileEntry.remotePath
-    .then (result) ->
-      fileEntry.type = result.ContentType
+  fetchFileMeta = (key, bucket) ->
+    cachedItem = metaCache[key]
 
-      fileEntry
+    if cachedItem
+      return Promise.resolve(cachedItem)
+
+    pinvoke bucket, "headObject",
+      Key: key
+    .then (result) ->
+      metaCache[key] = result
+
+      return result
 
   fetchMeta = (entry, bucket) ->
     Promise.resolve()
     .then ->
       return entry if entry.folder
 
-      fetchFileMeta entry, bucket
+      fetchFileMeta(entry.remotePath, bucket)
+      .then (meta) ->
+        entry.type = meta.ContentType
+        entry.updatedAt = new Date(meta.LastModified)
+  
+        return entry
 
   notify = (eventType, path) ->
     (result) ->

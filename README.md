@@ -32,6 +32,7 @@ FileEntry Interface
     path:
     size:
     type:
+    updatedAt:
 
 FolderEntry Interface
 ---------------------

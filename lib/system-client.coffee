@@ -16,7 +16,7 @@ do ->
 
   applicationProxy = new Proxy
     ready: ->
-      postmaster.invokeRemote "childLoaded"
+      postmaster.invokeRemote "ready"
   ,
     get: (target, property, receiver) ->
       target[property] or

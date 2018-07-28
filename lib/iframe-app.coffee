@@ -96,7 +96,12 @@ module.exports = (opts={}) ->
     deleteFile: (path) ->
       system.deleteFile(resolvePath(path))
     readTree: (path) ->
-      system.readTree(resolvePath(path))
+      # TODO: Figure out how to embalm the entries so they can proxy the calls
+      system.readTree(resolvePath(path)).then (data) ->
+        data.forEach (datum) ->
+          delete datum.blob
+
+        return data
   ,
     get: (target, method, receiver) ->
       target[method] or

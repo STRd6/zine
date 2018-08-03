@@ -1,6 +1,5 @@
 require "../../extensions"
 Model = require "model"
-Associations = require "../../system/associations"
 SystemModule = require "../../system/module"
 
 mocha.setup
@@ -8,7 +7,7 @@ mocha.setup
 
 makeSystemFS = (files) ->
   model = Model()
-  model.include SystemModule, Associations
+  model.include SystemModule
 
   Object.assign model,
     readFile: (path) ->
@@ -177,3 +176,8 @@ describe "System Module", ->
     model.vivifyPrograms ["/main.coffee"]
     .then ([main]) ->
       assert typeof main.buttonTemplate is "function"
+
+  it "should compile coffee", ->
+    model = makeSystemFS()
+
+    assert.equal model.compileCoffee("alert('heyy')"), "alert('heyy');\n"

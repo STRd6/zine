@@ -428,6 +428,11 @@ module.exports = (I, self) ->
 
     evalCSON: evalCSON
 
+    compileCoffee: (source, options={}) ->
+      options.bare ?= true
+
+      CoffeeScript.compile source, options
+
 # Compile files based on type to JS program source
 # These compilers return a string of JS source code that assigns a
 # result to module.exports

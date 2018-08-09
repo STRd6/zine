@@ -95,6 +95,8 @@ module.exports = (opts={}) ->
       system.writeFile(resolvePath(path), blob)
     deleteFile: (path) ->
       system.deleteFile(resolvePath(path))
+    readAsText: (path) ->
+      system.readAsText(resolvePath(path))
     readTree: (path) ->
       # TODO: Figure out how to embalm the entries so they can proxy the calls
       system.readTree(resolvePath(path)).then (data) ->

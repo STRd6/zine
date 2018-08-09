@@ -68,6 +68,8 @@ module.exports = (I, self) ->
       .then (blob) ->
         if blob
           blob.readAsText()
+        else
+          throw new Error "File not found at '#{path}'"
 
     readTree: (directoryPath) ->
       readTree(fs, directoryPath)

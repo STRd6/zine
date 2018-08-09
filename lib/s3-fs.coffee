@@ -131,7 +131,7 @@ module.exports = (id, bucket, refreshCredentials) ->
       .then (meta) ->
         entry.type = meta.ContentType
         entry.updatedAt = new Date(meta.LastModified)
-  
+
         return entry
 
   notify = (eventType, path) ->

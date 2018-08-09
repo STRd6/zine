@@ -63,6 +63,12 @@ module.exports = (I, self) ->
       path = normalizePath "/#{path}"
       fs.read(path)
 
+    readAsText: (path) ->
+      self.readFile(path)
+      .then (blob) ->
+        if blob
+          blob.readAsText()
+
     readTree: (directoryPath) ->
       readTree(fs, directoryPath)
 

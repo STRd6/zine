@@ -428,6 +428,9 @@ module.exports = (I, self) ->
 
     evalCSON: evalCSON
 
+    compileStylus: (source) ->
+      self.stylus(source).render()
+
     compileCoffee: (source, options={}) ->
       options.bare ?= true
 

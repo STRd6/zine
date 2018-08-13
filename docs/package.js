@@ -565,7 +565,7 @@
     },
     "system/template.coffee": {
       "path": "system/template.coffee",
-      "content": "# Compile a template from source text\n\nmodule.exports = (I, self) ->\n  self.extend\n    compileTemplate: (source) ->\n      templateSource = Jadelet.compile source,\n        compiler: CoffeeScript\n        runtime: \"Jadelet\" # TODO: Avoid the use of this global\n        exports: false\n\n      Function(\"return \" + templateSource)()\n",
+      "content": "# Compile a template from source text\n\nmodule.exports = (I, self) ->\n  self.extend\n    templateSource: (source) ->\n      return Jadelet.compile source,\n        compiler: CoffeeScript\n        runtime: \"Jadelet\" # TODO: Avoid the use of this global\n        exports: false\n\n    compileTemplate: (source) ->\n      templateSource = Jadelet.compile source,\n        compiler: CoffeeScript\n        runtime: \"Jadelet\" # TODO: Avoid the use of this global\n        exports: false\n\n      Function(\"return \" + templateSource)()\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -958,7 +958,7 @@
     },
     "system/template": {
       "path": "system/template",
-      "content": "(function() {\n  module.exports = function(I, self) {\n    return self.extend({\n      compileTemplate: function(source) {\n        var templateSource;\n        templateSource = Jadelet.compile(source, {\n          compiler: CoffeeScript,\n          runtime: \"Jadelet\",\n          exports: false\n        });\n        return Function(\"return \" + templateSource)();\n      }\n    });\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  module.exports = function(I, self) {\n    return self.extend({\n      templateSource: function(source) {\n        return Jadelet.compile(source, {\n          compiler: CoffeeScript,\n          runtime: \"Jadelet\",\n          exports: false\n        });\n      },\n      compileTemplate: function(source) {\n        var templateSource;\n        templateSource = Jadelet.compile(source, {\n          compiler: CoffeeScript,\n          runtime: \"Jadelet\",\n          exports: false\n        });\n        return Function(\"return \" + templateSource)();\n      }\n    });\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "system/token-store": {

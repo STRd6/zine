@@ -378,9 +378,7 @@ module.exports = (I, self) ->
         type: "text/html; charset=utf-8"
       src = URL.createObjectURL blob
 
-      data =
-        src: src
-        title: pkg.config?.title
+      data = Object.assign {}, pkg.config, {src: src}
 
       self.launchAppByAppData data,
         env:

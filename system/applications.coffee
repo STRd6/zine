@@ -253,6 +253,21 @@ module.exports = (I, self) ->
     ]
     achievement: "Notepad.exe"
   }, {
+    name: "Monaco Editor"
+    icon: "☢️"
+    src: "https://danielx.whimsy.space/danielx.net/code/monaco/"
+    associations: [
+      "mime:^application/javascript"
+      "mime:json$"
+      "html"
+      "jadelet"
+      "js"
+      "json"
+      "md"
+      "styl"
+    ]
+    achievement: "Notepad.exe"
+  }, {
     name: "Notepad"
     icon: "📝"
     src: "https://danielx.whimsy.space/danielx.net/notepad/"

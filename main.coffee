@@ -50,5 +50,3 @@ system.writeFile "feedback.exe", new Blob [
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.initAppSettings()
-
-require("./issues/2018-01")()

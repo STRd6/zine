@@ -1,5 +1,5 @@
 # Pretend Jadelet is a real package
-PACKAGE.dependencies["_SYS_jadelet"] =
+PACKAGE.dependencies["!jadelet"] =
   entryPoint: "main"
   distribution:
     main: PACKAGE.distribution["lib/jadelet.min"]

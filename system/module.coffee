@@ -12,32 +12,12 @@
   isRelativePath
   htmlForPackage
   startsWith
+  fetchDependency
 } = require "../util"
 
 Jadelet = require "../lib/jadelet.min"
 
 module.exports = (I, self) ->
-  ###
-  Load a module from a file in the file system.
-
-  Additional properties such as a reference to the global object and some metadata
-  are exposed.
-
-  Returns a promise that is fulfilled when the module assigns its exports, or
-  rejected on error.
-
-  Caches modules so mutual includes don't get re-run per include root.
-
-  Circular includes will never reslove
-  # TODO: Fail early on circular includes, challenging because of async
-
-  # Currently can require
-  # js, coffee, jadelet, json, cson
-
-  # Requiring other file types returns a Blob
-
-  ###
-
   findDependencies = (sourceProgram) ->
     requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
     results = []
@@ -58,114 +38,8 @@ module.exports = (I, self) ->
 
     return results
 
-  # Wrap program in async include wrapper
-  # Replaces references to require('something') with local variables in an async wrapper function
-  rewriteRequires = (program) ->
-    id = 0
-    namePrefix = "__req"
-    requires = {}
-
-    # rewrite requires like `require('cool-module')` or `require('./relative-path')`
-    # don't rewrite one that belong to another object `something.require('somepath')`
-    # don't rewrite dynamic ones like `require(someVar)`
-    rewrittenProgram = program.replace /[^.]require\(['"]([^'"]+)['"]\)/g, (match, key) ->
-      if requires[key]
-        tmpVar = requires[key]
-      else
-        tmpVar = "#{namePrefix}#{id}"
-        id += 1
-        requires[key] = tmpVar
-
-      return tmpVar
-
-    tmpVars = Object.keys(requires).map (name) ->
-      requires[name]
-
-    requirePaths = Object.keys(requires)
-    requirePaths = requirePaths
-
-    """
-      return system.vivifyPrograms(#{JSON.stringify(requirePaths)})
-      .then(function(__reqResults) {
-      (function(#{tmpVars.join(', ')}){
-      #{rewrittenProgram}
-      }).apply(this, __reqResults);
-      });
-    """
-
-  loadModule = (content, path, state) ->
-    new Promise (resolve, reject) ->
-      program = annotateSourceURL(rewriteRequires(content), path)
-      dirname = path.split(fileSeparator)[0...-1].join(fileSeparator) or fileSeparator
-
-      module =
-        path: dirname
-
-      # Use a defineProperty setter on module.exports to trigger when the module
-      # successfully exports because it can all be async madness.
-      exports = {}
-      Object.defineProperty module, "exports",
-        get: ->
-          exports
-        set: (newValue) ->
-          exports = newValue
-          # Trigger complete
-          resolve(module)
-
-      # Apply relative path wrapper for system.vivifyPrograms
-      localSystem = Object.assign {}, self,
-        vivifyPrograms: (moduleIdentifiers) ->
-          absoluteIdentifiers = moduleIdentifiers.map (identifier) ->
-            if isAbsolutePath(identifier)
-              absolutizePath "/", identifier
-            else if isRelativePath(identifier)
-              absolutizePath dirname, identifier
-            else
-              identifier
-
-          self.vivifyPrograms absoluteIdentifiers, state
-      # TODO: Also make working directory relative paths for readFile and writeFile
-
-      context =
-        system: localSystem
-        global: global
-        module: module
-        exports: module.exports
-        __filename: path
-        __dirname: dirname
-
-      args = Object.keys(context)
-      values = args.map (name) -> context[name]
-
-      Promise.resolve()
-      .then ->
-        Function(args..., program).apply(module, values)
-      .catch reject
-
-      # Scan for a module.exports to see if it is the kind of
-      # module that exports things vs just plain side effects code
-      # This can return false positives if it just matches the string and isn't
-      # really exporting, regex is not a parser, yolo, etc.
-      hasExports = program.match /module\.exports/
-
-      # Just resolve next tick if we're not specifically exporting
-      # can be fun with race conditions, but just export your biz, yo!
-      if !hasExports
-        setTimeout ->
-          resolve(module)
-        , 0
 
   Object.assign self,
-    autoboot: ->
-      self.fs.list "/System/Boot/"
-      .then (files) ->
-        bootablePaths = files.filter ({blob}) ->
-          blob?
-        .map ({path}) ->
-          path
-
-        self.vivifyPrograms(bootablePaths)
-
     # A simpler, dumber, packager that reads a pixie.cson, then
     # packages every file recursively down in the directories
     createPackageFromPixie: (pixiePath) ->
@@ -199,8 +73,7 @@ module.exports = (I, self) ->
 
           return pkg
 
-    # This is kind of the opposite approach of the vivifyPrograms, here we want
-    # to load everything statically and put it in a package that can be run by
+    # Load everything statically and put it in a package that can be run by our
     # `require`.
     packageProgram: (absolutePath, state={}) ->
       state.cache = {}
@@ -286,43 +159,21 @@ module.exports = (I, self) ->
                 throw new Error "Absolute paths not supported yet"
               else
                 # package path
-                # TODO: These system packages currently override remote packages specified in
-                # cson, we probably shouldn't even do this here at all, or we should use a
-                # special path to load the systems packages.
-                depPkg = PACKAGE.dependencies[depPath]
-                if depPkg
-                  pkg.dependencies[depPath] = depPkg
+                if startsWith depPath, "!"
+                  lookup = depPath
                 else
-                  fetchDependency(pkg.config.dependencies[depPath])
-                  .then (depPkg) ->
-                    pkg.dependencies[depPath] = depPkg
+                  lookup = pkg.config.dependencies[depPath]
+
+                  if !lookup?
+                    throw new Error "No dependency listed in `pixie.cson` for '#{depPath}'"
+
+                fetchDependency(lookup)
+                .then (depPkg) ->
+                  pkg.dependencies[depPath] = depPkg
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
 
-    # still experimenting with the API
-    # Async 'require' in the vein of require.js
-    # it's horrible but seems necessary
 
-    # This is an internal API and isn't recommended for general use
-    # The state determines an include root and should be the same for a single
-    # app or process
-    vivifyPrograms: (absolutePaths, state={}) ->
-      state.cache ?= {}
-
-      Promise.all absolutePaths.map (absolutePath) ->
-        state.cache[absolutePath] ?= self.loadProgram(absolutePath)
-        .then (sourceProgram) ->
-          # loadProgram returns an object in the case of JSON because it has no
-          # dependencies and doesn't need an require re-writing
-          # Having this special case lets us take a short cut without having to
-          # Parse/unparse json extra.
-          # This may be handy for other binary assets like images, etc. as well
-          if typeof sourceProgram is "string"
-            loadModule sourceProgram, absolutePath, state
-          else
-            exports: sourceProgram
-        .then (module) ->
-          module.exports
 
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath
@@ -341,30 +192,6 @@ module.exports = (I, self) ->
       else
         # Return the blob itself if we didn't find any compilers
         return file
-
-    # May want to reconsider this name
-    loadModule: (args...) ->
-      self.Achievement.unlock "Execute code"
-      loadModule(args...)
-
-    # Execute in the context of the system itself
-    spawn: (args...) ->
-      loadModule(args...)
-      .then ({exports}) ->
-        if typeof exports is "function" and exports.length is 0
-          result = exports()
-
-          if result.element
-            document.body.appendChild result.element
-
-    execute: (absolutePath) ->
-      self.vivifyPrograms [absolutePath]
-      .then ([{exports}])->
-        if typeof exports is "function" and exports.length is 0
-          result = exports()
-
-          if result.element
-            document.body.appendChild result.element
 
     executeInIFrame: (absolutePath, inputFile) ->
       self.packageProgram(absolutePath)
@@ -468,7 +295,7 @@ compilers = [{
       Jadelet.compile jadeletSource,
         compiler: CoffeeScript
         mode: "jade"
-        runtime: "require('_SYS_jadelet')"
+        runtime: "require('!jadelet')"
 }, {
   filter: ({path}) ->
     path.match /\.styl$/
@@ -500,65 +327,3 @@ compilers = [{
 
 stringifyExport = (data) ->
   "module.exports = #{JSON.stringify(data)}"
-
-annotateSourceURL = (program, path) ->
-  """
-    #{program}
-    //# sourceURL=#{path}
-  """
-
-ajax = require('ajax')()
-
-MemoizePromise = (fn) ->
-  cache = {}
-
-  return (key) ->
-    unless cache[key]
-      cache[key] = fn.apply(this, arguments)
-
-      cache[key].catch ->
-        delete cache[key]
-
-    return cache[key]
-
-###
-If our string is an absolute URL then we assume that the server is CORS enabled
-and we can make a cross origin request to collect the JSON data.
-
-We also handle a Github repo dependency such as `STRd6/issues:master`.
-This loads the package from the published gh-pages branch of the given repo.
-
-`STRd6/issues:master` will be accessible at `http://strd6.github.io/issues/master.json`.
-###
-
-fetchDependency = MemoizePromise (path) ->
-  if typeof path is "string"
-    if startsWith(path, "http")
-      ajax.getJSON(path)
-      .catch ({status, response}) ->
-        switch status
-          when 0
-            message = "Aborted"
-          when 404
-            message = "Not Found"
-          else
-            throw new Error response
-
-        throw new Error "#{status} #{message}: #{path}"
-    else
-      if (match = path.match(/([^\/]*)\/([^\:]*)\:(.*)/))
-        [callback, user, repo, branch] = match
-
-        url = "https://#{user}.github.io/#{repo}/#{branch}.json"
-
-        ajax.getJSON(url)
-        .catch ->
-          throw new Error "Failed to load package '#{path}' from #{url}"
-      else
-        Promise.reject new Error """
-          Failed to parse repository info string #{path}, be sure it's in the
-          form `<user>/<repo>:<ref>` for example: `STRd6/issues:master`
-          or `STRd6/editor:v0.9.1`
-        """
-  else
-    Promise.reject new Error "Can only handle url string dependencies right now"

@@ -57,6 +57,12 @@ htmlForPackage = (pkg, opts={}) ->
     </html>
   """
 
+startsWith = (str, prefix) ->
+  str.lastIndexOf(prefix, 0) is 0
+
+endsWith = (str, suffix) ->
+  str.indexOf(suffix, str.length - suffix.length) != -1
+
 extensionFor = (path) ->
   result = path.match /\.([^.]+)$/
 
@@ -76,6 +82,72 @@ readTree = (fs, directoryPath) ->
       a.concat(b)
     , []
 
+ajax = require('ajax')()
+
+MemoizePromise = (fn) ->
+  cache = {}
+
+  return (key) ->
+    unless cache[key]
+      cache[key] = fn.apply(this, arguments)
+
+      # Remove cache and propagate error
+      cache[key].catch (e) ->
+        delete cache[key]
+        throw e
+
+    return cache[key]
+
+###
+If our string is an absolute URL then we assume that the server is CORS enabled
+and we can make a cross origin request to collect the JSON data.
+
+We also handle a Github repo dependency such as `STRd6/issues:master`.
+This loads the package from the published gh-pages branch of the given repo.
+
+`STRd6/issues:master` will be accessible at `http://strd6.github.io/issues/master.json`.
+###
+
+fetchDependency = MemoizePromise (path) ->
+  console.log "fetch", path
+  if typeof path is "string"
+    if startsWith(path, "!") # system package
+      pkg = PACKAGE.dependencies[path]
+      if pkg
+        Promise.resolve pkg
+      else
+        Promise.reject new Error "No system package found for '#{path}'"
+    else if startsWith(path, "http")
+      ajax.getJSON(path)
+      .catch ({status, response}) ->
+        switch status
+          when 0
+            message = "Aborted"
+          when 404
+            message = "Not Found"
+          else
+            throw new Error response
+
+        throw new Error "#{status} #{message}: #{path}"
+    else
+      if (match = path.match(/([^\/]*)\/([^\:]*)\:(.*)/))
+        [callback, user, repo, branch] = match
+
+        url = "https://#{user}.github.io/#{repo}/#{branch}.json"
+
+        ajax.getJSON(url)
+        .catch ->
+          throw new Error "Failed to load package '#{path}' from #{url}"
+      else
+        Promise.reject new Error """
+          Failed to parse repository info string #{path}, be sure it's in the
+          form `<user>/<repo>:<ref>` for example: `STRd6/issues:master`
+          or `STRd6/editor:v0.9.1`
+        """
+  else
+    Promise.reject new Error "Can only handle url string dependencies right now, received: #{path}"
+
+
 module.exports = Util =
   emptyElement: (element) ->
     while element.lastChild
@@ -87,6 +159,10 @@ module.exports = Util =
   htmlForPackage: htmlForPackage
   normalizePath: normalizePath
   absolutizePath: absolutizePath
+  
+  fetchDependency: fetchDependency
+  
+  MemoizePromise: MemoizePromise
 
   # Execute a program with the given environment and context
   #
@@ -129,11 +205,9 @@ module.exports = Util =
 
         resolve result
 
-  startsWith: (str, prefix) ->
-    str.lastIndexOf(prefix, 0) is 0
-
-  endsWith: (str, suffix) ->
-    str.indexOf(suffix, str.length - suffix.length) != -1
+  startsWith: startsWith
+  
+  endsWith: endsWith
 
   evalCSON: (coffeeSource) ->
     Promise.resolve()

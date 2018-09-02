@@ -49,7 +49,6 @@ system.writeFile "feedback.exe", new Blob [
 ], type: "application/exe"
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
-system.autoboot()
 system.initAppSettings()
 
 require("./issues/2018-01")()

@@ -109,7 +109,6 @@ This loads the package from the published gh-pages branch of the given repo.
 ###
 
 fetchDependency = MemoizePromise (path) ->
-  console.log "fetch", path
   if typeof path is "string"
     if startsWith(path, "!") # system package
       pkg = PACKAGE.dependencies[path]
@@ -159,9 +158,9 @@ module.exports = Util =
   htmlForPackage: htmlForPackage
   normalizePath: normalizePath
   absolutizePath: absolutizePath
-  
+
   fetchDependency: fetchDependency
-  
+
   MemoizePromise: MemoizePromise
 
   # Execute a program with the given environment and context
@@ -206,7 +205,7 @@ module.exports = Util =
         resolve result
 
   startsWith: startsWith
-  
+
   endsWith: endsWith
 
   evalCSON: (coffeeSource) ->

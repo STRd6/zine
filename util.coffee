@@ -19,9 +19,6 @@ metaTag = (name, content) ->
   "<meta name=#{JSON.stringify(name)} content=#{JSON.stringify(content)}>"
 
 htmlForPackage = (pkg, opts={}) ->
-  {script} = opts
-  script ?= ""
-
   metas = [
     '<meta charset="utf-8">'
   ]
@@ -41,14 +38,7 @@ htmlForPackage = (pkg, opts={}) ->
   if url
     metas.push "<link rel=\"Progenitor\" href=#{JSON.stringify(url)}>"
 
-  # Add postmaster dependency so package can talk with parent window
-  # The packages are added with the _SYS_ prefix to reduce collisions
-  pkg.dependencies ?= {}
-  pkg.dependencies._SYS_postmaster ?= PACKAGE.dependencies.postmaster
-  pkg.dependencies._SYS_ui ?= PACKAGE.dependencies.ui
-
   code = """
-    #{script};
     require('./#{pkg.entryPoint}');
   """
 

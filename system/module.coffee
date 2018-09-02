@@ -11,6 +11,7 @@
   isAbsolutePath
   isRelativePath
   htmlForPackage
+  startsWith
 } = require "../util"
 
 Jadelet = require "../lib/jadelet.min"
@@ -271,9 +272,11 @@ module.exports = (I, self) ->
           # Add to package
           pkg.distribution[pkgPath] =
             content: sourceProgram
+          pkg.dependencies ?= {}
 
           # Pull in dependencies
           depPaths = findDependencies(sourceProgram)
+
           Promise.all depPaths.map (depPath) ->
             Promise.resolve().then ->
               if isRelativePath depPath
@@ -283,13 +286,16 @@ module.exports = (I, self) ->
                 throw new Error "Absolute paths not supported yet"
               else
                 # package path
+                # TODO: These system packages currently override remote packages specified in
+                # cson, we probably shouldn't even do this here at all, or we should use a
+                # special path to load the systems packages.
                 depPkg = PACKAGE.dependencies[depPath]
                 if depPkg
-                  pkg.dependencies ?= {}
                   pkg.dependencies[depPath] = depPkg
                 else
-                  # TODO: Load from remote?
-                  throw new Error "Package '#{depPath}' not found"
+                  fetchDependency(pkg.config.dependencies[depPath])
+                  .then (depPkg) ->
+                    pkg.dependencies[depPath] = depPkg
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
 
@@ -369,11 +375,7 @@ module.exports = (I, self) ->
     # The package is converted into a blob url containing an html source that
     # will execute the package.
     executePackageInIFrame: (pkg, pwd="/", inputFile) ->
-      html = system.htmlForPackage pkg,
-        script: """
-          var ZINEOS = #{JSON.stringify system.version()};
-          #{PACKAGE.distribution["lib/system-client"].content};
-        """
+      html = system.htmlForPackage pkg
       blob = new Blob [html],
         type: "text/html; charset=utf-8"
       src = URL.createObjectURL blob
@@ -504,3 +506,59 @@ annotateSourceURL = (program, path) ->
     #{program}
     //# sourceURL=#{path}
   """
+
+ajax = require('ajax')()
+
+MemoizePromise = (fn) ->
+  cache = {}
+
+  return (key) ->
+    unless cache[key]
+      cache[key] = fn.apply(this, arguments)
+
+      cache[key].catch ->
+        delete cache[key]
+
+    return cache[key]
+
+###
+If our string is an absolute URL then we assume that the server is CORS enabled
+and we can make a cross origin request to collect the JSON data.
+
+We also handle a Github repo dependency such as `STRd6/issues:master`.
+This loads the package from the published gh-pages branch of the given repo.
+
+`STRd6/issues:master` will be accessible at `http://strd6.github.io/issues/master.json`.
+###
+
+fetchDependency = MemoizePromise (path) ->
+  if typeof path is "string"
+    if startsWith(path, "http")
+      ajax.getJSON(path)
+      .catch ({status, response}) ->
+        switch status
+          when 0
+            message = "Aborted"
+          when 404
+            message = "Not Found"
+          else
+            throw new Error response
+
+        throw new Error "#{status} #{message}: #{path}"
+    else
+      if (match = path.match(/([^\/]*)\/([^\:]*)\:(.*)/))
+        [callback, user, repo, branch] = match
+
+        url = "https://#{user}.github.io/#{repo}/#{branch}.json"
+
+        ajax.getJSON(url)
+        .catch ->
+          throw new Error "Failed to load package '#{path}' from #{url}"
+      else
+        Promise.reject new Error """
+          Failed to parse repository info string #{path}, be sure it's in the
+          form `<user>/<repo>:<ref>` for example: `STRd6/issues:master`
+          or `STRd6/editor:v0.9.1`
+        """
+  else
+    Promise.reject new Error "Can only handle url string dependencies right now"

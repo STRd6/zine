@@ -24,6 +24,17 @@ module.exports = (I, self) ->
     fn: (file) ->
       self.pathAsApp file.path
   }, {
+    name: "Run"
+    filter: (file) ->
+      file.type is "application/json" or
+      file.path.match(/\.json$/)
+    fn: ({path}) ->
+      self.readFile(path)
+      .then (blob) ->
+        blob.readAsJSON()
+      .then (pkg) ->
+        self.executePackageInIFrame pkg, baseDirectory(path)
+  }, {
     name: "PDF Viewer"
     filter: (file) ->
       file.path.match /\.pdf$/

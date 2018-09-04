@@ -41,7 +41,7 @@ module.exports = (I, self) ->
 
   Object.assign self,
     findDependencies: findDependencies
-  
+
     # Load everything statically and put it in a package that can be run by our
     # `require`.
     packageProgram: (absolutePath, state={}) ->
@@ -174,7 +174,7 @@ module.exports = (I, self) ->
           throw new Error "File not found at path: #{absolutePath}. Tried #{tries}"
 
         return file
-      
+
       .then self.compileFile
 
     compileFile: (file) ->

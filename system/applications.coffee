@@ -376,6 +376,7 @@ module.exports = (I, self) ->
     width: 960
     height: 540
     achievement: "Rawr"
+    sandbox: false
   }, {
     name: "Dangerous"
     icon: "🐱"

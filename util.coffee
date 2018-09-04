@@ -84,19 +84,7 @@ readTree = (fs, directoryPath) ->
 
 ajax = require('ajax')()
 
-MemoizePromise = (fn) ->
-  cache = {}
-
-  return (key) ->
-    unless cache[key]
-      cache[key] = fn.apply(this, arguments)
-
-      # Remove cache and propagate error
-      cache[key].catch (e) ->
-        delete cache[key]
-        throw e
-
-    return cache[key]
+MemoizedPromise = require "./lib/memoized-promise"
 
 ###
 If our string is an absolute URL then we assume that the server is CORS enabled
@@ -108,7 +96,7 @@ This loads the package from the published gh-pages branch of the given repo.
 `STRd6/issues:master` will be accessible at `http://strd6.github.io/issues/master.json`.
 ###
 
-fetchDependency = MemoizePromise (path) ->
+fetchDependency = MemoizedPromise (path) ->
   if typeof path is "string"
     if startsWith(path, "!") # system package
       pkg = PACKAGE.dependencies[path]
@@ -160,8 +148,6 @@ module.exports = Util =
   absolutizePath: absolutizePath
 
   fetchDependency: fetchDependency
-
-  MemoizePromise: MemoizePromise
 
   # Execute a program with the given environment and context
   #

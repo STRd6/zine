@@ -19,7 +19,7 @@ Jadelet = require "../lib/jadelet.min"
 
 module.exports = (I, self) ->
   findDependencies = (sourceProgram) ->
-    requireMatcher = /[^.]require\(['"]([^'"]+)['"]\)/g
+    requireMatcher = /(^|[^.])require\(['"]([^'"]+)['"]\)/g
     results = []
     count = 0
 
@@ -27,7 +27,7 @@ module.exports = (I, self) ->
       match = requireMatcher.exec sourceProgram
 
       if match
-        results.push match[1]
+        results.push match[2]
       else
         break
 
@@ -40,39 +40,8 @@ module.exports = (I, self) ->
 
 
   Object.assign self,
-    # A simpler, dumber, packager that reads a pixie.cson, then
-    # packages every file recursively down in the directories
-    createPackageFromPixie: (pixiePath) ->
-      basePath = pixiePath.match(/^.*\//)?[0] or ""
-      pkg =
-        distribution: {}
-
-      self.loadProgram(pixiePath).then (config) ->
-        pkg.config = config
-      .then ->
-        self.readTree(basePath)
-      .then (files) ->
-        Promise.all files.map ({path, blob}) ->
-          (if blob instanceof Blob
-            self.compileFile(blob)
-          else
-            self.readFile(path)
-            .then(self.compileFile)
-          )
-          .then (result) ->
-            [path, result]
-        .then (results) ->
-          results.forEach ([path, result]) ->
-            pkgPath = path.replace(basePath, "").replace(/\.[^.]*$/, "")
-
-            if typeof result is "string"
-              pkg.distribution[pkgPath] =
-                content: result
-            else
-              console.warn "Can't package files like #{path} yet"
-
-          return pkg
-
+    findDependencies: findDependencies
+  
     # Load everything statically and put it in a package that can be run by our
     # `require`.
     packageProgram: (absolutePath, state={}) ->
@@ -93,35 +62,33 @@ module.exports = (I, self) ->
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.loadProgram(configPath).then (configSource) ->
+        state.loadConfigPromise = self.loadProgram(configPath)
+        .then (configSource) ->
           module = {}
           Function("module", configSource)(module)
           module.exports
         .then (config) ->
-          entryPoint = config.entryPoint
-          (if entryPoint
+          entryPoint = pkg.entryPoint = config.entryPoint
+          pkg.remoteDependencies = config.remoteDependencies
+          pkg.config = config
+
+          if entryPoint
             path = absolutizePath(basePath, entryPoint)
             self.loadProgramIntoPackage(path, state)
-          else
-            Promise.resolve()
-          ).then ->
-            pkg.remoteDependencies = config.remoteDependencies
-            pkg.config = config
         .catch (e) ->
           if e.message.match /File not found/i
             pkg.config = {}
           else
             throw e
 
-      self.loadProgramIntoPackage(absolutePath, state)
+      state.loadConfigPromise
       .then ->
-        state.loadConfigPromise
+        self.loadProgramIntoPackage(absolutePath, state)
       .then ->
-        pkg.remoteDependencies = pkg.config.remoteDependencies
-        if pkg.config.entryPoint
-          pkg.entryPoint = pkg.config.entryPoint
-        else
-          pkg.entryPoint ?= pkgPath
+        # Override entry point from package config
+        # we're packaging so we can run with the given file.
+        if pkgPath != "pixie"
+          pkg.entryPoint = pkgPath
 
         return pkg
 
@@ -130,6 +97,8 @@ module.exports = (I, self) ->
     # TODO: Loading deps like this doesn't work at all if require is used
     # from browserified js sources :(
     loadProgramIntoPackage: (absolutePath, state) ->
+      console.log "loadProgramIntoPackage", absolutePath, state
+
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
       relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
@@ -149,6 +118,8 @@ module.exports = (I, self) ->
 
           # Pull in dependencies
           depPaths = findDependencies(sourceProgram)
+
+          console.log "depPaths", depPaths
 
           Promise.all depPaths.map (depPath) ->
             Promise.resolve().then ->
@@ -193,6 +164,11 @@ module.exports = (I, self) ->
         # Return the blob itself if we didn't find any compilers
         return file
 
+    # Build a package for the file at `absolutePath`. Execute that package in an
+    # isolated context from the core system. It can communicate with the system
+    # over `postMessage`.
+    # It happens to be in an iframe but no reason it couldn't be web worker or
+    # something else.
     executeInIFrame: (absolutePath, inputFile) ->
       self.packageProgram(absolutePath)
       .then (pkg) ->

@@ -44,7 +44,6 @@ describe "Vivify", ->
 
     model.vivifyPrograms(["/root.js", "/wat.js", "/rand.js", "/rand.js"])
     .then ([root, wat, r1, r2]) ->
-      console.log root, wat, r1, r2
       assert.equal r1, r2
       assert.equal root, 'yo 2 rad hella'
 

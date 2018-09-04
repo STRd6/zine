@@ -13,7 +13,7 @@ run instead of magically asynchronously pulling and wrapping things.
 } = require "../../util"
 
 module.exports = (I, self) ->
-  
+
   self.include(require("../module"))
 
   ###

@@ -156,19 +156,3 @@ describe "Vivify", ->
     model.vivifyPrograms ["/main.js"]
     .then ([main]) ->
       assert.equal main, "b"
-
-  it "should require .jadelet sources", ->
-    model = makeSystemFS
-      "/main.coffee": """
-        template = require "./button.jadelet"
-
-        module.exports =
-          buttonTemplate: template
-      """
-      "/button.jadelet": """
-        button(@click)= @text
-      """
-
-    model.vivifyPrograms ["/main.coffee"]
-    .then ([main]) ->
-      assert typeof main.buttonTemplate is "function"

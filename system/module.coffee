@@ -137,8 +137,44 @@ module.exports = (I, self) ->
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
 
+    # Handle requiring with or without explicit extension
+    #     require "a"
+    # First check:
+    #     a
+    #     a.coffee
+    #     a.coffee.md
+    #     a.litcoffee
+    #     a.jadelet
+    #     a.js
     loadProgram: (path, basePath="/") ->
-      self.readForRequire path, basePath
+      absolutePath = absolutizePath(basePath, path)
+
+      suffixes = [
+        ""
+        ".coffee"
+        ".coffee.md"
+        ".litcoffee"
+        ".jadelet"
+        ".js"
+        ".styl"
+      ]
+
+      p = suffixes.reduce (promise, suffix) ->
+        promise.then (file) ->
+          return file if file
+          filePath = "#{absolutePath}#{suffix}"
+          self.readFile(filePath)
+          .catch -> # If read fails try next read
+      , Promise.resolve()
+
+      p.then (file) ->
+        unless file
+          tries = suffixes.map (suffix) ->
+            "#{absolutePath}#{suffix}"
+          throw new Error "File not found at path: #{absolutePath}. Tried #{tries}"
+
+        return file
+      
       .then self.compileFile
 
     compileFile: (file) ->
@@ -180,43 +216,6 @@ module.exports = (I, self) ->
         env:
           pwd: pwd
         inputFile: inputFile
-
-    # Handle requiring with or without explicit extension
-    #     require "a"
-    # First check:
-    #     a
-    #     a.coffee
-    #     a.coffee.md
-    #     a.litcoffee
-    #     a.jadelet
-    #     a.js
-    readForRequire: (path, basePath) ->
-      # Hack to load 'system' modules
-      isModule = !path.match(/^.?.?\//)
-      if isModule
-        return Promise.resolve()
-        .then ->
-          require path
-
-      absolutePath = absolutizePath(basePath, path)
-
-      suffixes = ["", ".coffee", ".coffee.md", ".litcoffee", ".jadelet", ".js", ".styl"]
-
-      p = suffixes.reduce (promise, suffix) ->
-        promise.then (file) ->
-          return file if file
-          filePath = "#{absolutePath}#{suffix}"
-          self.readFile(filePath)
-          .catch -> # If read fails try next read
-      , Promise.resolve()
-
-      p.then (file) ->
-        unless file
-          tries = suffixes.map (suffix) ->
-            "#{absolutePath}#{suffix}"
-          throw new Error "File not found at path: #{absolutePath}. Tried #{tries}"
-
-        return file
 
     htmlForPackage: htmlForPackage
 

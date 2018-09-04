@@ -62,11 +62,8 @@ module.exports = (I, self) ->
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.loadProgram(configPath)
-        .then (configSource) ->
-          module = {}
-          Function("module", configSource)(module)
-          module.exports
+        state.loadConfigPromise = self.readAsText(configPath)
+        .then evalCSON
         .then (config) ->
           entryPoint = pkg.entryPoint = config.entryPoint
           pkg.remoteDependencies = config.remoteDependencies
@@ -97,8 +94,6 @@ module.exports = (I, self) ->
     # TODO: Loading deps like this doesn't work at all if require is used
     # from browserified js sources :(
     loadProgramIntoPackage: (absolutePath, state) ->
-      console.log "loadProgramIntoPackage", absolutePath, state
-
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
       relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
@@ -119,10 +114,9 @@ module.exports = (I, self) ->
           # Pull in dependencies
           depPaths = findDependencies(sourceProgram)
 
-          console.log "depPaths", depPaths
-
           Promise.all depPaths.map (depPath) ->
-            Promise.resolve().then ->
+            Promise.resolve()
+            .then ->
               if isRelativePath depPath
                 path = absolutizePath(relativeRoot, depPath)
                 self.loadProgramIntoPackage path, state

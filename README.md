@@ -72,6 +72,8 @@ Apps should be able to read and write to the file system in a simple manner.
 
     readFile: (path) ->
 
+    readAsText: (path) ->
+
     writeFile: (path, blob) ->
 
     deleteFile: (path) ->

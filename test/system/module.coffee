@@ -10,6 +10,11 @@ makeSystemFS = (files) ->
   model.include SystemModule
 
   Object.assign model,
+    readAsText: (path) ->
+      if content = files[path]
+        return Promise.resolve(content)
+      else
+        return Promise.reject new Error "File not found at: #{path}"
     readFile: (path) ->
       Promise.resolve()
       .then ->

@@ -98,13 +98,7 @@ This loads the package from the published gh-pages branch of the given repo.
 
 fetchDependency = MemoizedPromise (path) ->
   if typeof path is "string"
-    if startsWith(path, "!") # system package
-      pkg = PACKAGE.dependencies[path]
-      if pkg
-        Promise.resolve pkg
-      else
-        Promise.reject new Error "No system package found for '#{path}'"
-    else if startsWith(path, "http")
+    if startsWith(path, "http")
       ajax.getJSON(path)
       .catch ({status, response}) ->
         switch status

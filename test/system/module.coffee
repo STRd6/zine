@@ -91,3 +91,21 @@ describe "System Module", ->
       assert !pkg.dependencies["system-client"], "Package shouldn't include system-client as a dependency"
       assert pkg.remoteDependencies[0], "It shoud have remote dependencies"
       assert.equal pkg.entryPoint, "main"
+
+  it "should package templates and dependencies", ->
+    model = makeSystemFS
+      "/main.coffee": """
+        template = require "./app"
+      """
+      "/app.jadelet": """
+        app
+          h1 hello
+          p Rad!
+      """
+
+    model.packageProgram("/main.coffee")
+    .then (pkg) ->
+      console.log pkg
+      # Note: we currently don't fetch dependencies that aren't referenced
+      assert pkg.dependencies["!jadelet"], "Package shouldn include special Jadelet dependency"
+      assert.equal pkg.entryPoint, "main"

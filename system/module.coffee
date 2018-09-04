@@ -122,23 +122,20 @@ module.exports = (I, self) ->
                 self.loadProgramIntoPackage path, state
               else if isAbsolutePath depPath
                 throw new Error "Absolute paths not supported yet"
-              else
-                # package path
-                if startsWith depPath, "!"
-                  lookup = depPath
+              else # package path
+                if startsWith depPath, "!" # special system package
+                  pkg.dependencies[depPath] = PACKAGE.dependencies[depPath]
                 else
                   lookup = pkg.config.dependencies[depPath]
 
                   if !lookup?
                     throw new Error "No dependency listed in `pixie.cson` for '#{depPath}'"
 
-                fetchDependency(lookup)
-                .then (depPkg) ->
-                  pkg.dependencies[depPath] = depPkg
+                  fetchDependency(lookup)
+                  .then (depPkg) ->
+                    pkg.dependencies[depPath] = depPkg
         else
           throw new Error "TODO: Can't package files like #{absolutePath} yet"
-
-
 
     loadProgram: (path, basePath="/") ->
       self.readForRequire path, basePath

@@ -62,6 +62,10 @@ module.exports = (I, self) ->
 
       path = normalizePath "/#{path}"
       fs.read(path)
+      .then (blob) ->
+        throw new Error "File not found at #{path}" unless blob
+
+        return blob
 
     readAsText: (path) ->
       self.readFile(path)

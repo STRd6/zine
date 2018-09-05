@@ -44,7 +44,7 @@ module.exports = Explorer = (options={}) ->
         console.log "Open in app #{targetPath} <- #{selectedFile}"
         system.readFile(selectedFile.path)
         .then (file) ->
-          system.pathAsApp(targetPath, file.path)
+          system.launchAppByPath(targetPath, file.path)
       e.preventDefault()
 
       return
@@ -59,7 +59,7 @@ module.exports = Explorer = (options={}) ->
           system.writeFile(newPath, file, true)
       else
         file = files[0]
-        system.pathAsApp(targetPath, file.path)
+        system.launchAppByPath(targetPath, file.path)
 
   explorerContextMenu = ContextMenu
     items: parseMenu """

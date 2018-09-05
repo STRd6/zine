@@ -22,7 +22,7 @@ module.exports = (I, self) ->
       file.path.match(/\.coffee$/) or
       file.path.match(/\.exe$/)
     fn: (file) ->
-      self.pathAsApp file.path
+      self.launchAppByPath file.path
   }, {
     name: "Run"
     filter: (file) ->
@@ -109,7 +109,7 @@ module.exports = (I, self) ->
       self.readFile path
       .then self.open
 
-    pathAsApp: (path, inputFile) ->
+    launchAppByPath: (path, inputFile) ->
       if path.match(/\.exe$/)
         self.readFile(path)
         .then (blob) ->

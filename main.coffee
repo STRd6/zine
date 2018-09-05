@@ -50,3 +50,9 @@ system.writeFile "feedback.exe", new Blob [
 system.writeFile "My Briefcase", new Blob [""], type: "application/briefcase"
 
 system.initAppSettings()
+
+window.addEventListener "beforeunload", (e) ->
+  unless system.saved()
+    e.returnValue = "Your changes haven't yet been saved. If you leave now you will lose your work."
+
+  return e.returnValue

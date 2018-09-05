@@ -48,6 +48,7 @@ Application objects are views (they have an element, usually a UI window).
     element: DOMElement
     exit: -> # Exit the app and remove its element from the DOM
     send: -> Promise
+    saved: -> Boolean
 
 Apps can communicate with each other by sending messages via the `send` method.
 Since apps can be running inside iframes or other places all data needs to be
@@ -73,6 +74,8 @@ Apps should be able to read and write to the file system in a simple manner.
     readFile: (path) ->
 
     readAsText: (path) ->
+
+    readTree: (path) ->
 
     writeFile: (path, blob) ->
 

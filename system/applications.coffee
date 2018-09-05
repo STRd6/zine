@@ -71,6 +71,10 @@ module.exports = (I, self) ->
     appData: Observable []
     runningApplications: Observable []
 
+    saved: ->
+      self.runningApplications().every (app) ->
+        !app.saved? or app.saved()
+
     # Open a file
     open: (file) ->
       handle(file)
@@ -132,9 +136,13 @@ module.exports = (I, self) ->
       # Add to list of apps
       self.runningApplications.push app
 
-      # Override the default close behavior to trigger exit events
-      if app.exit?
-        app.close = app.exit
+      # If apps don't implement an exit make sure to give them a default one.
+      app.exit ?= ->
+        app.element.remove()
+        app.trigger "exit"
+
+      # Override the default close behavior to trigger exit events  
+      app.close = app.exit
 
       app.on "exit", ->
         self.runningApplications.remove app

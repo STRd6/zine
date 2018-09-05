@@ -169,17 +169,28 @@ module.exports = (opts={}) ->
 
   signals = ObservableObject()
 
+  doExit = ->
+    setTimeout ->
+      application.element.remove()
+      application.trigger "exit"
+    , 0
+
   Object.assign application,
     # Observable fn that returns an array of [key, Observable(value)] items
     signals: signals
     # Expose an observable property that can be updated from within the iframe
     setSignal: signals.set
+    saved: Observable true
     exit: ->
-      # TODO: Prompt unsaved, etc.
-      setTimeout ->
-        application.element.remove()
-        application.trigger "exit"
-      , 0
+      # Prompt unsaved, etc.
+      if application.saved()
+        doExit()
+      else
+        Modal.confirm "You will lose unsaved changes"
+        .then (ok) ->
+          if ok
+            doExit()
+
       return
 
     # Send a message into the iframe, received by the client's postmaster.delegate

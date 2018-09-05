@@ -69,12 +69,16 @@ extensionFor = (path) ->
   if result
     result[1]
 
-readTree = (fs, directoryPath) ->
+readTree = (fs, directoryPath, recursive=true) ->
   fs.list(directoryPath)
   .then (files) ->
     Promise.all files.map (file) ->
       if file.folder
-        readTree(fs, file.path)
+        if recursive
+          readTree(fs, file.path)
+        else
+          folder: true
+          path: path
       else
         file
   .then (filesAndFolderFiles) ->

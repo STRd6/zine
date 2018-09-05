@@ -152,7 +152,8 @@ path:</code></pre>
   </div>
   <div class="content"><pre><code>element: DOMElement
 exit: -&gt; # Exit the app and remove its element from the DOM
-send: -&gt; Promise</code></pre>
+send: -&gt; Promise
+saved: -&gt; Boolean</code></pre>
 </div>
 </li>
 <li id="section-13">
@@ -190,6 +191,8 @@ TODO: Add methods for connecting streams.</p>
   <div class="content"><pre><code>readFile: (path) -&gt;
 
 readAsText: (path) -&gt;
+
+readTree: (path) -&gt;
 
 writeFile: (path, blob) -&gt;
 

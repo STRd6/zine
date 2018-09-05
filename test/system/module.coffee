@@ -4,7 +4,7 @@ SystemModule = require "../../system/module"
 
 mocha.setup
   globals: ['amazon']
-  
+
 makeSystemFS = (files) ->
   model = Model()
   model.include SystemModule

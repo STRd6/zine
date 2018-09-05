@@ -38,7 +38,6 @@ module.exports = (I, self) ->
 
     return results
 
-
   Object.assign self,
     findDependencies: findDependencies
 
@@ -46,7 +45,10 @@ module.exports = (I, self) ->
     # `require`.
     packageProgram: (absolutePath, state={}) ->
       state.cache = {}
-      state.pkg = {}
+      state.pkg = pkg =
+        distribution: {}
+        dependencies: # Pre-load system client dependency
+          "!system": PACKAGE.dependencies["!system"]
 
       basePath = absolutePath.match(/^.*\//)?[0] or ""
       state.basePath = basePath
@@ -56,9 +58,6 @@ module.exports = (I, self) ->
       state.pkgPath = (path) ->
         path.replace(state.basePath, "").replace(/\.[^.]*$/, "")
       pkgPath = state.pkgPath(absolutePath)
-
-      {pkg} = state
-      pkg.distribution ?= {}
 
       unless state.loadConfigPromise
         configPath = absolutizePath basePath, "pixie.cson"
@@ -109,7 +108,6 @@ module.exports = (I, self) ->
           # Add to package
           pkg.distribution[pkgPath] =
             content: sourceProgram
-          pkg.dependencies ?= {}
 
           # Pull in dependencies
           depPaths = findDependencies(sourceProgram)

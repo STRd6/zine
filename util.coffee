@@ -42,6 +42,25 @@ htmlForPackage = (pkg, opts={}) ->
     require('./#{pkg.entryPoint}');
   """
 
+  # Wrap code with !system integration if it exists
+  if pkg.dependencies["!system"]
+    code = """
+      var SystemClient = require("!system");
+      var {Observable} = SystemClient;
+      var {system, application} = SystemClient();
+
+      Object.assign(window, {
+        application: application,
+        system: system,
+        Observable: Observable
+      });
+
+      system.ready()
+      .then(function() {
+        #{code}
+      });
+    """
+
   """
     <!DOCTYPE html>
     <html>

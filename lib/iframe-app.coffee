@@ -167,10 +167,6 @@ module.exports = (opts={}) ->
     height: height
     iconEmoji: iconEmoji
 
-  application[system.embalmSymbol()] = () ->
-    id: application._id
-    title: application.title()
-
   signals = ObservableObject()
 
   doExit = ->

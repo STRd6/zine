@@ -175,6 +175,12 @@ module.exports = (I, self) ->
         app.element.remove()
         app.trigger "exit"
 
+      # JSONify apps so their handles can be passed across postMessage
+      app[system.embalmSymbol()] ?= ->
+        type: "Application"
+        id: app._id
+        title: app.title()
+
       # Override the default close behavior to trigger exit events
       app.close = app.exit
 

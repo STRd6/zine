@@ -60,7 +60,6 @@ module.exports = ->
             return reject(err)
 
           cognitoUser = result.user
-          console.log('user name is ' + cognitoUser.getUsername())
 
           # User will need to confirm email address
           resolve cognitoUser

@@ -45,7 +45,6 @@ module.exports = ->
   content = Observable null
 
   receivedCredentials = (AWS) ->
-    console.log AWS.config.credentials
     id = AWS.config.credentials.identityId
 
     content LoadedTemplate()
@@ -222,8 +221,6 @@ bindAlgoliaIndex = (id, fs) ->
   global.reindexBriefcase = ->
     readTree fs, "/public"
     .then (files) ->
-      console.log "All Bfiles", files
-
       queue = files
       RETRY = {}
 

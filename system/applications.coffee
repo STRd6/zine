@@ -18,6 +18,8 @@ module.exports = (I, self) ->
   # The first handler that matches is the default handler, the rest are available
   # from context menu
   handlers = [{
+      
+    }, {
     name: "Run"
     filter: (file) ->
       file.type is "application/javascript" or
@@ -89,8 +91,7 @@ module.exports = (I, self) ->
 
     # Add a handler to the list of handlers, position zero is highest priority
     # Default is lowest priority
-    registerHandler: (handler, position) ->
-      position ?= handlers.length
+    registerHandler: (handler, position=0) ->
       handlers.splice(position, 0, handler)
 
     removeHandler: (handler) ->

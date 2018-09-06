@@ -18,6 +18,7 @@ PkgFS = require "../lib/pkg-fs"
       # TODO: Can we make the explorer less specialized here?
       element = Explorer
         path: mountPath
+
       windowView = system.UI.Window
         title: mountPath
         content: element

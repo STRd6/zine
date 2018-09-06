@@ -49,6 +49,7 @@ module.exports = (I, self) ->
           distribution: {}
           dependencies: # Pre-load system client dependency
             "!system": PACKAGE.dependencies["!system"]
+          source: {}
 
       {pkg} = state
 
@@ -69,6 +70,9 @@ module.exports = (I, self) ->
           entryPoint = pkg.entryPoint = config.entryPoint
           pkg.remoteDependencies = config.remoteDependencies
           pkg.config = config
+          
+          
+          console.log "CONF", config, pkg.config
 
           if entryPoint
             path = absolutizePath(basePath, entryPoint)
@@ -98,10 +102,19 @@ module.exports = (I, self) ->
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
       relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
+      
+      console.log "LOAD", absolutePath, pkg.config
 
-      state.cache[absolutePath] ?= self.loadProgram(absolutePath)
-      .then (sourceProgram) ->
-        if typeof sourceProgram is "string"
+      self.readAsText(absolutePath)
+      .then (content) ->
+        # Add source to package
+        sourcePath = absolutePath.replace(state.basePath, "")
+        pkg.source[sourcePath] =
+          content: content
+
+        state.cache[absolutePath] ?= self.loadProgram(absolutePath)
+      .then (compiledProgram) ->
+        if typeof compiledProgram is "string"
           # NOTE: Things will fail if we require ../../ above our
           # initial directory.
           # TODO: Detect and throw if requiring relative or absolute paths above
@@ -109,10 +122,10 @@ module.exports = (I, self) ->
 
           # Add to package
           pkg.distribution[pkgPath] =
-            content: sourceProgram
+            content: compiledProgram
 
           # Pull in dependencies
-          depPaths = findDependencies(sourceProgram)
+          depPaths = findDependencies(compiledProgram)
 
           Promise.all depPaths.map (depPath) ->
             Promise.resolve()

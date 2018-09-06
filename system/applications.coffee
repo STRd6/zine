@@ -1,5 +1,7 @@
 MyBriefcase = require "../apps/my-briefcase"
 
+Explorer = require "../apps/explorer"
+PkgFS = require "../lib/pkg-fs"
 AppDrop = require "../lib/app-drop"
 IFrameApp = require "../lib/iframe-app"
 {
@@ -29,8 +31,8 @@ module.exports = (I, self) ->
   }, {
     name: "Run"
     filter: (file) ->
-      file.type is "application/json" or
-      file.path.match(/\.json$/)
+      file.type.match(/^application\/pixie\+json/) or
+      file.path.match(/💾$/)
     fn: ({path}) ->
       self.readFile(path)
       .then (blob) ->
@@ -47,9 +49,36 @@ module.exports = (I, self) ->
     fn: ({path}) ->
       self.packageProgram(path)
       .then (pkg) ->
-        Modal.prompt "Filename", "#{path}/../master.json"
+        Modal.prompt "Filename", "#{path}/../master💾"
         .then (path) ->
-          self.writeFile(path, JSON.toBlob(pkg))
+          self.writeFile(path, JSON.toBlob(pkg, "application/pixie+json"))
+  }, {
+    name: "Explore Package"
+    filter: (file) ->
+      file.type.match(/^application\/pixie\+json/) or
+      file.path.match(/💾$/)
+    fn: (file) ->
+      system.readFile(file.path)
+      .then (blob) ->
+        blob.readAsJSON()
+      .then (pkg) ->
+        mountPath = file.path + "/"
+        fs = PkgFS(pkg, file.path)
+        system.fs.mount mountPath, fs
+  
+        # TODO: Can we make the explorer less specialized here?
+        element = Explorer
+          path: mountPath
+  
+        windowView = system.UI.Window
+          title: mountPath
+          content: element
+          menuBar: null
+          width: 640
+          height: 480
+          iconEmoji: "📂"
+  
+        document.body.appendChild windowView.element
   }, {
     name: "PDF Viewer"
     filter: (file) ->

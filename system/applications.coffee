@@ -9,7 +9,7 @@ IFrameApp = require "../lib/iframe-app"
   htmlForPackage
 } = require "../util"
 
-{Observable} = require "ui"
+{Modal, Observable} = require "ui"
 
 lastAppId = 1024
 
@@ -37,6 +37,19 @@ module.exports = (I, self) ->
         blob.readAsJSON()
       .then (pkg) ->
         self.executePackageInIFrame pkg, baseDirectory(path)
+  }, {
+    name: "Create Package"
+    filter: (file) ->
+      file.type is "application/javascript" or
+      file.path.match(/\.js$/) or
+      file.path.match(/\.coffee$/) or
+      file.path.match(/pixie\.cson$/)
+    fn: ({path}) ->
+      self.packageProgram(path)
+      .then (pkg) ->
+        Modal.prompt "Filename", "#{path}/../master.json"
+        .then (path) ->
+          self.writeFile(path, JSON.toBlob(pkg))
   }, {
     name: "PDF Viewer"
     filter: (file) ->
@@ -89,8 +102,7 @@ module.exports = (I, self) ->
 
     # Add a handler to the list of handlers, position zero is highest priority
     # Default is lowest priority
-    registerHandler: (handler, position) ->
-      position ?= handlers.length
+    registerHandler: (handler, position=0) ->
       handlers.splice(position, 0, handler)
 
     removeHandler: (handler) ->
@@ -472,7 +484,7 @@ module.exports = (I, self) ->
     width: 960 + 8
     height: 640 + 27
     achievement: "In space, nobody can hear you in space"
-  }]
+  }].reverse()
 
   return self
 

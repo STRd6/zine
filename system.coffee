@@ -6,7 +6,6 @@ FS = require "./system/fs"
 Mimes = require "./system/mimes"
 SystemModule = require "./system/module"
 Template = require "./system/template"
-TokenStore = require "./system/token-store"
 UI = require "ui"
 
 module.exports = (I={}, self=Model(I)) ->
@@ -18,8 +17,7 @@ module.exports = (I={}, self=Model(I)) ->
     Mimes,
     require("./system/messaging"),
     SystemModule,
-    Template,
-    TokenStore
+    Template
 
   {title} = require "./pixie"
   [..., version] = title.split('-')

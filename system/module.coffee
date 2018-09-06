@@ -42,12 +42,15 @@ module.exports = (I, self) ->
 
     # Load everything statically and put it in a package that can be run by our
     # `require`.
-    packageProgram: (absolutePath, state={}) ->
-      state.cache = {}
-      state.pkg = pkg =
-        distribution: {}
-        dependencies: # Pre-load system client dependency
-          "!system": PACKAGE.dependencies["!system"]
+    packageProgram: (absolutePath) ->
+      state =
+        cache: {}
+        pkg:
+          distribution: {}
+          dependencies: # Pre-load system client dependency
+            "!system": PACKAGE.dependencies["!system"]
+
+      {pkg} = state
 
       basePath = absolutePath.match(/^.*\//)?[0] or ""
       state.basePath = basePath

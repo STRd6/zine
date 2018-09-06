@@ -23,9 +23,7 @@ module.exports = (pkg, persistencePath) ->
 
   persist = ->
     # Persist entire pkg
-    pkgBlob = new Blob [JSON.stringify(pkg)],
-      type: "application/json; charset=utf8"
-    system.writeFile persistencePath, pkgBlob
+    system.writeFile persistencePath, JSON.toBlob(pkg)
 
   compileAndWrite = (path, blob) ->
     writeSource = blob.readAsText()

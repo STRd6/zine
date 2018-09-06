@@ -88,15 +88,17 @@ module.exports = (opts={}) ->
     else
       absolutizePath env.pwd, path
 
+  # Adjust the path argument to handle relative paths and pass the rest through
+  adjustPathArgument = (method) ->
+    (path, args...) ->
+      system[method](resolvePath(path), args...)
+
   systemProxy = new Proxy
-    readFile: (path) ->
-      system.readFile(resolvePath(path))
-    writeFile: (path, blob) ->
-      system.writeFile(resolvePath(path), blob)
-    deleteFile: (path) ->
-      system.deleteFile(resolvePath(path))
-    readAsText: (path) ->
-      system.readAsText(resolvePath(path))
+    launchAppByPath: adjustPathArgument('launchAppByPath')
+    readFile: adjustPathArgument('readFile')
+    writeFile: adjustPathArgument('writeFile')
+    deleteFile: adjustPathArgument('deleteFile')
+    readAsText: adjustPathArgument('readAsText')
     readTree: (path) ->
       # TODO: Figure out how to embalm the entries so they can proxy the calls
       system.readTree(resolvePath(path)).then (data) ->

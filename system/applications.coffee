@@ -233,9 +233,18 @@ module.exports = (I, self) ->
         throw new Error "No app found named '#{name}'"
 
     tell: (appId, method, params...) ->
-      self.runningApplications().forEach (app) ->
-        if app._id is appId
-          app.send("application", method, params...)
+      self.appById(appId).send("application", method, params...)
+
+    kill: (appId) ->
+      self.appById(appId).exit()
+
+    appById: (id) ->
+      [app] = self.runningApplications().filter (app) ->
+        app._id is id
+
+      throw new Error "No app with id #{id}" unless app
+
+      return app
 
     initAppSettings: ->
       systemApps.forEach self.installAppHandler

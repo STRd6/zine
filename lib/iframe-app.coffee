@@ -72,9 +72,7 @@ module.exports = (opts={}) ->
       args: {} # TODO: Can pass args here, args can be an object
 
   # TODO: Set menu bar from within app
-
-  # TODO: embalm objects for passing into the afterlife (into iframes)
-  embalm = (x) -> x
+  
   # TODO: revitalize embalmed objects that are received
   # these can be used to link observables, or to have proxy objects
   # that remotely invoke their methods and return promises
@@ -113,7 +111,7 @@ module.exports = (opts={}) ->
         fn = system[method]
         if typeof fn is "function"
           Promise.resolve(fn.apply(system, revitalize(args)))
-          .then embalm
+          .then system.embalm # embalm objects for passing into the afterlife (into iframes)
         else
           throw new Error "system has no method '#{method}'"
 
@@ -168,6 +166,10 @@ module.exports = (opts={}) ->
     width: width
     height: height
     iconEmoji: iconEmoji
+
+  application[system.embalmSymbol()] = () ->
+    id: application._id
+    title: application.title()
 
   signals = ObservableObject()
 

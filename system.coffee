@@ -16,6 +16,7 @@ module.exports = (I={}, self=Model(I)) ->
     Achievement,
     Applications,
     Mimes,
+    require("./system/messaging"),
     SystemModule,
     Template,
     TokenStore

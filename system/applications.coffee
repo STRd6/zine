@@ -6,9 +6,12 @@ IFrameApp = require "../lib/iframe-app"
   baseDirectory
   endsWith
   execute
+  htmlForPackage
 } = require "../util"
 
 {Observable} = require "ui"
+
+lastAppId = 1024
 
 module.exports = (I, self) ->
   # Handlers use type and contents path info to do the right thing
@@ -124,10 +127,41 @@ module.exports = (I, self) ->
       else
         Promise.reject new Error "Could not launch #{path}"
 
+    # Build a package for the file at `absolutePath`. Execute that package in an
+    # isolated context from the core system. It can communicate with the system
+    # over `postMessage`.
+    # It happens to be in an iframe but no reason it couldn't be web worker or
+    # something else.
+    executeInIFrame: (absolutePath, inputFile) ->
+      self.packageProgram(absolutePath)
+      .then (pkg) ->
+        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputFile
+
+    # Execute a package in the context of an iframe
+    # The package is converted into a blob url containing an html source that
+    # will execute the package.
+    executePackageInIFrame: (pkg, pwd="/", inputFile) ->
+      html = system.htmlForPackage pkg
+      blob = new Blob [html],
+        type: "text/html; charset=utf-8"
+      src = URL.createObjectURL blob
+
+      data = Object.assign {}, pkg.config, {src: src}
+
+      self.launchAppByAppData data,
+        env:
+          pwd: pwd
+        inputFile: inputFile
+
+    htmlForPackage: htmlForPackage
+
     # The final step in launching an application in the OS
     # This wires up event streams, drop events, adds the app to the list
     # of running applications, and attaches the app's element to the DOM
     attachApplication: (app, options={}) ->
+      app._id = lastAppId
+      lastAppId += 1
+
       # Bind Drop events
       AppDrop(app)
 
@@ -141,13 +175,15 @@ module.exports = (I, self) ->
         app.element.remove()
         app.trigger "exit"
 
-      # Override the default close behavior to trigger exit events  
+      # Override the default close behavior to trigger exit events
       app.close = app.exit
 
       app.on "exit", ->
         self.runningApplications.remove app
 
       document.body.appendChild app.element
+
+      id: app._id
 
     ###
     Apps can come in many types based on what attributes are present.
@@ -195,6 +231,11 @@ module.exports = (I, self) ->
           inputPath: path
       else
         throw new Error "No app found named '#{name}'"
+
+    tell: (appId, method, params...) ->
+      self.runningApplications().forEach (app) ->
+        if app._id is appId
+          app.send("application", method, params...)
 
     initAppSettings: ->
       systemApps.forEach self.installAppHandler

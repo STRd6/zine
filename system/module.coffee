@@ -10,7 +10,6 @@
   normalizePath
   isAbsolutePath
   isRelativePath
-  htmlForPackage
   startsWith
   fetchDependency
 } = require "../util"
@@ -188,34 +187,6 @@ module.exports = (I, self) ->
       else
         # Return the blob itself if we didn't find any compilers
         return file
-
-    # Build a package for the file at `absolutePath`. Execute that package in an
-    # isolated context from the core system. It can communicate with the system
-    # over `postMessage`.
-    # It happens to be in an iframe but no reason it couldn't be web worker or
-    # something else.
-    executeInIFrame: (absolutePath, inputFile) ->
-      self.packageProgram(absolutePath)
-      .then (pkg) ->
-        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputFile
-
-    # Execute a package in the context of an iframe
-    # The package is converted into a blob url containing an html source that
-    # will execute the package.
-    executePackageInIFrame: (pkg, pwd="/", inputFile) ->
-      html = system.htmlForPackage pkg
-      blob = new Blob [html],
-        type: "text/html; charset=utf-8"
-      src = URL.createObjectURL blob
-
-      data = Object.assign {}, pkg.config, {src: src}
-
-      self.launchAppByAppData data,
-        env:
-          pwd: pwd
-        inputFile: inputFile
-
-    htmlForPackage: htmlForPackage
 
     evalCSON: evalCSON
 

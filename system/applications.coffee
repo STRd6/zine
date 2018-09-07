@@ -242,7 +242,6 @@ module.exports = (I, self) ->
       script: script that executes inline
       src: iframe apps
       name: a named system application
-      packageURL: iframe app for a remote package
     ###
     launchAppByAppData: (datum, options={}) ->
       {name, icon, width, height, src, sandbox, script, title, allow} = datum
@@ -273,14 +272,16 @@ module.exports = (I, self) ->
 
       self.attachApplication app
 
+    # Look up the app data for the given app name and launch that app
+    # we also download and cache remote apps here
     launchAppByName: (name, path) ->
       [datum] = self.appData.filter (datum) ->
         datum.name is name
 
       if datum
-        {remotePackage} = datum
-        if remotePackage
-          self.cachedOrFetchAppPackage(remotePackage, name)
+        {packageURL} = datum
+        if packageURL
+          self.cachedOrFetchAppPackage(packageURL, name)
           .then (pkg) ->
             self.executePackageInIFrame(pkg)
         else
@@ -291,15 +292,7 @@ module.exports = (I, self) ->
       else
         throw new Error "No app found named '#{name}'"
 
-    cachedOrFetchAppPackage: (remotePackage, cachedName) ->
-      match = remotePackage.match /([^\/]+)\/([^@]+)(@.*)?/
-
-      throw new Error "Could not parse remote package path #{remotePackage}" unless match
-
-      [x, domain, appName, version] = match
-
-      version ?= "master"
-
+    cachedOrFetchAppPackage: (packageURL, cachedName) ->
       cachedPath = "/System/Apps/#{cachedName}💾"
 
       self.readFile(cachedPath)
@@ -307,8 +300,7 @@ module.exports = (I, self) ->
         blob.readAsJSON()
       .catch (e) ->
         if e.message.match /File not found/i
-          url = "https://#{domain}/apps/#{appName}/#{version}💾"
-          fetch(url).then (result) ->
+          fetch(packageURL).then (result) ->
             result.json()
           .then (pkg) ->
             self.writeFile cachedPath, JSON.toBlob(pkg)
@@ -332,6 +324,13 @@ module.exports = (I, self) ->
     initAppSettings: ->
       systemApps.forEach self.installAppHandler
       # TODO: Install user apps
+      # could be a local index like this remote one
+
+      # Fetch whimsy.space app index
+      fetch("https://whimsy.space/apps/index.json").then (result) ->
+        result.json()
+      .then (appData) ->
+        self.appData self.appData.concat appData
 
       self.appData systemApps
 
@@ -378,10 +377,6 @@ module.exports = (I, self) ->
     sandbox: false
     width: 960
     height: 540
-  }, {
-    name: "Task Manager"
-    icon: "📡"
-    remotePackage: "whimsy.space/task-manager"
   }, {
     name: "Pixie Paint"
     icon: "🖌️"

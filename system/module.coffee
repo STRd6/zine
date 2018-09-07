@@ -65,22 +65,23 @@ module.exports = (I, self) ->
 
       # Load Config
       configPath = absolutizePath basePath, "pixie.cson"
-      state.loadConfigPromise = self.readAsText(configPath)
-      .then (configSource) ->
-        evalCSON(configSource)
-        .then (config) ->
+      self.loadProgramIntoPackage(configPath, state)
+      .catch (e) ->
+        throw e unless e.message.match /File not found/i
+      .then -> # Apply config
+        if pkg.distribution.pixie
+          # Remove 'module.exports = ' and parse as JSON
+          config = JSON.parse pkg.distribution.pixie.content.slice(17)
+
           pkg.entryPoint = config.entryPoint
           pkg.remoteDependencies = config.remoteDependencies
           pkg.config = config
-      , (e) ->
-         throw e unless e.message.match /File not found/i
-
-      .then ->
+      .then -> # Load Entry point
         # Load the entry point defined in pixie.cson if present
         if entryPoint = pkg.entryPoint
           path = absolutizePath(basePath, entryPoint)
           self.loadProgramIntoPackage(path, state)
-      .then ->
+      .then -> # Load program
         self.loadProgramIntoPackage(absolutePath, state)
       .then ->
         # Override entry point from package config
@@ -98,11 +99,14 @@ module.exports = (I, self) ->
       {basePath, pkg} = state
       pkgPath = state.pkgPath(absolutePath)
       relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
-      
-      console.log "LOAD", absolutePath, pkg.config
 
+      # TODO: Separate the resolving from the compiling
       state.cache[absolutePath] ?= self.loadProgram(absolutePath)
-      .then (compiledProgram) ->
+      .then ([compiledProgram, file, source]) ->
+        pkg.source[file.path.replace(state.basePath, "")] =
+          content: source
+          type: file.type
+
         if typeof compiledProgram is "string"
           # NOTE: Things will fail if we require ../../ above our
           # initial directory.
@@ -177,7 +181,12 @@ module.exports = (I, self) ->
 
         return file
 
-      .then self.compileFile
+      # TODO: Clean up compilers and this double reading source stuff :*(
+      .then (file) -> 
+        self.compileFile file
+        .then (compiled) ->
+          file.readAsText().then (source) ->
+            [compiled, file, source]
 
     compileFile: (file) ->
       # system modules are loaded as functions/objects right now, so just return them

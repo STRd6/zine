@@ -92,6 +92,7 @@ describe "System Module", ->
       assert !pkg.dependencies["system-client"], "Package shouldn't include system-client as a dependency"
       assert pkg.remoteDependencies[0], "It shoud have remote dependencies"
       assert.equal pkg.entryPoint, "main"
+      assert.equal pkg.source["main.coffee"].content, "alert('heyy')"
 
   it "should package templates and dependencies", ->
     model = makeSystemFS

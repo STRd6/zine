@@ -180,7 +180,7 @@ module.exports = (I, self) ->
 
       Promise.all absolutePaths.map (absolutePath) ->
         state.cache[absolutePath] ?= self.loadProgram(absolutePath)
-        .then (sourceProgram) ->
+        .then ([sourceProgram]) ->
           # loadProgram returns an object in the case of JSON because it has no
           # dependencies and doesn't need an require re-writing
           # Having this special case lets us take a short cut without having to

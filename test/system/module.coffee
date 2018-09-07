@@ -64,7 +64,6 @@ describe "System Module", ->
 
     model.packageProgram("/test.coffee")
     .then (pkg) ->
-      console.log(pkg)
       assert pkg.dependencies["system-client"], "Package should include system-client as a dependency"
       assert pkg.remoteDependencies[0], "It shoud have remote dependencies"
       assert.equal pkg.entryPoint, "test"

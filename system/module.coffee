@@ -46,9 +46,11 @@ module.exports = (I, self) ->
       state =
         cache: {}
         pkg:
+          config: {}
           distribution: {}
           dependencies: # Pre-load system client dependency
             "!system": PACKAGE.dependencies["!system"]
+          source: {}
 
       {pkg} = state
 
@@ -61,26 +63,25 @@ module.exports = (I, self) ->
         path.replace(state.basePath, "").replace(/\.[^.]*$/, "")
       pkgPath = state.pkgPath(absolutePath)
 
-      unless state.loadConfigPromise
-        configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.readAsText(configPath)
-        .then evalCSON
-        .then (config) ->
-          entryPoint = pkg.entryPoint = config.entryPoint
+      # Load Config
+      configPath = absolutizePath basePath, "pixie.cson"
+      self.loadProgramIntoPackage(configPath, state)
+      .catch (e) ->
+        throw e unless e.message.match /File not found/i
+      .then -> # Apply config
+        if pkg.distribution.pixie
+          # Remove 'module.exports = ' and parse as JSON
+          config = JSON.parse pkg.distribution.pixie.content.slice(17)
+
+          pkg.entryPoint = config.entryPoint
           pkg.remoteDependencies = config.remoteDependencies
           pkg.config = config
-
-          if entryPoint
-            path = absolutizePath(basePath, entryPoint)
-            self.loadProgramIntoPackage(path, state)
-        .catch (e) ->
-          if e.message.match /File not found/i
-            pkg.config = {}
-          else
-            throw e
-
-      state.loadConfigPromise
-      .then ->
+      .then -> # Load Entry point
+        # Load the entry point defined in pixie.cson if present
+        if entryPoint = pkg.entryPoint
+          path = absolutizePath(basePath, entryPoint)
+          self.loadProgramIntoPackage(path, state)
+      .then -> # Load program
         self.loadProgramIntoPackage(absolutePath, state)
       .then ->
         # Override entry point from package config
@@ -99,9 +100,14 @@ module.exports = (I, self) ->
       pkgPath = state.pkgPath(absolutePath)
       relativeRoot = absolutePath.replace(/\/[^/]*$/, "")
 
+      # TODO: Separate the resolving from the compiling
       state.cache[absolutePath] ?= self.loadProgram(absolutePath)
-      .then (sourceProgram) ->
-        if typeof sourceProgram is "string"
+      .then ([compiledProgram, file, source]) ->
+        pkg.source[file.path.replace(state.basePath, "")] =
+          content: source
+          type: file.type
+
+        if typeof compiledProgram is "string"
           # NOTE: Things will fail if we require ../../ above our
           # initial directory.
           # TODO: Detect and throw if requiring relative or absolute paths above
@@ -109,10 +115,10 @@ module.exports = (I, self) ->
 
           # Add to package
           pkg.distribution[pkgPath] =
-            content: sourceProgram
+            content: compiledProgram
 
           # Pull in dependencies
-          depPaths = findDependencies(sourceProgram)
+          depPaths = findDependencies(compiledProgram)
 
           Promise.all depPaths.map (depPath) ->
             Promise.resolve()
@@ -175,7 +181,12 @@ module.exports = (I, self) ->
 
         return file
 
-      .then self.compileFile
+      # TODO: Clean up compilers and this double reading source stuff :*(
+      .then (file) -> 
+        self.compileFile file
+        .then (compiled) ->
+          file.readAsText().then (source) ->
+            [compiled, file, source]
 
     compileFile: (file) ->
       # system modules are loaded as functions/objects right now, so just return them

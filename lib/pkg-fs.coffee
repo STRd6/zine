@@ -53,7 +53,10 @@ module.exports = (pkg, persistencePath) ->
   .extend
     # Read a blob from a path
     read: (path) ->
-      {content, type} = pkg.source[sourcePath(path)]
+      entry = pkg.source[sourcePath(path)]
+      throw new Error "File not found at: #{path}" unless entry
+
+      {content, type} = entry
       type ?= ""
 
       blob = new Blob [content],

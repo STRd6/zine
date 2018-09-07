@@ -46,6 +46,7 @@ module.exports = (I, self) ->
       state =
         cache: {}
         pkg:
+          config: {}
           distribution: {}
           dependencies: # Pre-load system client dependency
             "!system": PACKAGE.dependencies["!system"]
@@ -62,28 +63,23 @@ module.exports = (I, self) ->
         path.replace(state.basePath, "").replace(/\.[^.]*$/, "")
       pkgPath = state.pkgPath(absolutePath)
 
-      unless state.loadConfigPromise
-        configPath = absolutizePath basePath, "pixie.cson"
-        state.loadConfigPromise = self.readAsText(configPath)
-        .then evalCSON
+      # Load Config
+      configPath = absolutizePath basePath, "pixie.cson"
+      state.loadConfigPromise = self.readAsText(configPath)
+      .then (configSource) ->
+        evalCSON(configSource)
         .then (config) ->
-          entryPoint = pkg.entryPoint = config.entryPoint
+          pkg.entryPoint = config.entryPoint
           pkg.remoteDependencies = config.remoteDependencies
           pkg.config = config
-          
-          
-          console.log "CONF", config, pkg.config
+      , (e) ->
+         throw e unless e.message.match /File not found/i
 
-          if entryPoint
-            path = absolutizePath(basePath, entryPoint)
-            self.loadProgramIntoPackage(path, state)
-        .catch (e) ->
-          if e.message.match /File not found/i
-            pkg.config = {}
-          else
-            throw e
-
-      state.loadConfigPromise
+      .then ->
+        # Load the entry point defined in pixie.cson if present
+        if entryPoint = pkg.entryPoint
+          path = absolutizePath(basePath, entryPoint)
+          self.loadProgramIntoPackage(path, state)
       .then ->
         self.loadProgramIntoPackage(absolutePath, state)
       .then ->
@@ -105,14 +101,7 @@ module.exports = (I, self) ->
       
       console.log "LOAD", absolutePath, pkg.config
 
-      self.readAsText(absolutePath)
-      .then (content) ->
-        # Add source to package
-        sourcePath = absolutePath.replace(state.basePath, "")
-        pkg.source[sourcePath] =
-          content: content
-
-        state.cache[absolutePath] ?= self.loadProgram(absolutePath)
+      state.cache[absolutePath] ?= self.loadProgram(absolutePath)
       .then (compiledProgram) ->
         if typeof compiledProgram is "string"
           # NOTE: Things will fail if we require ../../ above our

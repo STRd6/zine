@@ -65,11 +65,11 @@ module.exports = (I, self) ->
         mountPath = file.path + "/"
         fs = PkgFS(pkg, file.path)
         system.fs.mount mountPath, fs
-  
+
         # TODO: Can we make the explorer less specialized here?
         element = Explorer
           path: mountPath
-  
+
         windowView = system.UI.Window
           title: mountPath
           content: element
@@ -77,7 +77,7 @@ module.exports = (I, self) ->
           width: 640
           height: 480
           iconEmoji: "📂"
-  
+
         document.body.appendChild windowView.element
   }, {
     name: "PDF Viewer"
@@ -182,17 +182,22 @@ module.exports = (I, self) ->
     # The package is converted into a blob url containing an html source that
     # will execute the package.
     executePackageInIFrame: (pkg, pwd="/", inputFile) ->
-      html = system.htmlForPackage pkg
-      blob = new Blob [html],
-        type: "text/html; charset=utf-8"
-      src = URL.createObjectURL blob
-
-      data = Object.assign {}, pkg.config, {src: src}
+      data = self.dataForPackage(pkg)
 
       self.launchAppByAppData data,
         env:
           pwd: pwd
         inputFile: inputFile
+
+    # Create an appData for a package, it includes the src and config.
+    dataForPackage: (pkg) ->
+      html = self.htmlForPackage pkg
+      blob = new Blob [html],
+        type: "text/html; charset=utf-8"
+
+      src = URL.createObjectURL blob
+
+      return Object.assign {}, pkg.config, {src: src}
 
     htmlForPackage: htmlForPackage
 
@@ -237,6 +242,7 @@ module.exports = (I, self) ->
       script: script that executes inline
       src: iframe apps
       name: a named system application
+      packageURL: iframe app for a remote package
     ###
     launchAppByAppData: (datum, options={}) ->
       {name, icon, width, height, src, sandbox, script, title, allow} = datum
@@ -272,12 +278,42 @@ module.exports = (I, self) ->
         datum.name is name
 
       if datum
-        self.launchAppByAppData datum,
-          env:
-            pwd: baseDirectory path
-          inputPath: path
+        {remotePackage} = datum
+        if remotePackage
+          self.cachedOrFetchAppPackage(remotePackage, name)
+          .then (pkg) ->
+            self.executePackageInIFrame(pkg)
+        else
+          self.launchAppByAppData datum,
+            env:
+              pwd: baseDirectory path
+            inputPath: path
       else
         throw new Error "No app found named '#{name}'"
+
+    cachedOrFetchAppPackage: (remotePackage, cachedName) ->
+      match = remotePackage.match /([^\/]+)\/([^@]+)(@.*)?/
+
+      throw new Error "Could not parse remote package path #{remotePackage}" unless match
+
+      [x, domain, appName, version] = match
+
+      version ?= "master"
+
+      cachedPath = "/System/Apps/#{cachedName}💾"
+
+      self.readFile(cachedPath)
+      .then (blob) ->
+        blob.readAsJSON()
+      .catch (e) ->
+        if e.message.match /File not found/i
+          url = "https://#{domain}/apps/#{appName}/#{version}💾"
+          fetch(url).then (result) ->
+            result.json()
+          .then (pkg) ->
+            self.writeFile cachedPath, JSON.toBlob(pkg)
+
+            return pkg
 
     tell: (appId, method, params...) ->
       self.appById(appId).send("application", method, params...)
@@ -342,6 +378,10 @@ module.exports = (I, self) ->
     sandbox: false
     width: 960
     height: 540
+  }, {
+    name: "Task Manager"
+    icon: "📡"
+    remotePackage: "whimsy.space/task-manager"
   }, {
     name: "Pixie Paint"
     icon: "🖌️"

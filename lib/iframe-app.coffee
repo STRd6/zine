@@ -72,7 +72,7 @@ module.exports = (opts={}) ->
       args: {} # TODO: Can pass args here, args can be an object
 
   # TODO: Set menu bar from within app
-  
+
   # TODO: revitalize embalmed objects that are received
   # these can be used to link observables, or to have proxy objects
   # that remotely invoke their methods and return promises
@@ -124,7 +124,6 @@ module.exports = (opts={}) ->
       frame.contentWindow
     delegate:
       ready: (clientData) ->
-        console.info clientData
         acceptClient()
 
       # Deprecated: should be moved to 'ready'

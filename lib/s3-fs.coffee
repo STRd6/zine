@@ -201,3 +201,4 @@ module.exports = (id, bucket, refreshCredentials) ->
 
     list: (folderPath="/") ->
       list bucket, id, folderPath
+      .then notify "list", folderPath

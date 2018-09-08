@@ -24,3 +24,9 @@ JavaScript Stuff
 ----------------
 
 Symbols cannot be cloned through postMessage.
+
+AWS
+---
+
+CloudFront automatic gzip doesn't handle application/custom+json types, so stick
+with the basics!

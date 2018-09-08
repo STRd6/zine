@@ -31,7 +31,6 @@ module.exports = (I, self) ->
   }, {
     name: "Run"
     filter: (file) ->
-      file.type.match(/^application\/pixie\+json/) or
       file.path.match(/💾$/)
     fn: ({path}) ->
       self.readFile(path)
@@ -51,11 +50,10 @@ module.exports = (I, self) ->
       .then (pkg) ->
         Modal.prompt "Filename", "#{path}/../master💾"
         .then (path) ->
-          self.writeFile(path, JSON.toBlob(pkg, "application/pixie+json"))
+          self.writeFile(path, JSON.toBlob(pkg, "application/json"))
   }, {
     name: "Explore Package"
     filter: (file) ->
-      file.type.match(/^application\/pixie\+json/) or
       file.path.match(/💾$/)
     fn: (file) ->
       system.readFile(file.path)

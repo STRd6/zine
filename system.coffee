@@ -1,9 +1,10 @@
-Ajax = require "ajax"
-Model = require "model"
 Achievement = require "./system/achievement"
+Ajax = require "ajax"
 Applications = require "./system/applications"
+Bindable = require "bindable"
 FS = require "./system/fs"
 Mimes = require "./system/mimes"
+Model = require "model"
 SystemModule = require "./system/module"
 Template = require "./system/template"
 UI = require "ui"
@@ -11,7 +12,8 @@ UI = require "ui"
 module.exports = (I={}, self=Model(I)) ->
   I.dbName ?= 'zine-os'
 
-  self.include FS, # Include FS first
+  self.include Bindable, 
+    FS, # Include FS before other modules
     Achievement,
     Applications,
     Mimes,
@@ -21,6 +23,9 @@ module.exports = (I={}, self=Model(I)) ->
 
   {title} = require "./pixie"
   [..., version] = title.split('-')
+
+  # Log system events
+  self.on "*", console.log
 
   self.extend
     ajax: Ajax()

@@ -97,4 +97,8 @@ module.exports = (I, self) ->
       fs.read(path)
       .then URL.createObjectURL
 
+  # Pass all events on to system
+  fs.on "*", (args...) ->
+    self.trigger "file", args...
+
   return self

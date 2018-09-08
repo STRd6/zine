@@ -45,19 +45,16 @@ module.exports = (I) ->
       else
         mount[method](subsystemPath, params...)
 
-  bindSubsystemEvent = (folderPath, subsystem, eventName) ->
-    subsystem.on eventName, (path) ->
+  bindSubsystemEvents = (folderPath, subsystem) ->
+    subsystem.on "*", (eventName, path) ->
       self.trigger eventName, path.replace("/", folderPath)
 
   self = Model()
   .include(Bindable)
   .extend
     read: proxyToMount "read"
-
     write: proxyToMount "write"
-
     delete: proxyToMount "delete"
-
     list: proxyToMount "list"
 
     mount: (folderPath, subsystem) ->
@@ -65,10 +62,8 @@ module.exports = (I) ->
       mountPaths.push folderPath
       mountPaths.sort longestToShortest
 
-      # TODO: Want to be able to pass through all events
-      bindSubsystemEvent(folderPath, subsystem, "write")
-      bindSubsystemEvent(folderPath, subsystem, "update")
-      bindSubsystemEvent(folderPath, subsystem, "delete")
+      # Pass through all events
+      bindSubsystemEvents(folderPath, subsystem)
 
       return self
 

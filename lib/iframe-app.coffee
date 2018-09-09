@@ -107,8 +107,10 @@ module.exports = (opts={}) ->
 
         return data
     on: (eventName, handlerId) ->
-      eventHandlers[handlerId] = ->
-        application.send "fn", handlerId, arguments
+      fn = (args...) ->
+        application.send "fn", handlerId, args
+      fn.eventName = eventName
+      eventHandlers[handlerId] = fn
       system.on eventName, eventHandlers[handlerId]
 
       return handlerId
@@ -186,6 +188,13 @@ module.exports = (opts={}) ->
       application.element.remove()
       application.trigger "exit"
     , 0
+
+  # Clean up `system.on` event handlers
+  application.on "exit", ->
+    Object.keys(eventHandlers).forEach (key) ->
+      fn = eventHandlers[key]
+
+      system.off fn.eventName, fn
 
   Object.assign application,
     # Observable fn that returns an array of [key, Observable(value)] items

@@ -3,7 +3,6 @@ Ajax = require "ajax"
 Applications = require "./system/applications"
 Bindable = require "bindable"
 FS = require "./system/fs"
-Mimes = require "./system/mimes"
 Model = require "model"
 SystemModule = require "./system/module"
 Template = require "./system/template"
@@ -12,11 +11,10 @@ UI = require "ui"
 module.exports = (I={}, self=Model(I)) ->
   I.dbName ?= 'zine-os'
 
-  self.include Bindable, 
+  self.include Bindable,
     FS, # Include FS before other modules
     Achievement,
     Applications,
-    Mimes,
     require("./system/messaging"),
     SystemModule,
     Template

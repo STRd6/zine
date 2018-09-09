@@ -182,7 +182,7 @@ module.exports = (I, self) ->
         return file
 
       # TODO: Clean up compilers and this double reading source stuff :*(
-      .then (file) -> 
+      .then (file) ->
         self.compileFile file
         .then (compiled) ->
           file.readAsText().then (source) ->

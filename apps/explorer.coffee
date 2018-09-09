@@ -255,6 +255,7 @@ module.exports = Explorer = (options={}) ->
 
   update()
 
+  # TODO: Limit update to only affected files
   # Refresh files when they change
   system.fs.on "write", (path) -> update()
   system.fs.on "delete", (path) -> update()
@@ -271,7 +272,16 @@ module.exports = Explorer = (options={}) ->
       width: 640
       height: 480
       iconEmoji: "📂"
+      x: 10 * (windowCount % 17) + 1
+      y: 15 * (windowCount % 13) + 1
+
+    windowCount += 1
 
     document.body.appendChild windowView.element
 
+  explorer.openFolder = addWindow
+
   return explorer
+
+# For positioning widows
+windowCount = 0

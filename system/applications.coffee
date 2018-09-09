@@ -230,10 +230,16 @@ module.exports = (I, self) ->
 
       app.on "exit", ->
         self.runningApplications.remove app
+        self.trigger "application", "stop", appData
 
       document.body.appendChild app.element
 
-      id: app._id
+      appData =
+        id: app._id
+
+      self.trigger "application", "start", appData
+
+      return appData
 
     ###
     Apps can come in many types based on what attributes are present.
@@ -398,7 +404,6 @@ module.exports = (I, self) ->
       "json"
       "md"
       "styl"
-      "exe"
     ]
     achievement: "Notepad.exe"
   }, {

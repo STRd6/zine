@@ -26,7 +26,12 @@ document.addEventListener "dragend", endDrag
 
 # Desktop
 Explorer = require "./apps/explorer"
-document.body.appendChild Explorer()
+explorer = Explorer()
+document.body.appendChild explorer
+system.openFolder = (path) ->
+  # Ensure trailing slash
+  explorer.openFolder path.replace /\/*$/, "/"
+  return # Don't return element so it's safe for postMessage
 
 VersionTemplate = require "./templates/version"
 document.body.appendChild VersionTemplate

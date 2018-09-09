@@ -91,6 +91,8 @@ module.exports = (opts={}) ->
     (path, args...) ->
       system[method](resolvePath(path), args...)
 
+  eventHandlers = {}
+
   systemProxy = new Proxy
     launchAppByPath: adjustPathArgument('launchAppByPath')
     readFile: adjustPathArgument('readFile')
@@ -104,6 +106,17 @@ module.exports = (opts={}) ->
           delete datum.blob
 
         return data
+    on: (eventName, handlerId) ->
+      eventHandlers[handlerId] = ->
+        application.send "fn", handlerId, arguments
+      system.on eventName, eventHandlers[handlerId]
+
+      return handlerId
+    off: (eventName, handlerId) ->
+      system.off eventName, eventHandlers[handlerId]
+      delete eventHandlers[handlerId]
+
+      return handlerId
   ,
     get: (target, method, receiver) ->
       target[method] or

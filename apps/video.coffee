@@ -30,7 +30,10 @@ module.exports = ->
     width: 640
     height: 480
 
-  windowView.send = (method, args...) ->
-    handlers[method](args...)
+  windowView.send = (type, method, args...) ->
+    if type is "application"
+      handlers[method](args...)
+    else
+      console.warn "Don't know how to handle #{type}, #{method}", args
 
   return windowView

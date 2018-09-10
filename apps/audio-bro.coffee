@@ -45,7 +45,10 @@ module.exports = ->
     height: 80
     iconEmoji: "🎶"
 
-  windowView.send = (method, args...) ->
-    handlers[method](args...)
+  windowView.send = (type, method, args...) ->
+    if type is "application"
+      handlers[method](args...)
+    else
+      console.warn "Don't know how to handle #{type}, #{method}", args
 
   return windowView

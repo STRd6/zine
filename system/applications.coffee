@@ -272,7 +272,7 @@ module.exports = (I, self) ->
       if inputPath
         self.readFile inputPath
         .then (blob) ->
-          app.send "loadFile", blob, inputPath
+          app.send "application", "loadFile", blob, inputPath
 
       self.attachApplication app
 

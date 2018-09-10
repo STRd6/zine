@@ -8,4 +8,4 @@ module.exports = (app) ->
     .then (file) ->
       if file
         # Need to send file.path because annotated blobs don't keep their annotations through the structured clone
-        app.send "loadFile", file, file.path
+        app.send "application", "loadFile", file, file.path

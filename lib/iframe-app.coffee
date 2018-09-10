@@ -70,6 +70,7 @@ module.exports = (opts={}) ->
       version: version
       env: env
       args: {} # TODO: Can pass args here, args can be an object
+      id: application._id
 
   # TODO: Set menu bar from within app
 

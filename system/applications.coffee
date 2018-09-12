@@ -356,9 +356,6 @@ module.exports = (I, self) ->
 
       self.installAppHandler(datum)
 
-    persistApps: ->
-      self.writeFile "System/apps.json", JSON.toBlob(systemApps)
-
     installAppHandler: (datum) ->
       {name, associations, script} = datum
 
@@ -421,19 +418,6 @@ module.exports = (I, self) ->
       "styl"
     ]
     achievement: "Notepad.exe"
-  }, {
-    name: "Notepad"
-    icon: "📝"
-    src: "https://danielx.whimsy.space/danielx.net/notepad/"
-    associations: ["mime:^text/", "mime:^application/javascript"]
-    achievement: "Notepad.exe"
-  }, {
-    name: "Progenitor"
-    icon: "🌿"
-    src: "https://danielx.whimsy.space/danielx.net/editor/"
-    associations: [
-      "mime:^application/zineos-package"
-    ]
   }, {
     name: "Sound Recorder"
     icon: "🎙️"

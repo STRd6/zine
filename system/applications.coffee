@@ -334,6 +334,8 @@ module.exports = (I, self) ->
       fetch("https://whimsy.space/apps/index.json").then (result) ->
         result.json()
       .then (appData) ->
+        appData.forEach self.installAppHandler
+
         self.appData self.appData.concat appData
 
       self.appData systemApps

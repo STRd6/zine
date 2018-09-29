@@ -156,6 +156,7 @@ module.exports = ->
   return windowView
 
 bindAlgoliaIndex = (id, fs) ->
+  # Get the Admin API key from the Algolia interface
   {ALGOLIA_SECRET} = localStorage
   unless ALGOLIA_SECRET
     console.warn "No Algolia key present, 'My Briefcase' will not be indexed."

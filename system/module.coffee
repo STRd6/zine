@@ -163,6 +163,7 @@ module.exports = (I, self) ->
         ".jadelet"
         ".js"
         ".styl"
+        ".cson"
       ]
 
       p = suffixes.reduce (promise, suffix) ->

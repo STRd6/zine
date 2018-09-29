@@ -191,7 +191,7 @@ bindAlgoliaIndex = (id, fs) ->
       new Promise (resolve, reject) ->
         index.addObjects [{
           objectID: id + path
-          path: path
+          path: path.replace(/^\/public\//, "")
           extension: extensionFor(path)
           content: content?.slice(0, 8192) # There's limits to the "full text" amount in the Algolia free tier. Records above 10k are rejected.
           contentType: contentType

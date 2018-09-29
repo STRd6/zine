@@ -11,7 +11,7 @@ dependencies:
   analytics: "distri/google-analytics:master"
   bindable: "distri/bindable:master"
   model: "distri/model:master"
-  postmaster: "distri/postmaster:v0.5.3"
+  postmaster: "distri/postmaster:v0.6.0"
   ui: "STRd6/ui:master"
   "!system": "STRd6/system-client:master"
 remoteDependencies: [

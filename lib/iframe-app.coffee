@@ -190,8 +190,11 @@ module.exports = (opts={}) ->
       application.trigger "exit"
     , 0
 
-  # Clean up `system.on` event handlers
+  
   application.on "exit", ->
+    # Clean up postmaster onmessage listener
+    postmaster.dispose()
+    # Clean up `system.on` event handlers
     Object.keys(eventHandlers).forEach (key) ->
       fn = eventHandlers[key]
 

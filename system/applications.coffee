@@ -151,18 +151,18 @@ module.exports = (I, self) ->
       self.readFile path
       .then self.open
 
-    launchAppByPath: (path, inputFile) ->
+    launchAppByPath: (path, inputPath) ->
       if path.match(/\.exe$/)
         self.readFile(path)
         .then (blob) ->
           blob.readAsJSON()
         .then (data) ->
           self.launchAppByAppData data,
-            inputFile: inputFile
+            inputPath: inputPath
             env:
               pwd: baseDirectory path
       else if path.match(/\.js$|\.coffee$/)
-        self.executeInIFrame path, inputFile
+        self.executeInIFrame path, inputPath
       else
         Promise.reject new Error "Could not launch #{path}"
 
@@ -171,21 +171,21 @@ module.exports = (I, self) ->
     # over `postMessage`.
     # It happens to be in an iframe but no reason it couldn't be web worker or
     # something else.
-    executeInIFrame: (absolutePath, inputFile) ->
+    executeInIFrame: (absolutePath, inputPath) ->
       self.packageProgram(absolutePath)
       .then (pkg) ->
-        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputFile
+        self.executePackageInIFrame pkg, baseDirectory(absolutePath), inputPath
 
     # Execute a package in the context of an iframe
     # The package is converted into a blob url containing an html source that
     # will execute the package.
-    executePackageInIFrame: (pkg, pwd="/", inputFile) ->
+    executePackageInIFrame: (pkg, pwd="/", inputPath) ->
       data = self.dataForPackage(pkg)
 
       self.launchAppByAppData data,
         env:
           pwd: pwd
-        inputFile: inputFile
+        inputPath: inputPath
 
     # Create an appData for a package, it includes the src and config.
     dataForPackage: (pkg) ->
@@ -287,7 +287,7 @@ module.exports = (I, self) ->
         if packageURL
           self.cachedOrFetchAppPackage(packageURL, name)
           .then (pkg) ->
-            self.executePackageInIFrame(pkg)
+            self.executePackageInIFrame(pkg, baseDirectory(path), path)
         else
           self.launchAppByAppData datum,
             env:

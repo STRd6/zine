@@ -47,7 +47,9 @@ htmlForPackage = (pkg, opts={}) ->
     code = """
       var SystemClient = require("!system");
       var {Observable} = SystemClient;
-      var {system, application} = SystemClient();
+      var client = SystemClient();
+      var {system, application} = client;
+      system.client = client;
 
       Object.assign(window, {
         application: application,

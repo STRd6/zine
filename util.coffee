@@ -45,20 +45,7 @@ htmlForPackage = (pkg, opts={}) ->
   # Wrap code with !system integration if it exists
   if pkg.dependencies["!system"]
     code = """
-      var SystemClient = require("!system");
-      var {Observable} = SystemClient;
-      var client = SystemClient();
-      var {system, application} = client;
-      system.client = client;
-
-      Object.assign(window, {
-        application: application,
-        system: system,
-        Observable: Observable
-      });
-
-      system.ready()
-      .then(function() {
+      require("!system").launch(function() {
         #{code}
       });
     """

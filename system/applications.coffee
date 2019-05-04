@@ -28,6 +28,7 @@ module.exports = (I, self) ->
       file.path.match(/\.exe$/)
     fn: (file) ->
       self.launchAppByPath file.path
+    priority: 5
   }, {
     name: "Run"
     filter: (file) ->
@@ -39,6 +40,7 @@ module.exports = (I, self) ->
         blob.readAsJSON()
       .then (pkg) ->
         self.executePackageInIFrame pkg, baseDirectory(path)
+    priority: 5
   }, {
     name: "Create Package"
     filter: (file) ->
@@ -52,6 +54,7 @@ module.exports = (I, self) ->
         Modal.prompt "Filename", "#{path}/../master💾"
         .then (path) ->
           self.writeFile(path, JSON.toBlob(pkg, "application/json"))
+    priority: 20
   }, {
     name: "Explore Package"
     filter: (file) ->
@@ -79,6 +82,7 @@ module.exports = (I, self) ->
           iconEmoji: "📂"
 
         document.body.appendChild windowView.element
+    priority: 20
   }, {
     name: "PDF Viewer"
     filter: (file) ->
@@ -90,12 +94,14 @@ module.exports = (I, self) ->
           src: url
           sandbox: false # Need Chrome's pdf plugin to view pdfs
           title: file.path
+    priority: 10
   }, {
     name: "My Briefcase"
     filter: ({path}) ->
       path.match /My Briefcase$/
     fn: ->
       system.openBriefcase()
+    priority: 10
   }]
 
   handle = (file) ->
@@ -129,10 +135,10 @@ module.exports = (I, self) ->
       handlers.filter (handler) ->
         handler.filter(file)
 
-    # Add a handler to the list of handlers, position zero is highest priority
-    # Default is lowest priority
-    registerHandler: (handler, position=0) ->
-      handlers.splice(position, 0, handler)
+    registerHandler: (handler) ->
+      handlers.push(handler)
+      handlers.sort (a, b) ->
+        a.priority - b.priority
 
     removeHandler: (handler) ->
       position = handlers.indexOf(handler)
@@ -328,9 +334,11 @@ module.exports = (I, self) ->
       return app
 
     initAppSettings: ->
+      self.trigger "app", "initSettings"
+
       systemApps.forEach self.installAppHandler
-      # TODO: Install user apps
-      # could be a local index like this remote one
+
+      self.appData systemApps
 
       # Fetch whimsy.space app index
       fetch("https://whimsy.space/apps/index.json").then (result) ->
@@ -340,7 +348,13 @@ module.exports = (I, self) ->
 
         self.appData self.appData.concat appData
 
-      self.appData systemApps
+      # Install local apps
+      system.fs.list("/Apps/").then (localAppFiles) ->
+        localAppFiles.forEach ({path, blob}) ->
+          blob.readAsJSON()
+          .then ({config}) ->
+            if config.name and config.associations
+              self.installApp(config)
 
     removeApp: (name) ->
       self.appData self.appData.filter (datum) ->
@@ -348,20 +362,24 @@ module.exports = (I, self) ->
           # Remove handler
           console.log "removing handler", datum
           self.removeHandler(datum.handler)
+          self.trigger "app", "remove", name, datum
           return false
         else
           true
 
     installApp: (datum) ->
+      {name} = datum
       # Only one app per name
-      self.removeApp(datum.name, true)
+      self.removeApp(name, true)
 
       self.appData self.appData.concat [datum]
 
       self.installAppHandler(datum)
+      self.trigger "app", "install", name, datum
+      return
 
     installAppHandler: (datum) ->
-      {name, associations} = datum
+      {name, associations, priority} = datum
 
       associations = [].concat(associations or [])
 
@@ -372,6 +390,7 @@ module.exports = (I, self) ->
             matchAssociation(association, type, path)
         fn: (file) ->
           self.launchAppByName name, file?.path
+        priority: priority ? 10
 
       self.registerHandler datum.handler
 

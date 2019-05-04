@@ -190,7 +190,7 @@ module.exports = (opts={}) ->
       application.trigger "exit"
     , 0
 
-  
+
   application.on "exit", ->
     # Clean up postmaster onmessage listener
     postmaster.dispose()

@@ -44,6 +44,18 @@ htmlForPackage = (pkg, opts={}) ->
 
   # Wrap code with !system integration if it exists
   if pkg.dependencies["!system"]
+    depVersion = pkg.dependencies["!system"].config?.version or ""
+    ourVersion = PACKAGE.dependencies["!system"].config.version
+
+    if versionCompare(ourVersion, depVersion) is 1
+      console.info "Force updating `!system` dependency (#{depVersion} -> #{ourVersion})", pkg
+      pkg.dependencies["!system"] = PACKAGE.dependencies["!system"]
+
+      code = """
+        window.Observable = system.client.Observable;
+        #{code}
+      """
+
     code = """
       require("!system").launch(function() {
         #{code}
@@ -140,6 +152,21 @@ fetchDependency = MemoizedPromise (path) ->
   else
     Promise.reject new Error "Can only handle url string dependencies right now, received: #{path}"
 
+# modified from https://github.com/substack/semver-compare/blob/master/index.js
+versionCompare = (a, b) ->
+  pa = a.split('.')
+  pb = b.split('.')
+  i = 0
+  while i < 4
+    na = parseInt pa[i], 10
+    nb = parseInt pb[i], 10
+    return  1  if (na > nb)
+    return -1  if (nb > na)
+    return  1  if !isNaN(na) and  isNaN(nb)
+    return -1  if  isNaN(na) and !isNaN(nb)
+    i++
+
+  return 0
 
 module.exports = Util =
   emptyElement: (element) ->
@@ -152,6 +179,7 @@ module.exports = Util =
   htmlForPackage: htmlForPackage
   normalizePath: normalizePath
   absolutizePath: absolutizePath
+  versionCompare: versionCompare
 
   fetchDependency: fetchDependency
 

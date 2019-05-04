@@ -112,12 +112,12 @@ module.exports = Explorer = (options={}) ->
 
     openers = system.openersFor(file)
 
-    openerOptions = openers.map ({name, fn}, i) ->
+    openerOptions = openers.map ({name, title, fn}, i) ->
       handlerName = "opener#{i}"
       contextMenuHandlers[handlerName] = ->
         fn(file)
 
-      "  #{name} -> #{handlerName}"
+      "  #{title or name} -> #{handlerName}"
     .join("\n")
 
     openWithMenu = ""

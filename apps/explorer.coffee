@@ -255,11 +255,15 @@ module.exports = Explorer = (options={}) ->
 
   update()
 
-  # TODO: Limit update to only affected files
+  # Limit update to only affected views
+  updateIfPathMatches = (updatedPath) ->
+    basePath = updatedPath.match(/^.*\//)?[0]
+    if basePath is path
+      update()
   # Refresh files when they change
-  system.fs.on "write", (path) -> update()
-  system.fs.on "delete", (path) -> update()
-  system.fs.on "update", (path) -> update()
+  system.fs.on "write", updateIfPathMatches
+  system.fs.on "delete", updateIfPathMatches
+  system.fs.on "update", updateIfPathMatches
 
   addWindow = (path) ->
     element = Explorer

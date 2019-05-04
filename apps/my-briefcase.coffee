@@ -87,7 +87,6 @@ module.exports = ->
       name you'd prefer. DM me in the friendsofjack slack or something.
     """] , type: "text/markdown; charset=utf-8"
     system.writeFile "/My Briefcase/public/info.md", infoBlob
-    system.writeFile "/My Briefcase/public/.keep", new Blob []
 
     content Explorer
       path: "/My Briefcase/"

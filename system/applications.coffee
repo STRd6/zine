@@ -112,6 +112,9 @@ module.exports = (I, self) ->
       handler.fn(file)
     else
       throw new Error "No handler for files of type #{file.type}"
+  
+  # Table for mapping installed app names to their packages
+  appMap = {}
 
   specialApps =
     "Audio Bro": require "../apps/audio-bro"
@@ -287,6 +290,11 @@ module.exports = (I, self) ->
     # Look up the app data for the given app name and launch that app
     # we also download and cache remote apps here
     launchAppByName: (name, path) ->
+      pkg = appMap[name]
+      if pkg
+        self.executePackageInIFrame pkg, baseDirectory(path), path
+        return
+
       [datum] = self.appData.filter (datum) ->
         datum.name is name
 
@@ -359,6 +367,7 @@ module.exports = (I, self) ->
         if datum.name is name
           # Remove handler
           console.log "removing handler", datum
+          delete appMap[name]
           self.removeHandler(datum.handler)
           self.trigger "app", "remove", name, datum
           return false
@@ -376,23 +385,24 @@ module.exports = (I, self) ->
 
         if config.name and config.associations
           self.installApp(config, pkg)
+          appMap[config.name] = pkg
         else
           console.warn "Cannot install app (#{path}). Missing `name` and `associations` in config.", config
       .catch (e) ->
         console.warn "Error installing app at #{path}", e
 
-    installApp: (datum, pkg) ->
+    installApp: (datum) ->
       {name} = datum
       # Only one app per name
       self.removeApp(name, true)
 
       self.appData self.appData.concat [datum]
 
-      self.installAppHandler(datum, pkg)
+      self.installAppHandler(datum)
       self.trigger "app", "install", name, datum
       return
 
-    installAppHandler: (datum, pkg) ->
+    installAppHandler: (datum) ->
       {name, associations, priority, title} = datum
 
       associations = [].concat(associations or [])
@@ -406,10 +416,7 @@ module.exports = (I, self) ->
         fn: (file) ->
           path = file?.path
 
-          if pkg
-            self.executePackageInIFrame pkg, baseDirectory(path), path
-          else
-            self.launchAppByName name, path
+          self.launchAppByName name, path
 
         priority: priority ? 10
 

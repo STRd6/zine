@@ -336,7 +336,8 @@ module.exports = (I, self) ->
     initAppSettings: ->
       self.trigger "app", "initSettings"
 
-      systemApps.forEach self.installAppHandler
+      systemApps.forEach (app) ->
+        self.installAppHandler app
 
       self.appData systemApps
 
@@ -352,9 +353,11 @@ module.exports = (I, self) ->
       system.fs.list("/Apps/").then (localAppFiles) ->
         localAppFiles.forEach ({path, blob}) ->
           blob.readAsJSON()
-          .then ({config}) ->
+          .then (pkg) ->
+            {config} = pkg
+
             if config.name and config.associations
-              self.installApp(config)
+              self.installApp(config, pkg)
 
     removeApp: (name) ->
       self.appData self.appData.filter (datum) ->
@@ -367,29 +370,36 @@ module.exports = (I, self) ->
         else
           true
 
-    installApp: (datum) ->
+    installApp: (datum, pkg) ->
       {name} = datum
       # Only one app per name
       self.removeApp(name, true)
 
       self.appData self.appData.concat [datum]
 
-      self.installAppHandler(datum)
+      self.installAppHandler(datum, pkg)
       self.trigger "app", "install", name, datum
       return
 
-    installAppHandler: (datum) ->
+    installAppHandler: (datum, pkg) ->
       {name, associations, priority, title} = datum
 
       associations = [].concat(associations or [])
 
       datum.handler =
-        name: title or name
+        name: name
+        title: title
         filter: ({type, path}) ->
           associations.some (association) ->
             matchAssociation(association, type, path)
         fn: (file) ->
-          self.launchAppByName name, file?.path
+          path = file?.path
+
+          if pkg
+            self.executePackageInIFrame pkg, baseDirectory(path), path
+          else
+            self.launchAppByName name, path
+
         priority: priority ? 10
 
       self.registerHandler datum.handler

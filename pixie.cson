@@ -1,7 +1,9 @@
 title: "Whimsy Space - ZineOS v0.420.950a ⌊ALPHA⌉"
 version: "0.420.950a"
 description: """
-  A Very Paranormal X-Mas
+  I have long been alarmed by people’s sheeplike acceptance of the term ‘computer technology’ — it sounds so objective and inexorable — when most computer technology is really a bunch of ideas turned into conventions and packages.
+  
+  - Ted Nelson
 """
 publish:
   s3:

@@ -31,7 +31,8 @@ module.exports = (I, self) ->
   }, {
     name: "Run"
     filter: (file) ->
-      file.path.match(/💾$/)
+      file.path.match(/💾$/) or
+      file.path.match(/\.json$/)
     fn: ({path}) ->
       self.readFile(path)
       .then (blob) ->
@@ -54,7 +55,8 @@ module.exports = (I, self) ->
   }, {
     name: "Explore Package"
     filter: (file) ->
-      file.path.match(/💾$/)
+      file.path.match(/💾$/) or
+      file.path.match(/\.json$/)
     fn: (file) ->
       system.readFile(file.path)
       .then (blob) ->
@@ -359,7 +361,7 @@ module.exports = (I, self) ->
       self.installAppHandler(datum)
 
     installAppHandler: (datum) ->
-      {name, associations, script} = datum
+      {name, associations} = datum
 
       associations = [].concat(associations or [])
 
@@ -394,7 +396,9 @@ module.exports = (I, self) ->
     src: "https://danielx.whimsy.space/danielx.net/code/"
     associations: [
       "mime:^application/javascript"
+      "mime:^text"
       "mime:json$"
+      "💾"
       "coffee"
       "cson"
       "html"
@@ -403,6 +407,7 @@ module.exports = (I, self) ->
       "json"
       "md"
       "styl"
+      "css"
     ]
     achievement: "Notepad.exe"
   }, {
@@ -411,13 +416,16 @@ module.exports = (I, self) ->
     src: "https://danielx.whimsy.space/danielx.net/code/monaco/"
     associations: [
       "mime:^application/javascript"
+      "mime:^text"
       "mime:json$"
+      "💾"
       "html"
       "jadelet"
       "js"
       "json"
       "md"
       "styl"
+      "css"
     ]
     achievement: "Notepad.exe"
   }, {

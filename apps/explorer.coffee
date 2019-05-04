@@ -112,7 +112,8 @@ module.exports = Explorer = (options={}) ->
 
     openers = system.openersFor(file)
 
-    openerOptions = openers.map ({name, title, fn}, i) ->
+    openerOptions = openers.map (data, i) ->
+      {name, title, fn} = data
       handlerName = "opener#{i}"
       contextMenuHandlers[handlerName] = ->
         fn(file)

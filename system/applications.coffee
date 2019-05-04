@@ -270,7 +270,7 @@ module.exports = (I, self) ->
         app = IFrameApp
           allow: allow
           env: env
-          title: name or title
+          title: title or name
           icon: icon
           width: width
           height: height

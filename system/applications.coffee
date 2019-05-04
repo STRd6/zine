@@ -351,13 +351,8 @@ module.exports = (I, self) ->
 
       # Install local apps
       system.fs.list("/Apps/").then (localAppFiles) ->
-        localAppFiles.forEach ({path, blob}) ->
-          blob.readAsJSON()
-          .then (pkg) ->
-            {config} = pkg
-
-            if config.name and config.associations
-              self.installApp(config, pkg)
+        localAppFiles.forEach ({path}) ->
+          self.installAppFromFileSystem path
 
     removeApp: (name) ->
       self.appData self.appData.filter (datum) ->
@@ -369,6 +364,22 @@ module.exports = (I, self) ->
           return false
         else
           true
+
+    installAppFromFileSystem: (path) ->
+      self.readAsJSON(path)
+      .then (pkg) ->
+        {config} = pkg
+
+        unless config
+          console.warn "Cannot install app. Missing `config` in package at #{path}", pkg
+          return
+
+        if config.name and config.associations
+          self.installApp(config, pkg)
+        else
+          console.warn "Cannot install app (#{path}). Missing `name` and `associations` in config.", config
+      .catch (e) ->
+        console.warn "Error installing app at #{path}", e
 
     installApp: (datum, pkg) ->
       {name} = datum
@@ -439,6 +450,7 @@ module.exports = (I, self) ->
       "css"
     ]
     achievement: "Notepad.exe"
+    priority: 5
   }, {
     name: "Monaco Editor"
     icon: "☢️"
@@ -575,6 +587,13 @@ module.exports = (I, self) ->
     height: 640 + 27
     achievement: "In space, nobody can hear you in space"
   }].reverse()
+
+  self.on "file", (operation, path) ->
+    return unless operation is "write"
+
+    if baseDirectory(path) is "/Apps/"
+      console.log "Update Apps"
+      self.installAppFromFileSystem(path)
 
   return self
 

@@ -70,10 +70,12 @@ module.exports = (I, self) ->
     readAsText: (path) ->
       self.readFile(path)
       .then (blob) ->
-        if blob
-          blob.readAsText()
-        else
-          throw new Error "File not found at '#{path}'"
+        blob.readAsText()
+
+    readAsJSON: (path) ->
+      self.readFile(path)
+      .then (blob) ->
+        blob.readAsJSON()
 
     readTree: (directoryPath) ->
       readTree(fs, directoryPath)

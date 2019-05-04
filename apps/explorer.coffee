@@ -9,7 +9,7 @@ Drop = require "../lib/drop"
 FileTemplate = require "../templates/file"
 FolderTemplate = require "../templates/folder"
 
-{emptyElement} = require "../util"
+{emptyElement, startsWith} = require "../util"
 
 extractPath = (element) ->
   while element
@@ -256,10 +256,10 @@ module.exports = Explorer = (options={}) ->
 
   update()
 
-  # Limit update to only affected views
+  # Limit update to only affected views, at our path or deeper
   updateIfPathMatches = (updatedPath) ->
     basePath = updatedPath.match(/^.*\//)?[0]
-    if basePath is path
+    if startsWith basePath, path
       update()
   # Refresh files when they change
   system.fs.on "write", updateIfPathMatches

@@ -379,12 +379,12 @@ module.exports = (I, self) ->
       return
 
     installAppHandler: (datum) ->
-      {name, associations, priority} = datum
+      {name, associations, priority, title} = datum
 
       associations = [].concat(associations or [])
 
       datum.handler =
-        name: name
+        name: title or name
         filter: ({type, path}) ->
           associations.some (association) ->
             matchAssociation(association, type, path)

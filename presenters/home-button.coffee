@@ -73,10 +73,10 @@ module.exports = (system) ->
     categories = {}
 
     data.forEach (datum) ->
-      {category} = datum
+      {category, icon, name, title} = datum
 
       category ?= "Applications"
-      (categories[category] ?= []).push "#{datum.icon or ""} #{datum.name} -> #{datum.name}"
+      (categories[category] ?= []).push "#{icon or ""} #{title or name} -> #{name}"
 
     Object.keys(categories).sort().map (category) ->
       [decorate(category), categories[category]]
